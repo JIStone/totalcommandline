@@ -290,7 +290,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    AFX_IDS_APP_TITLE       "FormViewShell"
+    AFX_IDS_APP_TITLE       "TotalCommandLine"
     AFX_IDS_IDLEMESSAGE     "¡ÿ∫Ò"
 END
 

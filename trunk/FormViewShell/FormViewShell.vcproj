@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="FormViewShell"
+	Name="TotalCommandLine"
 	ProjectGUID="{8453CA79-ED10-4418-9D85-B4DCBB480E7A}"
 	RootNamespace="FormViewShell"
 	Keyword="MFCProj"
