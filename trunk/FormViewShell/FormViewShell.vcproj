@@ -286,6 +286,10 @@
 			RelativePath=".\ReadMe.txt"
 			>
 		</File>
+		<File
+			RelativePath=".\vesion.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 		<Global
