@@ -101,9 +101,14 @@ public:
 	// 확장자 추가시 타입 결정
 	int m_AddExtTypeRadio;
 
+	CString m_kDir;
+
 	afx_msg void OnBnClickedRadio1Move();
 	afx_msg void OnBnClickedRadio2Copy();
 	afx_msg void OnBnClickedRadio3Delete();
+	CEdit m_Edit_Success_Fail;
+	ITEMIDLIST m_InputPathiIdList;
+	ITEMIDLIST m_OutputPathiIdList;
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

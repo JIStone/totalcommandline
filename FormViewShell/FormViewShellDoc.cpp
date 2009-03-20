@@ -84,6 +84,9 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		}
 		
 		ar << pView->m_Check_EnableErrPop.GetCheck();
+//ITEMIDLIST t = pView->m_InputPathiIdList;
+//		ar << pView->m_InputPathiIdList;
+//		ar << pView->m_OutputPathiIdList;
 		
 	}
 	else

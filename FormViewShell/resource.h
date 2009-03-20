@@ -32,6 +32,8 @@
 #define IDC_RADIO2_COPY                 1032
 #define IDC_RADIO3                      1033
 #define IDC_RADIO3_DELETE               1033
+#define IDC_EDIT_SUCESS_FAIL            1034
+#define IDC_EDIT_SUCCESS_FAIL           1034
 
 // Next default values for new objects
 // 
@@ -39,7 +41,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1034
+#define _APS_NEXT_CONTROL_VALUE         1035
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

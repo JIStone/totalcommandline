@@ -12,12 +12,14 @@
 #endif
 
 #define NUM_OF_CVTR_FILE_MAX (500)
-#define NUM_OF_CVTR_FOLDER_MAX (200)
+#define NUM_OF_CVTR_FOLDER_MAX (2000)
 
 // 확장자의 최대길이는 6으로 가정				
 #define FILE_EXT_LENGTH_MAX (6)
 
 // CFormViewShellView
+
+int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 
 IMPLEMENT_DYNCREATE(CFormViewShellView, CFormView)
 
@@ -88,8 +90,9 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 	//DDX_Control(pDX, IDC_EDIT_OUT, m_ListData);
 	DDX_Control(pDX, IDC_LIST_OUT, m_ListBox);
 	DDX_Text(pDX, IDC_EDIT_OUT, m_ListData);
-//	DDX_Control(pDX, IDC_RADIO1_MOVE, m_AddExtTypeRadio);
+	//	DDX_Control(pDX, IDC_RADIO1_MOVE, m_AddExtTypeRadio);
 	DDX_Radio(pDX, IDC_RADIO1_MOVE, m_AddExtTypeRadio);
+	DDX_Control(pDX, IDC_EDIT_SUCCESS_FAIL, m_Edit_Success_Fail);
 }
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
@@ -199,11 +202,13 @@ void CFormViewShellView::OnBnClickedSelpath()
 	BRinfo.pidlRoot = NULL;
 	BRinfo.pszDisplayName = m_DestPath.GetBuffer(MAX_PATH);
 	BRinfo.lpszTitle = "폴더를 선택하세요.";
-	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS;
-	BRinfo.lpfn = NULL;
-	BRinfo.lParam = 0;
+	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_STATUSTEXT | BIF_UAHINT;
+	// m_DestPath에 설정한 경로를 찾아감
+	BRinfo.lpfn = BrowseCallbackProc;
+	BRinfo.lParam = (LPARAM)BRinfo.pszDisplayName;
 
 	pidlBrowse = SHBrowseForFolder(&BRinfo);
+	//memcpy(&m_OutputPathiIdList, pidlBrowse, sizeof(ITEMIDLIST));
 	if(pidlBrowse != NULL) 
 	{
 		SHGetPathFromIDList(pidlBrowse, m_DestPath.GetBuffer(MAX_PATH));
@@ -301,7 +306,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	CString searchRootDirStr = m_FullFileName;
 	CString searchSubDirList[NUM_OF_CVTR_FOLDER_MAX];
-	
+	int iSuccessCnt = 0;
 	// 하위 폴더 갯수 초기화
 	m_SubDirCnt = 0;
 	// 검색된 갯수 초기화
@@ -321,7 +326,6 @@ void CFormViewShellView::OnBnClickedExecappl()
 		progressCnt += SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, NULL);
 
 	}
-	
 	m_EditProgCnt.ShowWindow(SW_SHOW);
 	
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
@@ -390,12 +394,14 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 
 				//실행결과로 생성된 파일패스 만들기
-				sIndex = testAllPath.Find('.',testAllPath.GetLength() - FILE_EXT_LENGTH_MAX);
+				//sIndex = testAllPath.Find('.',testAllPath.GetLength() - FILE_EXT_LENGTH_MAX);
+				sIndex = testAllPath.Find('.',0);
 				outPutResultPath = testAllPath.Left(sIndex) + oExtStr;
 
 				CString tempOutPutStr = searchedFileList[listCnt];
 				// 파일 이름만 분리하기
-				sIndex = tempOutPutStr.Find('.',tempOutPutStr.GetLength() - FILE_EXT_LENGTH_MAX);
+				//sIndex = tempOutPutStr.Find('.',tempOutPutStr.GetLength() - FILE_EXT_LENGTH_MAX);
+				sIndex = tempOutPutStr.Find('.',0);
 				CString sExte = tempOutPutStr.Right(tempOutPutStr.GetLength() - sIndex);
 				// 출력파일이름에 확장자 붙이기
 				tempOutPutStr.Replace(sExte, oExtStr);
@@ -411,10 +417,25 @@ void CFormViewShellView::OnBnClickedExecappl()
 				CString movingStr = "";
 				int findCnt = 0;
 				
-				// 컨버팅된 파일이 아직 없을 경우 계속 찾음
+				BOOL bAtiveFileProc = TRUE;
+				// 컨버팅된 파일이 원본 파일이 있는 폴더에 아직 없을 경우 계속 찾음
 				while(movingStr.IsEmpty() )
-				{					
-					SearchOneFile(NULL, outPutResultPath, &movingStr);
+				{	
+					if(iExtType == FO_COPY)
+					{
+						SearchOneFile(NULL, outPutResultPath, &movingStr);
+					}
+					else if(iExtType == FO_DELETE)
+					{
+						// 삭제할 파일의 경로
+						movingStr = tempOutPutStr;
+						bAtiveFileProc = PathFileExists(tempOutPutStr);
+						break;
+					}
+					else
+					{
+						SearchOneFile(searchRootDirStr + searchSubDirList[dirCnt], oExtStr, &movingStr);
+					}
 					Sleep(10);
 
 					findCnt++;
@@ -425,33 +446,86 @@ void CFormViewShellView::OnBnClickedExecappl()
 				// CMD 명령
 /*				CString testSTRING ="/c move " + movSrc + " " + movDest;
 				HINSTANCE movRet = ShellExecute(NULL, "open", "cmd", testSTRING, NULL, SW_HIDE);
+*/
 
-*/				//=========파일이동================
-				SHFILEOPSTRUCT shos;
-				ZeroMemory(&shos, sizeof(SHFILEOPSTRUCT));
-				// 파일처리 타입 결정
-				shos.wFunc = iExtType;
-				movingStr.Append("\0", 1);
-				movDest.Append("\0", 1);
-				shos.pFrom = NULL;
-				shos.pTo = NULL;
-				// 이런식으로 넣어줘야함!!!
-				TCHAR        pszFrom[1024] = {0}; 
-				strcpy_s(pszFrom , movingStr);
-				shos.pFrom = pszFrom;//"D:\\WORK\\Macheon_Trial\\MC\\Program\\NC\\MainUi\\2d\\MainUI_bottom.NCER";
-
-				TCHAR        pszTo[1024] = {0}; 
-				strcpy_s(pszTo , movDest);				
-				shos.pTo = pszTo;
-				// 작업과정 정보를 표시안함
-				shos.fFlags = FOF_NOCONFIRMATION | FOF_NOERRORUI;
-	
-				int shRet = SHFileOperation(&shos);
-				//이동시킬 파일이 없고 에러메세지를 표시한 상태이면
-				if(shRet && m_Check_EnableErrPop.GetCheck())
+//========================================= 결과 파일처리====================================================
+				if(bAtiveFileProc)
 				{
-					int popRet = MessageBox(movDest + " \n작업을 마치지 못했습니다. 계속 하시겠습니까?","파일이동 에러", MB_OKCANCEL);
+
+					SHFILEOPSTRUCT shos;
+					ZeroMemory(&shos, sizeof(SHFILEOPSTRUCT));
+					// 파일처리 타입 결정
+					shos.wFunc = iExtType;
+					movingStr.Append("\0", 1);
+					movDest.Append("\0", 1);
+					shos.pFrom = NULL;
+					shos.pTo = NULL;
+					// 이런식으로 넣어줘야함!!!
+					TCHAR        pszFrom[1024] = {0}; 
+					strcpy_s(pszFrom , movingStr);
+					shos.pFrom = pszFrom;//"D:\\WORK\\Macheon_Trial\\MC\\Program\\NC\\MainUi\\2d\\MainUI_bottom.NCER";
+
+					TCHAR        pszTo[1024] = {0}; 
+					strcpy_s(pszTo , movDest);
+				
+					if(iExtType != FO_DELETE)
+						shos.pTo = pszTo;
+
+					// 작업과정 정보를 표시안함
+					shos.fFlags = FOF_NOCONFIRMATION | FOF_NOERRORUI;
+
+					int shRet = 0;
+					int tryCount = 0;
+					// 생성결과 파일이 큰 이유등으로 SHFileOperation()가 제대로 마치지 못했으면 될때까지한다.
+					do
+					{
+						shRet = SHFileOperation(&shos);
+						Sleep(10);
+						tryCount++;
+					}
+					while(tryCount < 10 && shRet != 0);
 					
+
+					//처리해야할 파일이 없고 에러메세지를 표시한 상태이면
+					if(shRet && m_Check_EnableErrPop.GetCheck())
+					{
+						int popRet = MessageBox(movDest + " \n작업을 마치지 못했습니다. 계속 하시겠습니까?","파일이동 에러", MB_OKCANCEL);
+						
+						if(popRet == 1)
+						{
+							continue;
+						}
+						else if(popRet == 2)
+						{
+							m_ProgressCtrl.SetPos(0);
+							return;
+						}
+					}
+
+				}
+//==============================================================================================================================
+
+				BOOL isDestFileExist = FALSE;
+				if(iExtType == FO_DELETE)
+				{
+					isDestFileExist = PathFileExists(movingStr);// 삭제할 파일이 경로에 있는지 검사
+				}
+
+				int findMovedFileCnt = 0;
+				while((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist))
+				{
+					isDestFileExist = PathFileExists(tempOutPutStr);
+
+					Sleep(10);
+					findMovedFileCnt++;
+					if(findMovedFileCnt > 10)
+						break;
+				}
+				// 에러메세지 표시여부
+				if(m_Check_EnableErrPop.GetCheck() && ((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist)))
+				{
+					//int popRet = MessageBox(searchedFileList[listCnt] + " \n에대한 작업을 마치지 못했습니다. \n계속 하시겠습니까?","일지 정지", MB_OKCANCEL);
+					int popRet = MessageBox(tempOutPutStr + " \n에대한 작업을 마치지 못했습니다. \n계속 하시겠습니까?","일지 정지", MB_OKCANCEL);
 					if(popRet == 1)
 					{
 						continue;
@@ -462,33 +536,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 						return;
 					}
 				}
-
-				///////////////////////////////////
-				BOOL isExist = FALSE;
-				int findMovedFileCnt = 0;
-				while(!isExist)
+				else if(!((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist)))
 				{
-					isExist = PathFileExists(tempOutPutStr);
-
-					Sleep(10);
-					findMovedFileCnt++;
-					if(findMovedFileCnt > 10)
-						break;
-				}
-				// 에러메세지 표시여부
-				if(!isExist && m_Check_EnableErrPop.GetCheck())
-				{
-					//int popRet = MessageBox(searchedFileList[listCnt] + " \n에대한 작업을 마치지 못했습니다. \n계속 하시겠습니까?","일지 정지", MB_OKCANCEL);
-					int popRet = MessageBox(tempOutPutStr + " \n에대한 작업을 마치지 못했습니다. \n계속 하시겠습니까?","일지 정지", MB_OKCANCEL);
-						if(popRet == 1)
-						{
-							continue;
-						}
-						else if(popRet == 2)
-						{
-							m_ProgressCtrl.SetPos(0);
-							return;
-						}
+					iSuccessCnt +=  (lbIndex + 1) / m_ListBox.GetCount();//  ++;
 				}
 
 			}
@@ -508,10 +558,16 @@ void CFormViewShellView::OnBnClickedExecappl()
 				}
 				break;
 			}
+			
 		}
 
 	}
-
+	CString resultCnt;
+	//resultCnt.Format( "성공: %d", iSuccessCnt / m_ListBox.GetCount());
+	resultCnt.Format( "성공: %d", iSuccessCnt);
+	m_Edit_Success_Fail.ShowWindow(SW_SHOW);
+	SetDlgItemText(IDC_EDIT_SUCCESS_FAIL, resultCnt);
+	GetDlgItem(IDC_EDIT_SUCCESS_FAIL)->UpdateWindow();
 	//m_ProgressCtrl.SetPos(100);
 }
 int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
@@ -541,6 +597,10 @@ int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
 			TRACE(_T("%s\n"), (LPCTSTR)dirFinder.GetFilePath());
 			// 서브폴더 절대경로
 			CString tempfolderPath = dirFinder.GetFilePath();
+			
+			if(tempfolderPath.Find('.svn',0))
+				continue;
+
 			tempfolderPath.Replace(m_FullFileName, "");
 			sDirNameList[m_SubDirCnt++] = tempfolderPath;
 			// 서브폴더명만 저장
@@ -808,19 +868,23 @@ void CFormViewShellView::OnBnClickedBtnOutDel()
 void CFormViewShellView::OnBnClickedSelfile()
 {
 	// TODO: Add your control notification handler code here
+	//LPITEMIDLIST idRoot;
+    //SHGetSpecialFolderLocation(0, CSIDL_COMMON_PROGRAMS, &idRoot);
 
 	LPITEMIDLIST pidlBrowse;
 
 	BROWSEINFO BRinfo;
 	BRinfo.hwndOwner = GetSafeHwnd();
-	BRinfo.pidlRoot = NULL;
+	BRinfo.pidlRoot = 0;
 	BRinfo.pszDisplayName = m_FullFileName.GetBuffer(MAX_PATH);
 	BRinfo.lpszTitle = "폴더를 선택하세요.";
-	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS;
-	BRinfo.lpfn = NULL;
-	BRinfo.lParam = 0;
+	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_STATUSTEXT | BIF_UAHINT;
+	// m_FullFileName에 설정한 경로를 찾아감
+	BRinfo.lpfn = BrowseCallbackProc;
+	BRinfo.lParam = (LPARAM)BRinfo.pszDisplayName;
 
 	pidlBrowse = SHBrowseForFolder(&BRinfo);
+
 	if(pidlBrowse != NULL) 
 	{
 		SHGetPathFromIDList(pidlBrowse, m_FullFileName.GetBuffer(MAX_PATH));
@@ -829,6 +893,19 @@ void CFormViewShellView::OnBnClickedSelfile()
 		m_FullFileName = temp;
 	
 	}
+
+/*
+    CFileDialog dlg(TRUE);
+
+	if(dlg.DoModal() == IDOK)
+	{
+		CString fileName = dlg.GetFileName();
+		m_FullFileName = dlg.GetPathName();
+		m_FullFileName.Replace("\\" + fileName, "");
+
+		SetDlgItemText(IDC_SRC_FILE, m_FullFileName);
+	}
+*/
 	DisplayCommand(TRUE);
 }
 BOOL CFormViewShellView::PreTranslateMessage(MSG* pMsg)
@@ -868,4 +945,24 @@ void CFormViewShellView::OnBnClickedRadio3Delete()
 {
 	// TODO: Add your control notification handler code here
 	UpdateData(TRUE);
+}
+
+
+int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
+{
+	CHAR lpszDir[MAX_PATH];
+	switch(uMsg)
+	{
+	case BFFM_INITIALIZED:
+		//
+		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
+		break;
+	case BFFM_SELCHANGED:
+		if(SHGetPathFromIDList((LPITEMIDLIST)lParam, lpszDir))
+		{ //
+			SendMessage(hwnd, BFFM_SETSTATUSTEXT, 0, (LPARAM)lpszDir);
+		}
+		break;
+	}
+	return 0;
 }
