@@ -120,7 +120,7 @@ void CFormViewShellView::OnInitialUpdate()
 		m_toolTip.Activate(TRUE);
 		m_toolTip.AddTool(GetDlgItem(IDC_EDIT4), "ex) *.txt, mainBG.nsc");
 		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_OUT), "ex) .NCGR,.NCER ... ");
-		m_toolTip.AddTool(GetDlgItem(IDC_EDIT7), "파일처리후 최종확장자");
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT7), "파일처리후 최종확장자 ex) .nlz");
 		m_toolTip.SetMaxTipWidth(500);
 		m_IsToolTipInit = true;
 	}

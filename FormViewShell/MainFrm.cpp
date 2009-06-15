@@ -67,7 +67,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockControlBar(&m_wndToolBar);
 
 	// 타이틀바의 "******" - FormViewShell -> "******" - TotalCommandLine Converter
-	//SetTitle("TotalCommandLine");
+	SetTitle("TotalCommandLine");
 	return 0;
 }
 
