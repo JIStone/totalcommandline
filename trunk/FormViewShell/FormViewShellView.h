@@ -109,6 +109,8 @@ public:
 	CEdit m_Edit_Success_Fail;
 	ITEMIDLIST m_InputPathiIdList;
 	ITEMIDLIST m_OutputPathiIdList;
+	afx_msg void OnEnChangeEdit6();
+	afx_msg void OnEnChangeEdit7();
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

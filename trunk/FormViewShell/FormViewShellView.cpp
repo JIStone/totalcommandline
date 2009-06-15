@@ -50,6 +50,8 @@ ON_BN_CLICKED(IDC_SELFILE, &CFormViewShellView::OnBnClickedSelfile)
 ON_BN_CLICKED(IDC_RADIO1_MOVE, &CFormViewShellView::OnBnClickedRadio1Move)
 ON_BN_CLICKED(IDC_RADIO2_COPY, &CFormViewShellView::OnBnClickedRadio2Copy)
 ON_BN_CLICKED(IDC_RADIO3_DELETE, &CFormViewShellView::OnBnClickedRadio3Delete)
+ON_EN_CHANGE(IDC_EDIT6, &CFormViewShellView::OnEnChangeEdit6)
+ON_EN_CHANGE(IDC_EDIT7, &CFormViewShellView::OnEnChangeEdit7)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -295,7 +297,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 			return;
 		}
 	}
-	
+	// 실행 파일 다음 옵션 파라미터
+	CString execFirstArg;
+	GetDlgItemText(IDC_EDIT6, execFirstArg);
+
 	CString execArg;
 	GetDlgItemText(IDC_EDIT3, execArg);
 
@@ -349,11 +354,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 			//UpdateWindow();
 			
 
-			CString testAllPath = searchedFileList[listCnt] + m_PreCmdOptStr + m_DestPath + searchSubDirList[dirCnt] + execArg;
+			CString testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + m_PreCmdOptStr + m_DestPath + searchSubDirList[dirCnt] +"\"" + execArg;
 			// 출력폴더 옵션이 없으면
 			if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
 			{
-				testAllPath = searchedFileList[listCnt] + execArg;
+				testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + "\"" +  execArg;
 			}
 
 			//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
@@ -397,6 +402,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 				//sIndex = testAllPath.Find('.',testAllPath.GetLength() - FILE_EXT_LENGTH_MAX);
 				sIndex = testAllPath.Find('.',0);
 				outPutResultPath = testAllPath.Left(sIndex) + oExtStr;
+				outPutResultPath.Replace("\"","");
+
 
 				CString tempOutPutStr = searchedFileList[listCnt];
 				// 파일 이름만 분리하기
@@ -434,6 +441,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 					}
 					else
 					{
+						CString extModify;
+						GetDlgItemText(IDC_EDIT7, extModify);
+						// 파일이동처리시 특정확장자로 변경 
+						if(!extModify.IsEmpty())
+							movDest.Replace(oExtStr, iExtStr + extModify);
+							//movDest += extModify;
 						SearchOneFile(searchRootDirStr + searchSubDirList[dirCnt], oExtStr, &movingStr);
 					}
 					Sleep(10);
@@ -456,6 +469,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 					ZeroMemory(&shos, sizeof(SHFILEOPSTRUCT));
 					// 파일처리 타입 결정
 					shos.wFunc = iExtType;
+
+					//movingStr = "\"" + movingStr + "\"";
 					movingStr.Append("\0", 1);
 					movDest.Append("\0", 1);
 					shos.pFrom = NULL;
@@ -465,11 +480,14 @@ void CFormViewShellView::OnBnClickedExecappl()
 					strcpy_s(pszFrom , movingStr);
 					shos.pFrom = pszFrom;//"D:\\WORK\\Macheon_Trial\\MC\\Program\\NC\\MainUi\\2d\\MainUI_bottom.NCER";
 
-					TCHAR        pszTo[1024] = {0}; 
+					TCHAR        pszTo[1024] = {0};
+					//movDest = "\"" + movDest + "\"";
 					strcpy_s(pszTo , movDest);
 				
 					if(iExtType != FO_DELETE)
 						shos.pTo = pszTo;
+
+
 
 					// 작업과정 정보를 표시안함
 					shos.fFlags = FOF_NOCONFIRMATION | FOF_NOERRORUI;
@@ -514,7 +532,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				int findMovedFileCnt = 0;
 				while((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist))
 				{
-					isDestFileExist = PathFileExists(tempOutPutStr);
+					isDestFileExist = PathFileExists(movDest);
 
 					Sleep(10);
 					findMovedFileCnt++;
@@ -598,7 +616,7 @@ int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
 			// 서브폴더 절대경로
 			CString tempfolderPath = dirFinder.GetFilePath();
 			
-			if(tempfolderPath.Find('.svn',0))
+			if(-1 != tempfolderPath.Find(".svn",0))
 				continue;
 
 			tempfolderPath.Replace(m_FullFileName, "");
@@ -691,8 +709,12 @@ int CFormViewShellView::SearchOneFile(CString sDirName, CString sFileName, CStri
 // // 커맨드 명령 표시
 void CFormViewShellView::DisplayCommand(BOOL modifyed)
 {
-	CString execArg;
-	GetDlgItemText(IDC_EDIT3, execArg);
+	// 실행 파일 바로 다음 옵션	
+	CString execFirstArg;
+	GetDlgItemText(IDC_EDIT6, execFirstArg);
+
+	CString execSecondArg;
+	GetDlgItemText(IDC_EDIT3, execSecondArg);
 
 	GetDlgItemText(IDC_SRC_FILE, m_FullFileName);
 
@@ -706,7 +728,7 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	
 	GetDlgItemText(IDC_EDIT5, m_PreCmdOptStr);
 
-	CString testAllPath = m_ExecFileName + " " + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execArg;
+	CString testAllPath = m_ExecFileName + execFirstArg + " " + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
 	
 	testAllPath.Replace(" ", "□");
 
@@ -965,4 +987,25 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpDa
 		break;
 	}
 	return 0;
+}
+void CFormViewShellView::OnEnChangeEdit6()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CFormView::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	DisplayCommand(TRUE);
+}
+
+void CFormViewShellView::OnEnChangeEdit7()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CFormView::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	DisplayCommand(TRUE);
 }
