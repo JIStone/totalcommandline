@@ -73,6 +73,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		pView->GetDlgItemText(IDC_EDIT4, execArg);
 		ar << execArg;
 
+
 		ar << pView->m_ExecFileName;
 		ar << pView->m_PreCmdOptStr;
 		int lbCnt = pView->m_ListBox.GetCount();
@@ -87,7 +88,11 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 //ITEMIDLIST t = pView->m_InputPathiIdList;
 //		ar << pView->m_InputPathiIdList;
 //		ar << pView->m_OutputPathiIdList;
-		
+
+		pView->GetDlgItemText(IDC_EDIT6, execArg);
+		ar << execArg;
+		pView->GetDlgItemText(IDC_EDIT7, execArg);
+		ar << execArg;
 	}
 	else
 	{
@@ -103,6 +108,8 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		pView->SetDlgItemText(IDC_PATH, execArg);
 		ar >> execArg;
 		pView->SetDlgItemText(IDC_EDIT4, execArg);
+
+
 		/*if(!execArg.IsEmpty())
 			pView->m_ExtName.SetCheck(TRUE);
 		else
@@ -130,6 +137,10 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		int nCheck = 0;
 		ar >> nCheck;
 		pView->m_Check_EnableErrPop.SetCheck(nCheck);
+		ar >> execArg;
+		pView->SetDlgItemText(IDC_EDIT6, execArg);
+		ar >> execArg;
+		pView->SetDlgItemText(IDC_EDIT7, execArg);
 	}
 
 	//설정파일 저장
