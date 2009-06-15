@@ -119,7 +119,8 @@ void CFormViewShellView::OnInitialUpdate()
 		m_toolTip.Create(this);
 		m_toolTip.Activate(TRUE);
 		m_toolTip.AddTool(GetDlgItem(IDC_EDIT4), "ex) *.txt, mainBG.nsc");
-		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_OUT), "ex) .NCGR,.NCER ... "); 
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_OUT), "ex) .NCGR,.NCER ... ");
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT7), "파일처리후 최종확장자");
 		m_toolTip.SetMaxTipWidth(500);
 		m_IsToolTipInit = true;
 	}
@@ -367,15 +368,19 @@ void CFormViewShellView::OnBnClickedExecappl()
 			
 			for(int lbIndex = 0; lbIndex < m_ListBox.GetCount(); lbIndex++)
 			{
+				// 파일처리 타입 설정
+				int iExtType = 0;
+			
 				int sIndex = 0;
 				CString oExtStr;
 				//실행결과로 생성된 파일패스
 				CString outPutResultPath = "";
-				CString iExtStr = searchFileStr;
-			
-				// 파일처리 타입 설정
-				int iExtType = 0;
-				iExtStr.Replace("*", "");
+				// 입력 파일의 확장자
+				CString iExtStr = "";//searchFileStr;
+				// 확장자만 추출
+				sIndex = testAllPath.Find('.', 0);
+				iExtStr = testAllPath.Right(testAllPath.GetLength() - sIndex);
+				iExtStr.Replace("\"", "");
 				
 				m_ListBox.GetText(lbIndex, oExtStr);
 				CString tExtTypeStr = oExtStr.Left(3);
@@ -453,7 +458,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 					findCnt++;
 					// 릴리즈모드 대응(디버그라면 더늘려야함)
-					if(findCnt > 10)
+					if(findCnt > 20)
 						break;
 				}	
 				// CMD 명령
@@ -654,7 +659,7 @@ int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, CString 
 	{
 		bWorking = finder.FindNextFile();
 	
-		if (finder.IsDots())
+		if (finder.IsDots() || finder.IsDirectory())
 			continue;
 
 		TRACE(_T("%s\n"), (LPCTSTR)finder.GetFileName());
@@ -665,7 +670,7 @@ int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, CString 
 		}
 		else
 		{
-			// 변환할 파일릐 갯수만 증가시킴
+			// 변환할 파일의 갯수만 증가시킴
 			fCnt++;
 		}
 	} 
@@ -728,7 +733,7 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	
 	GetDlgItemText(IDC_EDIT5, m_PreCmdOptStr);
 
-	CString testAllPath = m_ExecFileName + execFirstArg + " " + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
+	CString testAllPath = m_ExecFileName + " " + execFirstArg + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
 	
 	testAllPath.Replace(" ", "□");
 
