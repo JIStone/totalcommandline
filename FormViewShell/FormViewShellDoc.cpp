@@ -93,6 +93,8 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		ar << execArg;
 		pView->GetDlgItemText(IDC_EDIT7, execArg);
 		ar << execArg;
+		pView->GetDlgItemText(IDC_EDIT8, execArg);
+		ar << execArg;
 	}
 	else
 	{
@@ -134,13 +136,19 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		pView->DisplayCommand(FALSE);
 
 		pView->m_FirstLoaded = TRUE;
+		
 		int nCheck = 0;
 		ar >> nCheck;
 		pView->m_Check_EnableErrPop.SetCheck(nCheck);
+		
 		ar >> execArg;
 		pView->SetDlgItemText(IDC_EDIT6, execArg);
+		
 		ar >> execArg;
 		pView->SetDlgItemText(IDC_EDIT7, execArg);
+
+		ar >> execArg;
+		pView->SetDlgItemText(IDC_EDIT8, execArg);
 	}
 
 	//설정파일 저장
