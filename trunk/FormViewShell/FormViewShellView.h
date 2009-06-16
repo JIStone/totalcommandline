@@ -102,7 +102,9 @@ public:
 	int m_AddExtTypeRadio;
 
 	CString m_kDir;
-
+	// 파일패스 표시용
+	CString m_ExcuteFilePath;
+	
 	afx_msg void OnBnClickedRadio1Move();
 	afx_msg void OnBnClickedRadio2Copy();
 	afx_msg void OnBnClickedRadio3Delete();
@@ -111,6 +113,7 @@ public:
 	ITEMIDLIST m_OutputPathiIdList;
 	afx_msg void OnEnChangeEdit6();
 	afx_msg void OnEnChangeEdit7();
+	afx_msg void OnEnChangeEdit8();
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

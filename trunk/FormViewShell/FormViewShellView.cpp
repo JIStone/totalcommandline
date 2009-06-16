@@ -52,6 +52,7 @@ ON_BN_CLICKED(IDC_RADIO2_COPY, &CFormViewShellView::OnBnClickedRadio2Copy)
 ON_BN_CLICKED(IDC_RADIO3_DELETE, &CFormViewShellView::OnBnClickedRadio3Delete)
 ON_EN_CHANGE(IDC_EDIT6, &CFormViewShellView::OnEnChangeEdit6)
 ON_EN_CHANGE(IDC_EDIT7, &CFormViewShellView::OnEnChangeEdit7)
+ON_EN_CHANGE(IDC_EDIT8, &CFormViewShellView::OnEnChangeEdit8)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -310,6 +311,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	GetDlgItemText(IDC_PATH, m_DestPath);
 
+	int fileCheckCnt = 0;
+	fileCheckCnt = GetDlgItemInt(IDC_EDIT8);
+
 	CString searchRootDirStr = m_FullFileName;
 	CString searchSubDirList[NUM_OF_CVTR_FOLDER_MAX];
 	int iSuccessCnt = 0;
@@ -325,7 +329,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	
 	m_ProgressCtrl.SetRange(0, 100);
 	m_ProgressCtrl.SetPos(0);
-
+	m_ExcuteFilePath = "";
 	int progressCnt = 0;
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
 	{
@@ -351,6 +355,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				prgCnt += " Complet!!!";
 
 			SetDlgItemText(IDC_EDIT2, prgCnt);
+			
 			GetDlgItem(IDC_EDIT2)->UpdateWindow();
 			//UpdateWindow();
 			
@@ -361,7 +366,6 @@ void CFormViewShellView::OnBnClickedExecappl()
 			{
 				testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + "\"" +  execArg;
 			}
-
 			//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
 			HINSTANCE ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, SW_HIDE);
 			
@@ -458,7 +462,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 					findCnt++;
 					// 릴리즈모드 대응(디버그라면 더늘려야함)
-					if(findCnt > 20)
+					if(findCnt > fileCheckCnt)
 						break;
 				}	
 				// CMD 명령
@@ -469,7 +473,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 //========================================= 결과 파일처리====================================================
 				if(bAtiveFileProc)
 				{
-
+					m_ExcuteFilePath +=	movingStr + "  \r\n -> " + movDest + "\r\n";
+					SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
+					GetDlgItem(IDC_EDIT9)->UpdateWindow();
+					
 					SHFILEOPSTRUCT shos;
 					ZeroMemory(&shos, sizeof(SHFILEOPSTRUCT));
 					// 파일처리 타입 결정
@@ -1005,6 +1012,17 @@ void CFormViewShellView::OnEnChangeEdit6()
 }
 
 void CFormViewShellView::OnEnChangeEdit7()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CFormView::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	DisplayCommand(TRUE);
+}
+
+void CFormViewShellView::OnEnChangeEdit8()
 {
 	// TODO:  If this is a RICHEDIT control, the control will not
 	// send this notification unless you override the CFormView::OnInitDialog()
