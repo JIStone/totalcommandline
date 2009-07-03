@@ -114,6 +114,15 @@ public:
 	afx_msg void OnEnChangeEdit6();
 	afx_msg void OnEnChangeEdit7();
 	afx_msg void OnEnChangeEdit8();
+	afx_msg void OnLbnSelchangeListOut();
+	afx_msg void OnEnChangeEditOut();
+	afx_msg void OnBnClickedButtonAddFolder();
+
+	// 제외할 폴더리스트
+	CListBox m_ExFolderListBox;
+	// 추가할 제외폴더명
+	CString m_ExFolderName;
+	afx_msg void OnBnClickedButtonDelFolder();
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전
