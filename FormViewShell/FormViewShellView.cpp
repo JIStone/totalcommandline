@@ -53,6 +53,10 @@ ON_BN_CLICKED(IDC_RADIO3_DELETE, &CFormViewShellView::OnBnClickedRadio3Delete)
 ON_EN_CHANGE(IDC_EDIT6, &CFormViewShellView::OnEnChangeEdit6)
 ON_EN_CHANGE(IDC_EDIT7, &CFormViewShellView::OnEnChangeEdit7)
 ON_EN_CHANGE(IDC_EDIT8, &CFormViewShellView::OnEnChangeEdit8)
+ON_LBN_SELCHANGE(IDC_LIST_OUT, &CFormViewShellView::OnLbnSelchangeListOut)
+ON_EN_CHANGE(IDC_EDIT_OUT, &CFormViewShellView::OnEnChangeEditOut)
+ON_BN_CLICKED(IDC_BUTTON_ADD_FOLDER, &CFormViewShellView::OnBnClickedButtonAddFolder)
+ON_BN_CLICKED(IDC_BUTTON_DEL_FOLDER, &CFormViewShellView::OnBnClickedButtonDelFolder)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -72,6 +76,7 @@ CFormViewShellView::CFormViewShellView()
 
 	, m_IsToolTipInit(false)
 	, m_AddExtTypeRadio(0)
+	, m_ExFolderName(_T(""))
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 
@@ -96,6 +101,9 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 	//	DDX_Control(pDX, IDC_RADIO1_MOVE, m_AddExtTypeRadio);
 	DDX_Radio(pDX, IDC_RADIO1_MOVE, m_AddExtTypeRadio);
 	DDX_Control(pDX, IDC_EDIT_SUCCESS_FAIL, m_Edit_Success_Fail);
+
+	DDX_Control(pDX, IDC_LIST3, m_ExFolderListBox);
+	DDX_Text(pDX, IDC_EDIT_EX_FOLDER, m_ExFolderName);
 }
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
@@ -330,7 +338,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 	m_ProgressCtrl.SetRange(0, 100);
 	m_ProgressCtrl.SetPos(0);
 	m_ExcuteFilePath = "";
+	
 	int progressCnt = 0;
+	// 변환할 파일의 개수를 결정. 
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
 	{
 		progressCnt += SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, NULL);
@@ -627,8 +637,21 @@ int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
 			TRACE(_T("%s\n"), (LPCTSTR)dirFinder.GetFilePath());
 			// 서브폴더 절대경로
 			CString tempfolderPath = dirFinder.GetFilePath();
+			CString exFolderName;
+
+			BOOL isExFolder = FALSE;
+			for(int lbIndex = 0; lbIndex < m_ExFolderListBox.GetCount(); lbIndex++)
+			{
+				m_ExFolderListBox.GetText(lbIndex, exFolderName);
 			
-			if(-1 != tempfolderPath.Find(".svn",0))
+				if(-1 != tempfolderPath.Find(exFolderName,0))
+				{
+					isExFolder = TRUE;			
+					continue;
+				}
+			}
+
+			if(isExFolder)
 				continue;
 
 			tempfolderPath.Replace(m_FullFileName, "");
@@ -1031,4 +1054,44 @@ void CFormViewShellView::OnEnChangeEdit8()
 
 	// TODO:  Add your control notification handler code here
 	DisplayCommand(TRUE);
+}
+
+void CFormViewShellView::OnLbnSelchangeListOut()
+{
+	// TODO: Add your control notification handler code here
+}
+
+void CFormViewShellView::OnEnChangeEditOut()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CFormView::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+}
+
+void CFormViewShellView::OnBnClickedButtonAddFolder()
+{
+	// TODO: Add your control notification handler code here
+	UpdateData(TRUE);
+	if(!m_ExFolderName.IsEmpty())
+	{
+		m_ExFolderListBox.AddString(m_ExFolderName);
+		GetDocument()->SetModifiedFlag(TRUE);
+	}
+}
+
+void CFormViewShellView::OnBnClickedButtonDelFolder()
+{
+	// TODO: Add your control notification handler code here
+	int loc;
+	loc = m_ExFolderListBox.GetCurSel();
+	m_ExFolderListBox.DeleteString(loc);
+	if(loc == m_ExFolderListBox.GetCount())
+	{
+		loc = loc - 1;
+		GetDocument()->SetModifiedFlag(TRUE);
+	}
+	m_ExFolderListBox.SetCurSel(loc);
 }

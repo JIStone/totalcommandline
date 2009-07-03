@@ -95,10 +95,22 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		ar << execArg;
 		pView->GetDlgItemText(IDC_EDIT8, execArg);
 		ar << execArg;
+		
+		int lbExFolderCnt = pView->m_ExFolderListBox.GetCount();
+		ar << lbExFolderCnt;
+		for(int lbIndex = 0; lbIndex < lbExFolderCnt; lbIndex++)
+		{
+			pView->m_ExFolderListBox.GetText(lbIndex, execArg);
+			ar << execArg;
+		}
+
 	}
 	else
 	{
 		// TODO: 여기에 로딩 코드를 추가합니다.
+
+		BOOL isEmpty = ar.IsBufferEmpty();
+
 		pView->m_FirstLoaded = FALSE;
 		ar >> execArg;
 		pView->SetDlgItemText(IDC_EDIT3, execArg);
@@ -143,12 +155,36 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		
 		ar >> execArg;
 		pView->SetDlgItemText(IDC_EDIT6, execArg);
-		
+	
 		ar >> execArg;
 		pView->SetDlgItemText(IDC_EDIT7, execArg);
 
 		ar >> execArg;
 		pView->SetDlgItemText(IDC_EDIT8, execArg);
+
+		// 새로운 설정요소가 추가되어 일어들일때 과거 버전인지를 검사해준다
+		isEmpty = ar.IsBufferEmpty();
+		
+		if(isEmpty)
+		{
+			// 제외 폴더리스트 로드
+			pView->m_ExFolderListBox.ResetContent();
+			// 이전버전은 기본적으로 svn폴더를 제외해준 것 대응
+			pView->m_ExFolderListBox.AddString(".svn");
+		}
+		else
+		{
+			// 제외 폴더리스트 로드
+			int lbExFolderCnt = 0;
+			pView->m_ExFolderListBox.ResetContent();
+			ar >> lbExFolderCnt;
+			for(int lbIndex = 0; lbIndex < lbExFolderCnt; lbIndex++)
+			{
+				ar >> execArg;
+				pView->m_ExFolderListBox.AddString(execArg);
+			}
+		}
+
 	}
 
 	//설정파일 저장
