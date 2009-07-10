@@ -153,15 +153,23 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		ar >> nCheck;
 		pView->m_Check_EnableErrPop.SetCheck(nCheck);
 		
-		ar >> execArg;
-		pView->SetDlgItemText(IDC_EDIT6, execArg);
-	
-		ar >> execArg;
-		pView->SetDlgItemText(IDC_EDIT7, execArg);
+		if(!ar.IsBufferEmpty())
+		{	
+			ar >> execArg;
+			pView->SetDlgItemText(IDC_EDIT6, execArg);
+		}
 
-		ar >> execArg;
-		pView->SetDlgItemText(IDC_EDIT8, execArg);
+		if(!ar.IsBufferEmpty())
+		{	
+			ar >> execArg;
+			pView->SetDlgItemText(IDC_EDIT7, execArg);
+		}
 
+		if(!ar.IsBufferEmpty())
+		{
+			ar >> execArg;
+			pView->SetDlgItemText(IDC_EDIT8, execArg);
+		}
 		// 새로운 설정요소가 추가되어 일어들일때 과거 버전인지를 검사해준다
 		isEmpty = ar.IsBufferEmpty();
 		
