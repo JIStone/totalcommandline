@@ -17,6 +17,7 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -73,15 +74,24 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	cs.cx = 550;
-	cs.cy = 460;
+	//cs.cx = 550;
+	//cs.cy = 460;
+	
+	m_cs = cs;
+	
+	memcpy(&m_cs, &cs, sizeof(CREATESTRUCT));
 	if( !CFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
-
+	//cs.cx = 550;
+	//cs.cy = 460;
 	return TRUE;
 }
+
+
+
+
 
 
 // CMainFrame 진단
@@ -104,3 +114,10 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 
 
+
+void CMainFrame::OnSize(UINT nType, int cx, int cy)
+{
+	CFrameWnd::OnSize(nType, cx, cy);
+	//UpdateWindow();
+	// TODO: Add your message handler code here
+}

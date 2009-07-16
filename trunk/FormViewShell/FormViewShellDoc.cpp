@@ -6,7 +6,7 @@
 
 #include "FormViewShellDoc.h"
 #include "FormViewShellView.h"
-
+#include "MainFrm.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -104,6 +104,20 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			ar << execArg;
 		}
 
+		// 멀티커맨드라인 강제 딜레이
+		pView->GetDlgItemText(IDC_EDIT_DELAY_TIME, execArg);
+		ar << execArg;
+
+		int lbTclFilesCnt = pView->m_TclFilesListBox.GetCount();
+		ar << lbTclFilesCnt;
+		for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
+		{
+			pView->m_TclFilesListBox.GetText(lbIndex, execArg);
+			ar << execArg;
+			pView->m_SettingFilePath = ar.m_strFileName;
+			// 다중 쉘API 호출시 창 확대
+			((CMainFrame*)(pWnd->GetActiveFrame()))->SetWindowPos(NULL,0,0,1300,700,SWP_NOMOVE);
+		}
 	}
 	else
 	{
@@ -193,6 +207,46 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			}
 		}
 
+		// 멀티커맨드라인 강제 딜레이
+		if(!ar.IsBufferEmpty())
+		{	
+			ar >> execArg;
+			pView->SetDlgItemText(IDC_EDIT_DELAY_TIME, execArg);
+		}
+	
+		isEmpty = ar.IsBufferEmpty();
+
+		// 읽어올 설정이 있고, 멀티실행중이어서 로딩하는 것이 아니면
+		if((!isEmpty && !pView->m_bMultiMode) || !(ar.m_strFileName.Right(5)).Compare(".mtcl"))
+		{
+			int lbTclFilesCnt = 0;
+			pView->m_TclFilesListBox.ResetContent();
+			ar >> lbTclFilesCnt;
+			CREATESTRUCT cs;
+			cs = ((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs;
+			
+			if(lbTclFilesCnt)
+			{
+				// 다중 쉘API 호출시 창 확대
+				((CMainFrame*)(pWnd->GetActiveFrame()))->SetWindowPos(NULL,0,0,1300,700,SWP_NOMOVE);
+			}
+			else
+			{
+				((CMainFrame*)(pWnd->GetActiveFrame()))->SetWindowPos(NULL,0,0,550,460,SWP_NOMOVE);
+			}
+
+			for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
+			{
+				ar >> execArg;
+				pView->m_TclFilesListBox.AddString(execArg);
+			}
+			pView->m_SettingFilePath = ar.m_strFileName;
+
+		}
+		else if(!pView->m_bMultiMode)
+		{
+			pView->m_TclFilesListBox.ResetContent();
+		}
 	}
 
 	//설정파일 저장
