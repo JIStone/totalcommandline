@@ -37,11 +37,16 @@
 #define IDC_EDIT7                       1036
 #define IDC_EDIT8                       1038
 #define IDC_EDIT9                       1039
-#define IDC_LIST_EX_FOLDER              1040
 #define IDC_EDIT_EX_FOLDER              1041
 #define IDC_BUTTON_ADD_FOLDER           1042
 #define IDC_BUTTON_DEL_FOLDER           1043
 #define IDC_LIST3                       1044
+#define IDC_LIST_TCL_FILES              1046
+#define IDC_BUTTON2                     1047
+#define IDC_BUTTON_UP                   1048
+#define IDC_BUTTON_DN                   1049
+#define IDC_EDIT10                      1050
+#define IDC_EDIT_DELAY_TIME             1050
 
 // Next default values for new objects
 // 
@@ -49,7 +54,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1045
+#define _APS_NEXT_CONTROL_VALUE         1051
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

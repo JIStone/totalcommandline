@@ -123,6 +123,15 @@ public:
 	// 추가할 제외폴더명
 	CString m_ExFolderName;
 	afx_msg void OnBnClickedButtonDelFolder();
+	afx_msg void OnDropFiles(HDROP hDropInfo);
+	// TCL 파일 리스트
+	CListBox m_TclFilesListBox;
+	//
+	BOOL m_bMultiMode;
+	CString m_SettingFilePath;
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButtonUp();
+	afx_msg void OnBnClickedButtonDn();
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

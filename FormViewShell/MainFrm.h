@@ -13,14 +13,14 @@ protected: // serialization에서만 만들어집니다.
 
 // 특성입니다.
 public:
-
+	CREATESTRUCT m_cs;
 // 작업입니다.
 public:
 
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-
+	//void OnSize(UINT nType, int cx, int cy);
 // 구현입니다.
 public:
 	virtual ~CMainFrame();
@@ -37,6 +37,8 @@ protected:  // 컨트롤 모음이 포함된 멤버입니다.
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };
 
 

@@ -57,6 +57,10 @@ ON_LBN_SELCHANGE(IDC_LIST_OUT, &CFormViewShellView::OnLbnSelchangeListOut)
 ON_EN_CHANGE(IDC_EDIT_OUT, &CFormViewShellView::OnEnChangeEditOut)
 ON_BN_CLICKED(IDC_BUTTON_ADD_FOLDER, &CFormViewShellView::OnBnClickedButtonAddFolder)
 ON_BN_CLICKED(IDC_BUTTON_DEL_FOLDER, &CFormViewShellView::OnBnClickedButtonDelFolder)
+ON_WM_DROPFILES()
+ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnClickedButton2)
+ON_BN_CLICKED(IDC_BUTTON_UP, &CFormViewShellView::OnBnClickedButtonUp)
+ON_BN_CLICKED(IDC_BUTTON_DN, &CFormViewShellView::OnBnClickedButtonDn)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -68,7 +72,7 @@ CFormViewShellView::CFormViewShellView()
 	, m_DestPath(_T(""))
 	, m_SubDirCnt(0)
 	, m_SearchedFileCnt(0)
-	,m_PreCmdOptStr(_T(""))
+	, m_PreCmdOptStr(_T(""))
 	, m_AllCmdLnText(_T(""))
 	, m_FirstLoaded(FALSE)
 
@@ -77,6 +81,7 @@ CFormViewShellView::CFormViewShellView()
 	, m_IsToolTipInit(false)
 	, m_AddExtTypeRadio(0)
 	, m_ExFolderName(_T(""))
+	, m_bMultiMode(FALSE)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 
@@ -104,6 +109,7 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_LIST3, m_ExFolderListBox);
 	DDX_Text(pDX, IDC_EDIT_EX_FOLDER, m_ExFolderName);
+	DDX_Control(pDX, IDC_LIST_TCL_FILES, m_TclFilesListBox);
 }
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
@@ -163,7 +169,7 @@ CFormViewShellDoc* CFormViewShellView::GetDocument() const // 디버그되지 않은 버
 void CFormViewShellView::OnBnClickedSelfile2()
 {
 	// TODO: Add your control notification handler code here
-
+/*
     CFileDialog dlg(TRUE);
 
 	if(dlg.DoModal() == IDOK)
@@ -173,6 +179,29 @@ void CFormViewShellView::OnBnClickedSelfile2()
 		m_ExecFilePath = dlg.GetPathName();
 		
 	}
+*/
+	LPITEMIDLIST pidlBrowse;
+
+	BROWSEINFO BRinfo;
+	BRinfo.hwndOwner = GetSafeHwnd();
+	BRinfo.pidlRoot = 0;
+	BRinfo.pszDisplayName = m_ExecFilePath.GetBuffer(MAX_PATH);
+	BRinfo.lpszTitle = "파일을 선텍하세요.";
+	BRinfo.ulFlags = BIF_NEWDIALOGSTYLE | BIF_STATUSTEXT | BIF_UAHINT | BIF_RETURNFSANCESTORS | BIF_BROWSEINCLUDEFILES;
+	// m_ExecFilePath에 설정한 경로를 찾아감
+	BRinfo.lpfn = BrowseCallbackProc;
+	BRinfo.lParam = (LPARAM)BRinfo.pszDisplayName;
+
+	pidlBrowse = SHBrowseForFolder(&BRinfo);
+
+	if(pidlBrowse != NULL) 
+	{
+		SHGetPathFromIDList(pidlBrowse, m_ExecFilePath.GetBuffer(MAX_PATH));
+		SetDlgItemText(IDC_EXEC_FILE, m_ExecFilePath);
+		char *temp = m_ExecFilePath.GetBuffer(MAX_PATH);
+		m_ExecFilePath = temp;
+	}
+
 	DisplayCommand(TRUE);
 }
 
@@ -297,7 +326,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			return;
 		}
 	}
-	else if(m_ExecFilePath.IsEmpty()) 
+	else if(m_ExecFilePath.IsEmpty())// && (fPath.Right(5)).Compare(".mtcl")) 
 	{ 
 		AfxMessageBox("실행파일을 선택하세요.");
 
@@ -321,6 +350,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	int fileCheckCnt = 0;
 	fileCheckCnt = GetDlgItemInt(IDC_EDIT8);
+	
 
 	CString searchRootDirStr = m_FullFileName;
 	CString searchSubDirList[NUM_OF_CVTR_FOLDER_MAX];
@@ -353,7 +383,14 @@ void CFormViewShellView::OnBnClickedExecappl()
 		int starIndex = m_SearchedFileCnt;
 		//대상파일 검색
 		SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, searchedFileList);
-	
+		
+		// 외부 명령어 대응
+		if(!(m_ExecFilePath).Compare("command.com") || !(m_ExecFilePath).Compare("cmd.exe"))
+		{
+			m_SearchedFileCnt = 1;
+			progressCnt= 1;
+		}
+
 		for(int listCnt = starIndex; listCnt < m_SearchedFileCnt; listCnt++)
 		{
 			m_ProgressCtrl.SetPos(((listCnt + 1) * 100) / progressCnt);
@@ -377,7 +414,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + "\"" +  execArg;
 			}
 			//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
-			HINSTANCE ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, SW_HIDE);
+			HINSTANCE ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, SW_SHOW);
 			
 			
 			for(int lbIndex = 0; lbIndex < m_ListBox.GetCount(); lbIndex++)
@@ -1094,4 +1131,119 @@ void CFormViewShellView::OnBnClickedButtonDelFolder()
 		GetDocument()->SetModifiedFlag(TRUE);
 	}
 	m_ExFolderListBox.SetCurSel(loc);
+}
+
+void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	//CFormView::OnDropFiles(hDropInfo);
+
+	char szFullPath[512] = {0,};
+	//--xx 드래그앤 드랍한 파일의 개수 획득
+	int iCount = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
+	m_TclFilesListBox.ResetContent();
+	for(int i=0; i<iCount; i++)
+	{
+		//--xx 드래그앤 드랍한 파일의 경로정보를 하나씩 획득
+		DragQueryFile(hDropInfo, i, szFullPath, sizeof(szFullPath));
+		AfxMessageBox(szFullPath);
+		
+		CString fPath = szFullPath;
+		if(!fPath.IsEmpty() && i== 0)
+		{
+			GetDocument()->OnOpenDocument(fPath);
+			GetDocument()->SetPathName(fPath,0);
+		}
+		
+		UpdateData(TRUE);
+		if(!fPath.IsEmpty() && (fPath.Right(5)).Compare(".mtcl"))
+		{
+			m_TclFilesListBox.AddString(fPath);
+			GetDocument()->SetModifiedFlag(TRUE);
+		}
+	}
+	
+
+/*
+	CString fPath = szFullPath;
+	if(!fPath.IsEmpty())
+	{
+		GetDocument()->OnOpenDocument(fPath);
+		GetDocument()->SetPathName(fPath,0);
+	}
+	CFormView::OnDropFiles(hDropInfo);
+*/
+}
+
+void CFormViewShellView::OnBnClickedButton2()
+{
+	// TODO: Add your control notification handler code here
+	
+	int lbTclFilesCnt = m_TclFilesListBox.GetCount();
+	int forceDelay = 0;
+	
+	for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
+	{
+		CString fPath;	
+		m_TclFilesListBox.GetText(lbIndex, fPath);
+		
+		if(!fPath.IsEmpty())
+		{
+			m_bMultiMode = TRUE;
+			m_TclFilesListBox.SetCurSel(lbIndex);
+			GetDocument()->OnOpenDocument(fPath);
+			GetDocument()->SetPathName(fPath,0);
+			UpdateWindow();
+			OnBnClickedExecappl();
+			forceDelay = GetDlgItemInt(IDC_EDIT_DELAY_TIME);
+			if(lbIndex < lbTclFilesCnt - 1)
+				Sleep(forceDelay * 10);
+
+		}
+	}
+	// 다수의 설정파일을 로드 했기때문에 처음 설정파일을 재로드		
+	m_bMultiMode = FALSE;
+	GetDocument()->OnOpenDocument(m_SettingFilePath);
+	GetDocument()->SetPathName(m_SettingFilePath,0);
+}
+
+void CFormViewShellView::OnBnClickedButtonUp()
+{
+	// TODO: Add your control notification handler code here
+	
+	int loc;
+	CString tempUp;
+	CString tempDn;
+	loc = m_TclFilesListBox.GetCurSel();
+	UpdateData(TRUE);
+	if(loc)
+	{
+		m_TclFilesListBox.GetText(loc - 1, tempUp);
+		m_TclFilesListBox.GetText(loc, tempDn);
+		m_TclFilesListBox.DeleteString(loc - 1);
+		m_TclFilesListBox.InsertString(loc, tempUp);
+		GetDocument()->SetModifiedFlag(TRUE);
+		m_TclFilesListBox.SetCurSel(loc - 1);
+	}
+}
+
+void CFormViewShellView::OnBnClickedButtonDn()
+{
+	// TODO: Add your control notification handler code here
+	int loc;
+	CString tempUp;
+	CString tempDn;
+	loc = m_TclFilesListBox.GetCurSel();
+	UpdateData(TRUE);
+	if(loc < m_TclFilesListBox.GetCount() - 1)
+	{
+		m_TclFilesListBox.GetText(loc, tempUp);
+		m_TclFilesListBox.GetText(loc + 1, tempDn);
+		m_TclFilesListBox.DeleteString(loc + 1);
+		m_TclFilesListBox.InsertString(loc, tempDn);
+		GetDocument()->SetModifiedFlag(TRUE);
+		m_TclFilesListBox.SetCurSel(loc + 1);
+	}
+
 }
