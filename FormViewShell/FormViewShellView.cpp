@@ -376,22 +376,25 @@ void CFormViewShellView::OnBnClickedExecappl()
 		progressCnt += SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, NULL);
 
 	}
+	
 	m_EditProgCnt.ShowWindow(SW_SHOW);
 	
+	BOOL isInternalCmd = FALSE;
+	// 내부 명령어 대응
+	if(!(m_ExecFilePath).Compare("command.com") || !(m_ExecFilePath).Compare("cmd.exe"))
+	{
+		//m_SearchedFileCnt = 1;
+		progressCnt= 1;// 분모가 0이되는걸 막음
+		isInternalCmd = TRUE;
+	}
+
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
 	{
 		int starIndex = m_SearchedFileCnt;
 		//대상파일 검색
 		SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, searchedFileList);
 		
-		// 외부 명령어 대응
-		if(!(m_ExecFilePath).Compare("command.com") || !(m_ExecFilePath).Compare("cmd.exe"))
-		{
-			m_SearchedFileCnt = 1;
-			progressCnt= 1;
-		}
-
-		for(int listCnt = starIndex; listCnt < m_SearchedFileCnt; listCnt++)
+		for(int listCnt = starIndex; listCnt < m_SearchedFileCnt || isInternalCmd; listCnt++)
 		{
 			m_ProgressCtrl.SetPos(((listCnt + 1) * 100) / progressCnt);
 
@@ -408,8 +411,16 @@ void CFormViewShellView::OnBnClickedExecappl()
 			
 
 			CString testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + m_PreCmdOptStr + m_DestPath + searchSubDirList[dirCnt] +"\"" + execArg;
+			// 내부 명령어 대응
+			if(isInternalCmd)
+			{
+				//testAllPath = execFirstArg + "\"" + searchRootDirStr + m_DestPath + execArg + "\"";
+				testAllPath = execFirstArg + "\"" + searchRootDirStr + "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
+				//testAllPath = execFirstArg + searchRootDirStr + m_DestPath + execArg;
+				isInternalCmd = FALSE;
+			}
 			// 출력폴더 옵션이 없으면
-			if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
+			else if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
 			{
 				testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + "\"" +  execArg;
 			}
