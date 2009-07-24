@@ -43,10 +43,9 @@
 #define IDC_LIST3                       1044
 #define IDC_LIST_TCL_FILES              1046
 #define IDC_BUTTON2                     1047
-#define IDC_BUTTON_UP                   1048
 #define IDC_BUTTON_DN                   1049
-#define IDC_EDIT10                      1050
 #define IDC_EDIT_DELAY_TIME             1050
+#define IDC_SPIN2                       1053
 
 // Next default values for new objects
 // 
@@ -54,7 +53,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1051
+#define _APS_NEXT_CONTROL_VALUE         1054
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

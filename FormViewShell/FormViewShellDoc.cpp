@@ -25,6 +25,7 @@ END_MESSAGE_MAP()
 CFormViewShellDoc::CFormViewShellDoc()
 : m_IniFilePath(_T(""))
 , m_TiltleString(_T(""))
+, m_bIsFirstLoad(TRUE)
 {
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
 
@@ -167,12 +168,14 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		ar >> nCheck;
 		pView->m_Check_EnableErrPop.SetCheck(nCheck);
 		
+		pView->SetDlgItemText(IDC_EDIT6, "");
 		if(!ar.IsBufferEmpty())
 		{	
 			ar >> execArg;
 			pView->SetDlgItemText(IDC_EDIT6, execArg);
 		}
-
+		
+		pView->SetDlgItemText(IDC_EDIT7, "");
 		if(!ar.IsBufferEmpty())
 		{	
 			ar >> execArg;
@@ -228,11 +231,24 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			if(lbTclFilesCnt)
 			{
 				// 다중 쉘API 호출시 창 확대
-				((CMainFrame*)(pWnd->GetActiveFrame()))->SetWindowPos(NULL,0,0,1300,700,SWP_NOMOVE);
+				//(pWnd)->SetWindowPos(NULL,0,0,1300,700,SWP_NOMOVE);
+				if(m_bIsFirstLoad)
+					(pWnd)->SetWindowPos(NULL,0,0,1269,689,SWP_NOMOVE);
+				else
+					(pWnd)->SetWindowPos(NULL,0,0,1280,700,SWP_NOMOVE);
+				
+				pView->m_BtnMultiTCLExcute.EnableWindow(TRUE);
+				pView->m_BtnExcute.EnableWindow(FALSE);
 			}
 			else
 			{
-				((CMainFrame*)(pWnd->GetActiveFrame()))->SetWindowPos(NULL,0,0,550,460,SWP_NOMOVE);
+				if(m_bIsFirstLoad)
+					(pWnd)->SetWindowPos(NULL,0,0,540,707,SWP_NOMOVE);
+				else
+					(pWnd)->SetWindowPos(NULL,0,0,540,700,SWP_NOMOVE);
+				
+				pView->m_BtnMultiTCLExcute.EnableWindow(FALSE);
+				pView->m_BtnExcute.EnableWindow(TRUE);
 			}
 
 			for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
@@ -246,10 +262,19 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		else if(!pView->m_bMultiMode)
 		{
 			pView->m_TclFilesListBox.ResetContent();
+			if(m_bIsFirstLoad)
+				(pWnd)->SetWindowPos(NULL,0,0,540,707,SWP_NOMOVE);
+			else
+				(pWnd)->SetWindowPos(NULL,0,0,540,700,SWP_NOMOVE);
+			
+			pView->m_BtnMultiTCLExcute.EnableWindow(FALSE);
+			pView->m_BtnExcute.EnableWindow(TRUE);
 		}
 	}
-
-	//설정파일 저장
+	
+	m_bIsFirstLoad = FALSE;
+	
+		//설정파일 저장
 	CFile myFile;
 	CFileException e;
 	if(!myFile.Open(m_IniFilePath, CFile::modeCreate | CFile::modeWrite, &e))

@@ -39,6 +39,8 @@ public:
 	// 설정파일 경로
 	CString m_IniFilePath;
 	CString m_TiltleString;
+	// 저장데이터를 최초 로드
+	BOOL m_bIsFirstLoad;
 };
 
 

@@ -59,8 +59,10 @@ ON_BN_CLICKED(IDC_BUTTON_ADD_FOLDER, &CFormViewShellView::OnBnClickedButtonAddFo
 ON_BN_CLICKED(IDC_BUTTON_DEL_FOLDER, &CFormViewShellView::OnBnClickedButtonDelFolder)
 ON_WM_DROPFILES()
 ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnClickedButton2)
-ON_BN_CLICKED(IDC_BUTTON_UP, &CFormViewShellView::OnBnClickedButtonUp)
-ON_BN_CLICKED(IDC_BUTTON_DN, &CFormViewShellView::OnBnClickedButtonDn)
+// IDC_SPIN2로 대체
+//ON_BN_CLICKED(IDC_BUTTON_UP, &CFormViewShellView::OnBnClickedButtonUp)
+//ON_BN_CLICKED(IDC_BUTTON_DN, &CFormViewShellView::OnBnClickedButtonDn)
+ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin2)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -110,6 +112,8 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST3, m_ExFolderListBox);
 	DDX_Text(pDX, IDC_EDIT_EX_FOLDER, m_ExFolderName);
 	DDX_Control(pDX, IDC_LIST_TCL_FILES, m_TclFilesListBox);
+	DDX_Control(pDX, IDC_BUTTON2, m_BtnMultiTCLExcute);
+	DDX_Control(pDX, IDC_EXECAPPL, m_BtnExcute);
 }
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
@@ -409,8 +413,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 			GetDlgItem(IDC_EDIT2)->UpdateWindow();
 			//UpdateWindow();
 			
-
 			CString testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + m_PreCmdOptStr + m_DestPath + searchSubDirList[dirCnt] +"\"" + execArg;
+			INT nShowCmd = SW_HIDE;	
 			// 내부 명령어 대응
 			if(isInternalCmd)
 			{
@@ -418,6 +422,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				testAllPath = execFirstArg + "\"" + searchRootDirStr + "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
 				//testAllPath = execFirstArg + searchRootDirStr + m_DestPath + execArg;
 				isInternalCmd = FALSE;
+				nShowCmd = SW_SHOW;
 			}
 			// 출력폴더 옵션이 없으면
 			else if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
@@ -425,7 +430,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + "\"" +  execArg;
 			}
 			//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
-			HINSTANCE ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, SW_SHOW);
+			HINSTANCE ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, nShowCmd);
 			
 			
 			for(int lbIndex = 0; lbIndex < m_ListBox.GetCount(); lbIndex++)
@@ -1153,12 +1158,13 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 	char szFullPath[512] = {0,};
 	//--xx 드래그앤 드랍한 파일의 개수 획득
 	int iCount = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
+
 	m_TclFilesListBox.ResetContent();
 	for(int i=0; i<iCount; i++)
 	{
 		//--xx 드래그앤 드랍한 파일의 경로정보를 하나씩 획득
 		DragQueryFile(hDropInfo, i, szFullPath, sizeof(szFullPath));
-		AfxMessageBox(szFullPath);
+		//AfxMessageBox(szFullPath);
 		
 		CString fPath = szFullPath;
 		if(!fPath.IsEmpty() && i== 0)
@@ -1175,6 +1181,14 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 		}
 	}
 	
+	if(iCount > 1)
+	{
+		CFrameWnd * pWnd = (CFrameWnd*)AfxGetMainWnd();
+		pWnd->SetWindowPos(NULL,0,0,1280,700,SWP_NOMOVE);
+
+		m_BtnMultiTCLExcute.EnableWindow(TRUE);
+		m_BtnExcute.EnableWindow(FALSE);
+	}
 
 /*
 	CString fPath = szFullPath;
@@ -1218,7 +1232,7 @@ void CFormViewShellView::OnBnClickedButton2()
 	GetDocument()->OnOpenDocument(m_SettingFilePath);
 	GetDocument()->SetPathName(m_SettingFilePath,0);
 }
-
+/*
 void CFormViewShellView::OnBnClickedButtonUp()
 {
 	// TODO: Add your control notification handler code here
@@ -1228,7 +1242,7 @@ void CFormViewShellView::OnBnClickedButtonUp()
 	CString tempDn;
 	loc = m_TclFilesListBox.GetCurSel();
 	UpdateData(TRUE);
-	if(loc)
+	if(loc > 0)
 	{
 		m_TclFilesListBox.GetText(loc - 1, tempUp);
 		m_TclFilesListBox.GetText(loc, tempDn);
@@ -1257,4 +1271,47 @@ void CFormViewShellView::OnBnClickedButtonDn()
 		m_TclFilesListBox.SetCurSel(loc + 1);
 	}
 
+}
+*/
+
+void CFormViewShellView::OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	if(pNMUpDown->iDelta < 0)
+	{
+		int loc;
+		CString tempUp;
+		CString tempDn;
+		loc = m_TclFilesListBox.GetCurSel();
+		UpdateData(TRUE);
+		if(loc > 0)
+		{
+			m_TclFilesListBox.GetText(loc - 1, tempUp);
+			m_TclFilesListBox.GetText(loc, tempDn);
+			m_TclFilesListBox.DeleteString(loc - 1);
+			m_TclFilesListBox.InsertString(loc, tempUp);
+			GetDocument()->SetModifiedFlag(TRUE);
+			m_TclFilesListBox.SetCurSel(loc - 1);
+		}
+	}
+	else if(pNMUpDown->iDelta > 0)
+	{
+		int loc;
+		CString tempUp;
+		CString tempDn;
+		loc = m_TclFilesListBox.GetCurSel();
+		UpdateData(TRUE);
+		if(loc >= 0 && loc < m_TclFilesListBox.GetCount() - 1)
+		{
+			m_TclFilesListBox.GetText(loc, tempUp);
+			m_TclFilesListBox.GetText(loc + 1, tempDn);
+			m_TclFilesListBox.DeleteString(loc + 1);
+			m_TclFilesListBox.InsertString(loc, tempDn);
+			GetDocument()->SetModifiedFlag(TRUE);
+			m_TclFilesListBox.SetCurSel(loc + 1);
+		}
+	}
+
+	*pResult = 0;
 }
