@@ -132,6 +132,11 @@ public:
 	afx_msg void OnBnClickedButton2();
 	afx_msg void OnBnClickedButtonUp();
 	afx_msg void OnBnClickedButtonDn();
+	// 모두실행 버튼
+	CButton m_BtnMultiTCLExcute;
+	// 실행버튼
+	CButton m_BtnExcute;
+	afx_msg void OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전
