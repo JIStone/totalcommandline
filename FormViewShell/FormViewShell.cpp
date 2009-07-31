@@ -51,6 +51,10 @@ BOOL CFormViewShellApp::InitInstance()
 	// 이 항목을 설정하십시오.
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
+	
+char *a0 =	__argv[0];
+char *a1 =	__argv[1];
+
 
 	CWinApp::InitInstance();
 
