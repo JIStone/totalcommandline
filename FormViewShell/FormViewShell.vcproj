@@ -289,6 +289,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\totalcommandline.exe.manifest"
+			>
+		</File>
+		<File
 			RelativePath=".\vesion.txt"
 			>
 		</File>

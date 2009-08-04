@@ -453,16 +453,18 @@ void CFormViewShellView::OnBnClickedExecappl()
 				
 				m_ListBox.GetText(lbIndex, oExtStr);
 				CString tExtTypeStr = oExtStr.Left(3);
+
+				char *fileOp[3]= {"[M]", "[C]", "[D]"};
 				
-				if(!(oExtStr.Left(3)).Compare("[M]"))
+				if(!(oExtStr.Left(3)).Compare(fileOp[FO_MOVE - 1]))
 				{
 					iExtType = FO_MOVE;
 				}
-				else if(!(oExtStr.Left(3)).Compare("[C]"))
+				else if(!(oExtStr.Left(3)).Compare(fileOp[FO_COPY - 1]))
 				{
 					iExtType = FO_COPY;
 				}
-				else if(!(oExtStr.Left(3)).Compare("[D]"))
+				else if(!(oExtStr.Left(3)).Compare(fileOp[FO_DELETE - 1]))
 				{
 					iExtType = FO_DELETE;
 				}
@@ -538,7 +540,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 //========================================= 결과 파일처리====================================================
 				if(bAtiveFileProc)
 				{
-					m_ExcuteFilePath +=	movingStr + "  \r\n -> " + movDest + "\r\n";
+					m_ExcuteFilePath +=	movingStr + "  \r\n" + fileOp[iExtType - 1] + " -> " + movDest + "\r\n";
 					SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
 					GetDlgItem(IDC_EDIT9)->UpdateWindow();
 					
