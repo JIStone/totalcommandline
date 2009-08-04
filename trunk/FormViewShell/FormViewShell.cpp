@@ -96,11 +96,11 @@ char *a1 =	__argv[1];
 	// 명령줄에 지정된 명령을 디스패치합니다.
 	// 응용 프로그램이 /RegServer, /Register, /Unregserver 또는 /Unregister로 시작된 경우 FALSE를 반환합니다.
 	if (!ProcessShellCommand(cmdInfo))
+	{
 		return FALSE;
+	}
+		
 
-	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.
-	m_pMainWnd->ShowWindow(SW_SHOW);
-	m_pMainWnd->UpdateWindow();
 	// 접미사가 있을 경우에만 DragAcceptFiles를 호출합니다.
 	//  SDI 응용 프로그램에서는 ProcessShellCommand 후에 이러한 호출이 발생해야 합니다.
 	
@@ -110,7 +110,15 @@ char *a1 =	__argv[1];
 	CString fPath;
 	CString filePath;
 
-	if(!fIni.Open(_T(".\\totalcvtr.ini"), CFile::modeRead))
+
+	if(a1)
+	{
+		fPath = a1;
+		fIni.Open(_T(".\\totalcvtr.ini"), CFile::modeRead);
+		filePath = fIni.GetFilePath();
+		//AfxMessageBox("테스트.");
+	}
+	else if(!fIni.Open(_T(".\\totalcvtr.ini"), CFile::modeRead))
 	{
 		filePath = fIni.GetFilePath();
 		TRACE(_T("File could not be opened %d\n"), e.m_cause);
@@ -124,8 +132,10 @@ char *a1 =	__argv[1];
 		fPath = buffer;
 		filePath = fIni.GetFilePath();
 
-		fIni.Close();
+		
 	}
+	fIni.Close();
+	
 	
 	CFrameWnd * pWnd = (CFrameWnd*)AfxGetMainWnd();
 	CFormViewShellView* pView = (CFormViewShellView*)pWnd->GetActiveView();
@@ -137,8 +147,11 @@ char *a1 =	__argv[1];
 	{
 		mydoc->OnOpenDocument(fPath);
 		mydoc->SetPathName(fPath,0);
+		
 	}
-	
+	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.
+	m_pMainWnd->ShowWindow(SW_SHOW);
+	m_pMainWnd->UpdateWindow();	
 	
 /*	
 	// 컨버터 셋팅파일 로드

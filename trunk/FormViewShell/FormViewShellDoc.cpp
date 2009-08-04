@@ -56,6 +56,8 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 	CString execArg;
 
 	CFrameWnd * pWnd = (CFrameWnd*)AfxGetMainWnd();
+	if(pWnd == NULL)
+		return;
 
 	CFormViewShellView* pView = (CFormViewShellView*)pWnd->GetActiveView();
 
@@ -277,6 +279,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		//설정파일 저장
 	CFile myFile;
 	CFileException e;
+	//AfxMessageBox(m_IniFilePath);
 	if(!myFile.Open(m_IniFilePath, CFile::modeCreate | CFile::modeWrite, &e))
 	{
 		TRACE(_T("File could not be opened %s : %d\n"), m_IniFilePath, e.m_cause);

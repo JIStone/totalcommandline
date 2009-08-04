@@ -67,6 +67,8 @@ END_MESSAGE_MAP()
 
 // CFormViewShellView »ý¼º/¼Ò¸ê
 
+extern "C" __declspec(dllimport) char* GetDateTime();
+
 CFormViewShellView::CFormViewShellView()
 	: CFormView(CFormViewShellView::IDD)
 	, m_ExecFilePath(_T(""))
@@ -1314,4 +1316,5 @@ void CFormViewShellView::OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 
 	*pResult = 0;
+	char* t = GetDateTime();
 }
