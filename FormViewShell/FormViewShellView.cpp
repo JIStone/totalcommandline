@@ -369,8 +369,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	CString searchFileStr = midPath + "\0";
 
-	CString searchedFileList[NUM_OF_CVTR_FILE_MAX];
+	CString *searchedFileList = NULL;//[NUM_OF_CVTR_FILE_MAX];
 	
+	vecSearchedFileList.clear();
+
 	m_ProgressCtrl.SetRange(0, 100);
 	m_ProgressCtrl.SetPos(0);
 	m_ExcuteFilePath = "";
@@ -379,7 +381,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	// 변환할 파일의 개수를 결정. 
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
 	{
-		progressCnt += SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, NULL);
+		progressCnt += SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr);
 
 	}
 	
@@ -398,7 +400,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	{
 		int starIndex = m_SearchedFileCnt;
 		//대상파일 검색
-		SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, searchedFileList);
+		SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, TRUE);
 		
 		for(int listCnt = starIndex; listCnt < m_SearchedFileCnt || isInternalCmd; listCnt++)
 		{
@@ -415,7 +417,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			GetDlgItem(IDC_EDIT2)->UpdateWindow();
 			//UpdateWindow();
 			
-			CString testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + m_PreCmdOptStr + m_DestPath + searchSubDirList[dirCnt] +"\"" + execArg;
+			CString testAllPath = execFirstArg + "\"" + vecSearchedFileList[listCnt] + m_PreCmdOptStr + m_DestPath + searchSubDirList[dirCnt] +"\"" + execArg;
 			INT nShowCmd = SW_HIDE;	
 			// 내부 명령어 대응
 			if(isInternalCmd)
@@ -429,7 +431,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			// 출력폴더 옵션이 없으면
 			else if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
 			{
-				testAllPath = execFirstArg + "\"" + searchedFileList[listCnt] + "\"" +  execArg;
+				testAllPath = execFirstArg + "\"" + vecSearchedFileList[listCnt] + "\"" +  execArg;
 			}
 			//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
 			HINSTANCE ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, nShowCmd);
@@ -481,7 +483,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				outPutResultPath.Replace("\"","");
 
 
-				CString tempOutPutStr = searchedFileList[listCnt];
+				CString tempOutPutStr = vecSearchedFileList[listCnt];
 				// 파일 이름만 분리하기
 				//sIndex = tempOutPutStr.Find('.',tempOutPutStr.GetLength() - FILE_EXT_LENGTH_MAX);
 				sIndex = tempOutPutStr.Find('.',0);
@@ -666,6 +668,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	SetDlgItemText(IDC_EDIT_SUCCESS_FAIL, resultCnt);
 	GetDlgItem(IDC_EDIT_SUCCESS_FAIL)->UpdateWindow();
 	//m_ProgressCtrl.SetPos(100);
+	
 }
 int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
 {
@@ -735,9 +738,9 @@ int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
 	return dCnt;
 }
 
-int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, CString *sFileNameList)
+int CFormViewShellView::SearchFile(CString sDirName, CString sFileName,BOOL isFNameListing)
 {
-
+	std::vector<CString> vecFileList;
 	CFileFind finder;
 	CString findFileStr = sDirName + "\\" + sFileName;
 	BOOL bWorking = finder.FindFile(findFileStr);
@@ -751,9 +754,13 @@ int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, CString 
 
 		TRACE(_T("%s\n"), (LPCTSTR)finder.GetFileName());
 		TRACE(_T("%s\n"), (LPCTSTR)finder.GetFilePath());
-		if(sFileNameList)
+		if(isFNameListing)
 		{
-			sFileNameList[m_SearchedFileCnt++] = finder.GetFilePath();
+			//sFileNameList[m_SearchedFileCnt++] = finder.GetFilePath();
+			vecSearchedFileList.push_back(finder.GetFilePath());
+			
+			//sFileNameList[m_SearchedFileCnt] = vecFileList[m_SearchedFileCnt];
+			m_SearchedFileCnt++;
 		}
 		else
 		{
@@ -761,6 +768,7 @@ int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, CString 
 			fCnt++;
 		}
 	} 
+
 	return fCnt;
 }
 
@@ -1228,7 +1236,6 @@ void CFormViewShellView::OnBnClickedButton2()
 			forceDelay = GetDlgItemInt(IDC_EDIT_DELAY_TIME);
 			if(lbIndex < lbTclFilesCnt - 1)
 				Sleep(forceDelay * 10);
-
 		}
 	}
 	// 다수의 설정파일을 로드 했기때문에 처음 설정파일을 재로드		

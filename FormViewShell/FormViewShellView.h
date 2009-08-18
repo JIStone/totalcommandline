@@ -5,7 +5,7 @@
 #pragma once
 #include "afxwin.h"
 #include "afxcmn.h"
-
+#include <vector>
 
 class CFormViewShellView : public CFormView
 {
@@ -64,7 +64,7 @@ public:
 	//CToolTipCtrl m_tooltip;
 
 	int SearchDir(CString sDirName, CString *sDirNameList);
-	int SearchFile(CString sDirName, CString sFileName,CString *sFileNameList);
+	int SearchFile(CString sDirName, CString sFileName, BOOL isFNameListing = FALSE);
 	int SearchOneFile(CString sDirName, CString sFileName, CString *sFileNameList);
 	// // 커맨드 명령 표시
 	void DisplayCommand(BOOL modifyed = TRUE);
@@ -136,6 +136,7 @@ public:
 	CButton m_BtnMultiTCLExcute;
 	// 실행버튼
 	CButton m_BtnExcute;
+	std::vector<CString> vecSearchedFileList;
 	afx_msg void OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
