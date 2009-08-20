@@ -11,9 +11,6 @@
 #define new DEBUG_NEW
 #endif
 
-#define NUM_OF_CVTR_FILE_MAX (500)
-#define NUM_OF_CVTR_FOLDER_MAX (2000)
-
 // 확장자의 최대길이는 6으로 가정				
 #define FILE_EXT_LENGTH_MAX (6)
 
@@ -318,6 +315,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 {
 	// TODO: Add your control notification handler code here
 	//GetDlgItemText(IDC_SRC_FILE, m_FullFileName);
+
+	BOOL bUseShellExCute = TRUE;
 	GetDlgItemText(IDC_SRC_FILE, m_FullFileName);
 	GetDlgItemText(IDC_EXEC_FILE, m_ExecFilePath);
 	GetDlgItemText(IDC_PATH, m_DestPath);
@@ -359,19 +358,17 @@ void CFormViewShellView::OnBnClickedExecappl()
 	
 
 	CString searchRootDirStr = m_FullFileName;
-	CString searchSubDirList[NUM_OF_CVTR_FOLDER_MAX];
+	std::vector<CString> vecSearchSubDirList;
 	int iSuccessCnt = 0;
 	// 하위 폴더 갯수 초기화
 	m_SubDirCnt = 0;
 	// 검색된 갯수 초기화
 	m_SearchedFileCnt = 0;
-	SearchDir(m_FullFileName, searchSubDirList);
+	SearchDir(m_FullFileName, vecSearchSubDirList);
 
 	CString searchFileStr = midPath + "\0";
 
-	CString *searchedFileList = NULL;//[NUM_OF_CVTR_FILE_MAX];
-	
-	vecSearchedFileList.clear();
+	std::vector<CString> vecFileList;
 
 	m_ProgressCtrl.SetRange(0, 100);
 	m_ProgressCtrl.SetPos(0);
@@ -381,7 +378,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	// 변환할 파일의 개수를 결정. 
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
 	{
-		progressCnt += SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr);
+		progressCnt += SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList);
 
 	}
 	
@@ -400,14 +397,14 @@ void CFormViewShellView::OnBnClickedExecappl()
 	{
 		int starIndex = m_SearchedFileCnt;
 		//대상파일 검색
-		SearchFile(searchRootDirStr + searchSubDirList[dirCnt], searchFileStr, TRUE);
+		SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList, TRUE);
 		
 		for(int listCnt = starIndex; listCnt < m_SearchedFileCnt || isInternalCmd; listCnt++)
 		{
 			m_ProgressCtrl.SetPos(((listCnt + 1) * 100) / progressCnt);
 
 			CString prgCnt;
-			prgCnt.Format( "[ %d / %d ]", listCnt+1, progressCnt );
+			prgCnt.Format( "[ %d / %d ]", listCnt+1, progressCnt);
 			
 			if(listCnt+1 == progressCnt)
 				prgCnt += " Complet!!!";
@@ -417,7 +414,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			GetDlgItem(IDC_EDIT2)->UpdateWindow();
 			//UpdateWindow();
 			
-			CString testAllPath = execFirstArg + "\"" + vecSearchedFileList[listCnt] + m_PreCmdOptStr + m_DestPath + searchSubDirList[dirCnt] +"\"" + execArg;
+			CString testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + m_PreCmdOptStr + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
 			INT nShowCmd = SW_HIDE;	
 			// 내부 명령어 대응
 			if(isInternalCmd)
@@ -431,11 +428,24 @@ void CFormViewShellView::OnBnClickedExecappl()
 			// 출력폴더 옵션이 없으면
 			else if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
 			{
-				testAllPath = execFirstArg + "\"" + vecSearchedFileList[listCnt] + "\"" +  execArg;
+				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" +  execArg;
 			}
-			//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
-			HINSTANCE ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, nShowCmd);
+
+			CString oExtStrTop;
+			m_ListBox.GetText(0, oExtStrTop);
 			
+			// 셀함수 반환값
+			HINSTANCE ret;
+
+			if(0 <= oExtStrTop.Find('*',0))
+			{
+				bUseShellExCute = FALSE;
+			}
+			else
+			{
+				//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
+				ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, nShowCmd);
+			}
 			
 			for(int lbIndex = 0; lbIndex < m_ListBox.GetCount(); lbIndex++)
 			{
@@ -454,6 +464,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				iExtStr.Replace("\"", "");
 				
 				m_ListBox.GetText(lbIndex, oExtStr);
+
 				CString tExtTypeStr = oExtStr.Left(3);
 
 				char *fileOp[3]= {"[M]", "[C]", "[D]"};
@@ -479,11 +490,24 @@ void CFormViewShellView::OnBnClickedExecappl()
 				//실행결과로 생성된 파일패스 만들기
 				//sIndex = testAllPath.Find('.',testAllPath.GetLength() - FILE_EXT_LENGTH_MAX);
 				sIndex = testAllPath.Find('.',0);
-				outPutResultPath = testAllPath.Left(sIndex) + oExtStr;
+				
+				if(!bUseShellExCute)
+				{
+					sIndex = testAllPath.Find('.',0);
+					CString sExte = testAllPath.Right(testAllPath.GetLength() - sIndex);
+					sExte.Replace("\"","");
+					oExtStr = sExte;
+					outPutResultPath = testAllPath;
+				}
+				else
+				{
+					outPutResultPath = testAllPath.Left(sIndex) + oExtStr;
+				}
+
 				outPutResultPath.Replace("\"","");
 
 
-				CString tempOutPutStr = vecSearchedFileList[listCnt];
+				CString tempOutPutStr = vecFileList[listCnt];
 				// 파일 이름만 분리하기
 				//sIndex = tempOutPutStr.Find('.',tempOutPutStr.GetLength() - FILE_EXT_LENGTH_MAX);
 				sIndex = tempOutPutStr.Find('.',0);
@@ -496,7 +520,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				//CString movSrc = searchRootDirStr + tempOutPutStr;
 				tempOutPutStr = m_DestPath + tempOutPutStr;
 				// 이름 강제 바꾸고 이동하기////////
-				CString movSrc = searchRootDirStr + searchSubDirList[dirCnt] + "\\*" + oExtStr;//SE_ERR_ACCESSDENIED
+				//CString movSrc = searchRootDirStr + vecSearchSubDirList[dirCnt] + "\\*" + oExtStr;//SE_ERR_ACCESSDENIED
 				CString movDest = tempOutPutStr;
 				//생성된 파일 찾기위한 파일 패스
 				CString movingStr = "";
@@ -504,7 +528,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				
 				BOOL bAtiveFileProc = TRUE;
 				// 컨버팅된 파일이 원본 파일이 있는 폴더에 아직 없을 경우 계속 찾음
-				while(movingStr.IsEmpty() )
+				while(movingStr.IsEmpty())
 				{	
 					if(iExtType == FO_COPY)
 					{
@@ -525,10 +549,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 						if(!extModify.IsEmpty())
 							movDest.Replace(oExtStr, iExtStr + extModify);
 							//movDest += extModify;
-						SearchOneFile(searchRootDirStr + searchSubDirList[dirCnt], oExtStr, &movingStr);
+						SearchOneFile(searchRootDirStr + vecSearchSubDirList[dirCnt], oExtStr, &movingStr);
 					}
 					Sleep(10);
-
+					m_ExcuteFilePath +=  ".\r\n";
 					findCnt++;
 					// 릴리즈모드 대응(디버그라면 더늘려야함)
 					if(findCnt > fileCheckCnt)
@@ -542,10 +566,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 //========================================= 결과 파일처리====================================================
 				if(bAtiveFileProc)
 				{
+
+					/* 파일처리 리스트 출력하기
 					m_ExcuteFilePath +=	movingStr + "  \r\n" + fileOp[iExtType - 1] + " -> " + movDest + "\r\n";
 					SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
 					GetDlgItem(IDC_EDIT9)->UpdateWindow();
-					
+					*/
 					SHFILEOPSTRUCT shos;
 					ZeroMemory(&shos, sizeof(SHFILEOPSTRUCT));
 					// 파일처리 타입 결정
@@ -623,7 +649,6 @@ void CFormViewShellView::OnBnClickedExecappl()
 				// 에러메세지 표시여부
 				if(m_Check_EnableErrPop.GetCheck() && ((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist)))
 				{
-					//int popRet = MessageBox(searchedFileList[listCnt] + " \n에대한 작업을 마치지 못했습니다. \n계속 하시겠습니까?","일지 정지", MB_OKCANCEL);
 					int popRet = MessageBox(tempOutPutStr + " \n에대한 작업을 마치지 못했습니다. \n계속 하시겠습니까?","일지 정지", MB_OKCANCEL);
 					if(popRet == 1)
 					{
@@ -632,6 +657,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 					else if(popRet == 2)
 					{
 						m_ProgressCtrl.SetPos(0);
+						
 						return;
 					}
 				}
@@ -641,23 +667,23 @@ void CFormViewShellView::OnBnClickedExecappl()
 				}
 
 			}
-
-			switch((int)ret)
-			{
-				case SE_ERR_NOASSOC:
-				{
-					MessageBox("지정된 파일 확장자로 실행할 수 있는 프로그램이 없습니다.",
-					"파일 확장자 오류", MB_OKCANCEL);
-				}
-				break;
-				case SE_ERR_FNF:
-				{
-					MessageBox("지정된 파일을 찾을수 없습니다.",
-					"파일 오류", MB_OKCANCEL);
-				}
-				break;
-			}
 			
+			if(bUseShellExCute)
+			{
+				switch((int)ret)
+				{
+					case SE_ERR_NOASSOC:
+					{
+						MessageBox("지정된 파일 확장자로 실행할 수 있는 프로그램이 없습니다.","파일 확장자 오류", MB_OKCANCEL);
+					}
+					break;
+					case SE_ERR_FNF:
+					{
+						MessageBox("지정된 파일을 찾을수 없습니다.","파일 오류", MB_OKCANCEL);
+					}
+					break;
+				}
+			}			
 		}
 
 	}
@@ -670,7 +696,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	//m_ProgressCtrl.SetPos(100);
 	
 }
-int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
+int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNameList)
 {
 	CFileFind dirFinder;
 	BOOL bWorking = dirFinder.FindFile(sDirName + "\\*.*");
@@ -680,7 +706,9 @@ int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
 	{
 		//CString tempfolderPath = sDirName;
 		//tempfolderPath.Replace(m_FullFileName, "");
-		sDirNameList[m_SubDirCnt++];// = tempfolderPath;
+		//sDirNameList[m_SubDirCnt++];// = tempfolderPath;
+		m_SubDirCnt++;
+		sDirNameList.push_back("");
 		CreateDirectory(sDirName, NULL);
 	}
 
@@ -715,7 +743,9 @@ int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
 				continue;
 
 			tempfolderPath.Replace(m_FullFileName, "");
-			sDirNameList[m_SubDirCnt++] = tempfolderPath;
+			//sDirNameList[m_SubDirCnt++] = tempfolderPath;
+			m_SubDirCnt++;
+			sDirNameList.push_back(tempfolderPath);
 			// 서브폴더명만 저장
 			
 			
@@ -738,9 +768,8 @@ int CFormViewShellView::SearchDir(CString sDirName, CString *sDirNameList)
 	return dCnt;
 }
 
-int CFormViewShellView::SearchFile(CString sDirName, CString sFileName,BOOL isFNameListing)
+int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, std::vector<CString> &vecFileList, BOOL isFNameListing)
 {
-	std::vector<CString> vecFileList;
 	CFileFind finder;
 	CString findFileStr = sDirName + "\\" + sFileName;
 	BOOL bWorking = finder.FindFile(findFileStr);
@@ -756,10 +785,7 @@ int CFormViewShellView::SearchFile(CString sDirName, CString sFileName,BOOL isFN
 		TRACE(_T("%s\n"), (LPCTSTR)finder.GetFilePath());
 		if(isFNameListing)
 		{
-			//sFileNameList[m_SearchedFileCnt++] = finder.GetFilePath();
-			vecSearchedFileList.push_back(finder.GetFilePath());
-			
-			//sFileNameList[m_SearchedFileCnt] = vecFileList[m_SearchedFileCnt];
+			vecFileList.push_back(finder.GetFilePath());
 			m_SearchedFileCnt++;
 		}
 		else

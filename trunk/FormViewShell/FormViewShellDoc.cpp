@@ -184,6 +184,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			pView->SetDlgItemText(IDC_EDIT7, execArg);
 		}
 
+		pView->SetDlgItemText(IDC_EDIT8, "");
 		if(!ar.IsBufferEmpty())
 		{
 			ar >> execArg;
