@@ -63,8 +63,8 @@ public:
 	// 툴팁
 	//CToolTipCtrl m_tooltip;
 
-	int SearchDir(CString sDirName, CString *sDirNameList);
-	int SearchFile(CString sDirName, CString sFileName, BOOL isFNameListing = FALSE);
+	int SearchDir(CString sDirName, std::vector<CString> &sDirNameList);
+	int SearchFile(CString sDirName, CString sFileName, std::vector<CString> &vecFileList, BOOL isFNameListing = FALSE);
 	int SearchOneFile(CString sDirName, CString sFileName, CString *sFileNameList);
 	// // 커맨드 명령 표시
 	void DisplayCommand(BOOL modifyed = TRUE);
@@ -136,7 +136,7 @@ public:
 	CButton m_BtnMultiTCLExcute;
 	// 실행버튼
 	CButton m_BtnExcute;
-	std::vector<CString> vecSearchedFileList;
+	//std::vector<CString> vecSearchedFileList;
 	afx_msg void OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
