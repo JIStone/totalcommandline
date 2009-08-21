@@ -549,7 +549,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 						if(!extModify.IsEmpty())
 							movDest.Replace(oExtStr, iExtStr + extModify);
 							//movDest += extModify;
-						SearchOneFile(searchRootDirStr + vecSearchSubDirList[dirCnt], oExtStr, &movingStr);
+						// 파일이동 올바르게 하려면 하나의 파일만 선택되도록 해야함
+						if(bUseShellExCute)
+							SearchOneFile(searchRootDirStr + vecSearchSubDirList[dirCnt], oExtStr, &movingStr);
+						else
+							movingStr = outPutResultPath;
 					}
 					Sleep(10);
 					m_ExcuteFilePath +=  ".\r\n";
