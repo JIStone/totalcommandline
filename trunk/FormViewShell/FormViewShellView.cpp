@@ -379,7 +379,6 @@ void CFormViewShellView::OnBnClickedExecappl()
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
 	{
 		progressCnt += SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList);
-
 	}
 	
 	m_EditProgCnt.ShowWindow(SW_SHOW);
@@ -388,9 +387,13 @@ void CFormViewShellView::OnBnClickedExecappl()
 	// 내부 명령어 대응
 	if(!(m_ExecFilePath).Compare("command.com") || !(m_ExecFilePath).Compare("cmd.exe"))
 	{
-		//m_SearchedFileCnt = 1;
+		//m_SearchedFileCnt = m_SearchedFileCnt > 0 ? 1 : 0;
 		progressCnt= 1;// 분모가 0이되는걸 막음
-		isInternalCmd = TRUE;
+		isInternalCmd = TRUE && m_SearchedFileCnt;
+
+		CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "\\" + searchFileStr +  "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
+		ShellExecute(NULL, "open", m_ExecFilePath, CMDLine, NULL, SW_SHOW);
+		return;
 	}
 
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
@@ -399,6 +402,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 		//대상파일 검색
 		SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList, TRUE);
 		
+		if(isInternalCmd)
+			m_SearchedFileCnt = 1;
+
 		for(int listCnt = starIndex; listCnt < m_SearchedFileCnt || isInternalCmd; listCnt++)
 		{
 			m_ProgressCtrl.SetPos(((listCnt + 1) * 100) / progressCnt);
@@ -414,25 +420,21 @@ void CFormViewShellView::OnBnClickedExecappl()
 			GetDlgItem(IDC_EDIT2)->UpdateWindow();
 			//UpdateWindow();
 			
-			CString testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + m_PreCmdOptStr + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
+			CString testAllPath;// = execFirstArg + "\"" + vecFileList[listCnt] + m_PreCmdOptStr + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
 			INT nShowCmd = SW_HIDE;	
-			// 내부 명령어 대응
-			if(isInternalCmd)
-			{
-				//testAllPath = execFirstArg + "\"" + searchRootDirStr + m_DestPath + execArg + "\"";
-				testAllPath = execFirstArg + "\"" + searchRootDirStr + "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
-				//testAllPath = execFirstArg + searchRootDirStr + m_DestPath + execArg;
-				isInternalCmd = FALSE;
-				nShowCmd = SW_SHOW;
-			}
-			// 출력폴더 옵션이 없으면
-			else if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
+			
+			if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
 			{
 				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" +  execArg;
 			}
+			else
+			{
+				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + m_PreCmdOptStr + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
+			}
 
 			CString oExtStrTop;
-			m_ListBox.GetText(0, oExtStrTop);
+			if(m_ListBox.GetCount())
+				m_ListBox.GetText(0, oExtStrTop);
 			
 			// 셀함수 반환값
 			HINSTANCE ret;
