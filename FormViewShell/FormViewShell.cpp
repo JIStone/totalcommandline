@@ -114,11 +114,11 @@ char *a1 =	__argv[1];
 	if(a1)
 	{
 		fPath = a1;
-		fIni.Open(_T(".\\totalcvtr.ini"), CFile::modeRead);
+		fIni.Open(_T(".\\totalcvtr.cur"), CFile::modeRead);
 		filePath = fIni.GetFilePath();
 		//AfxMessageBox("Å×½ºÆ®.");
 	}
-	else if(!fIni.Open(_T(".\\totalcvtr.ini"), CFile::modeRead))
+	else if(!fIni.Open(_T(".\\totalcvtr.cur"), CFile::modeRead))
 	{
 		filePath = fIni.GetFilePath();
 		TRACE(_T("File could not be opened %d\n"), e.m_cause);
