@@ -6,7 +6,10 @@
 
 #include "FormViewShellDoc.h"
 #include "FormViewShellView.h"
+#include <shlwapi.h>
+
 #include <direct.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -309,7 +312,7 @@ void CFormViewShellView::OnBnClickedCheck3()
 	*/
 }
 
-#include <shlwapi.h>
+
 
 void CFormViewShellView::OnBnClickedExecappl()
 {
