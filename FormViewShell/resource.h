@@ -18,6 +18,7 @@
 #define IDC_EDIT4                       1008
 #define IDC_CHECK1                      1009
 #define IDC_CHECK2                      1010
+#define IDC_VEIWFILELIST                1010
 #define IDC_CHECK3                      1011
 #define IDC_EDIT2                       1012
 #define IDC_EDIT1                       1013
