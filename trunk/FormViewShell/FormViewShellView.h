@@ -64,7 +64,7 @@ public:
 	//CToolTipCtrl m_tooltip;
 
 	int SearchDir(CString sDirName, std::vector<CString> &sDirNameList);
-	int SearchFile(CString sDirName, CString sFileName, std::vector<CString> &vecFileList, BOOL isFNameListing = FALSE);
+	int SearchFile(CString sDirName, CString sFileName, std::vector<CString> &vecFileList, int &SearchedFileCnt);
 	int SearchOneFile(CString sDirName, CString sFileName, CString *sFileNameList);
 	// // 커맨드 명령 표시
 	void DisplayCommand(BOOL modifyed = TRUE);
@@ -138,6 +138,7 @@ public:
 	CButton m_BtnExcute;
 	//std::vector<CString> vecSearchedFileList;
 	afx_msg void OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult);
+	void ShellCommon(CString excutteFile, CString CMDLine, int isShow);
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

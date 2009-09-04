@@ -6,7 +6,7 @@
 
 #include "FormViewShellDoc.h"
 #include "FormViewShellView.h"
-
+#include <direct.h>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -377,8 +377,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 	int progressCnt = 0;
 	// 변환할 파일의 개수를 결정. 
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
-	{
-		progressCnt += SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList);
+	{	
+		int noUse = -1;
+		progressCnt += SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList, noUse);
 	}
 	
 	m_EditProgCnt.ShowWindow(SW_SHOW);
@@ -387,29 +388,38 @@ void CFormViewShellView::OnBnClickedExecappl()
 	// 내부 명령어 대응
 	if(!(m_ExecFilePath).Compare("command.com") || !(m_ExecFilePath).Compare("cmd.exe"))
 	{
+		CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "\\" + searchFileStr +  "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
+
+		ShellCommon(m_ExecFilePath, CMDLine, SW_SHOW);
+
+		//fMask에 SEE_MASK_NOCLOSEPROCESS를 포함하였다면
+		//hProcesss 멤버를 통하여 새로생긴 프로세스의 핸들을 반환 받을 수 있다.
 		//m_SearchedFileCnt = m_SearchedFileCnt > 0 ? 1 : 0;
 		progressCnt= 1;// 분모가 0이되는걸 막음
 		isInternalCmd = TRUE && m_SearchedFileCnt;
 
-		CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "\\" + searchFileStr +  "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
-		ShellExecute(NULL, "open", m_ExecFilePath, CMDLine, NULL, SW_SHOW);
+		//HWND hwnd = GetDlgItem(IDC_EDIT9)->m_hWnd;
+		//CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "\\" + searchFileStr +  "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
+		//ShellExecute(hwnd, "open", m_ExecFilePath, CMDLine, NULL, SW_SHOW);
 		return;
 	}
 
-	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
+	for(int dirCnt = 0; dirCnt < m_SubDirCnt; dirCnt++) 
 	{
 		int starIndex = m_SearchedFileCnt;
 		//대상파일 검색
-		SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList, TRUE);
+		SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList, m_SearchedFileCnt);
 		
 		if(isInternalCmd)
 			m_SearchedFileCnt = 1;
 
 		for(int listCnt = starIndex; listCnt < m_SearchedFileCnt || isInternalCmd; listCnt++)
 		{
-			m_ProgressCtrl.SetPos(((listCnt + 1) * 100) / progressCnt);
-
 			CString prgCnt;
+			// 셀함수 반환값
+			HINSTANCE ret = 0;
+			
+			m_ProgressCtrl.SetPos(((listCnt + 1) * 100) / progressCnt);
 			prgCnt.Format( "[ %d / %d ]", listCnt+1, progressCnt);
 			
 			if(listCnt+1 == progressCnt)
@@ -436,8 +446,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			if(m_ListBox.GetCount())
 				m_ListBox.GetText(0, oExtStrTop);
 			
-			// 셀함수 반환값
-			HINSTANCE ret;
+
 
 			if(0 <= oExtStrTop.Find('*',0))
 			{
@@ -445,8 +454,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 			}
 			else
 			{
+
+				ShellCommon(m_ExecFilePath, testAllPath, SW_HIDE);
+
 				//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
-				ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, nShowCmd);
+				//ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, nShowCmd);
 			}
 			
 			for(int lbIndex = 0; lbIndex < m_ListBox.GetCount(); lbIndex++)
@@ -557,7 +569,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 						else
 							movingStr = outPutResultPath;
 					}
-					Sleep(10);
+					//Sleep(10);
 					m_ExcuteFilePath +=  ".\r\n";
 					findCnt++;
 					// 릴리즈모드 대응(디버그라면 더늘려야함)
@@ -573,11 +585,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 				if(bAtiveFileProc)
 				{
 
-					/* 파일처리 리스트 출력하기
+					//파일처리 리스트 출력하기
 					m_ExcuteFilePath +=	movingStr + "  \r\n" + fileOp[iExtType - 1] + " -> " + movDest + "\r\n";
 					SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
 					GetDlgItem(IDC_EDIT9)->UpdateWindow();
-					*/
+					
 					SHFILEOPSTRUCT shos;
 					ZeroMemory(&shos, sizeof(SHFILEOPSTRUCT));
 					// 파일처리 타입 결정
@@ -600,8 +612,6 @@ void CFormViewShellView::OnBnClickedExecappl()
 					if(iExtType != FO_DELETE)
 						shos.pTo = pszTo;
 
-
-
 					// 작업과정 정보를 표시안함
 					shos.fFlags = FOF_NOCONFIRMATION | FOF_NOERRORUI;
 
@@ -610,12 +620,16 @@ void CFormViewShellView::OnBnClickedExecappl()
 					// 생성결과 파일이 큰 이유등으로 SHFileOperation()가 제대로 마치지 못했으면 될때까지한다.
 					do
 					{
+//===================================쉘파일처러===========================================================
 						shRet = SHFileOperation(&shos);
-						Sleep(10);
+						//Sleep(10);
+						m_ExcuteFilePath +=  ">";
 						tryCount++;
 					}
-					while(tryCount < 10 && shRet != 0);
+					while(tryCount < 400 && shRet != 0);
+
 					
+
 
 					//처리해야할 파일이 없고 에러메세지를 표시한 상태이면
 					if(shRet && m_Check_EnableErrPop.GetCheck())
@@ -691,8 +705,27 @@ void CFormViewShellView::OnBnClickedExecappl()
 				}
 			}			
 		}
-
 	}
+	
+	// 폴더도 지우기
+	for(int dirCnt = m_SubDirCnt - 1; dirCnt >= 0; dirCnt--) 
+	{
+//더 알아보라우
+//하위에 파일이나 폴더가 있으면 안됨
+
+		WCHAR       wstring[1024];
+		CString		delFolderPath;
+		delFolderPath = m_FullFileName + vecSearchSubDirList[dirCnt];
+		ZeroMemory(wstring, sizeof(wstring));
+
+		mbstowcs(wstring, (LPCTSTR)(delFolderPath), delFolderPath.GetLength());
+
+
+		_wrmdir(wstring);
+		int tempErr = errno;//GetLastError();
+		errno;
+	}
+
 	CString resultCnt;
 	//resultCnt.Format( "성공: %d", iSuccessCnt / m_ListBox.GetCount());
 	resultCnt.Format( "성공: %d", iSuccessCnt);
@@ -774,7 +807,7 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 	return dCnt;
 }
 
-int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, std::vector<CString> &vecFileList, BOOL isFNameListing)
+int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, std::vector<CString> &vecFileList, int &searchedFileCnt)
 {
 	CFileFind finder;
 	CString findFileStr = sDirName + "\\" + sFileName;
@@ -789,10 +822,10 @@ int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, std::vec
 
 		TRACE(_T("%s\n"), (LPCTSTR)finder.GetFileName());
 		TRACE(_T("%s\n"), (LPCTSTR)finder.GetFilePath());
-		if(isFNameListing)
+		if(searchedFileCnt != -1)
 		{
 			vecFileList.push_back(finder.GetFilePath());
-			m_SearchedFileCnt++;
+			searchedFileCnt++;
 		}
 		else
 		{
@@ -860,7 +893,7 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	
 	GetDlgItemText(IDC_EDIT5, m_PreCmdOptStr);
 
-	CString testAllPath = m_ExecFileName + " " + execFirstArg + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
+	CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
 	
 	testAllPath.Replace(" ", "□");
 
@@ -1358,4 +1391,91 @@ void CFormViewShellView::OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult)
 
 	*pResult = 0;
 	char* t = GetDateTime();
+}
+void CFormViewShellView::ShellCommon(CString excutteFile, CString CMDLine, int isShow)
+{
+	DWORD dwExitCode ;
+	SHELLEXECUTEINFO si;
+
+	ZeroMemory(&si, sizeof(SHELLEXECUTEINFO));
+	//PathIP.Format("interface ip set address name=\"%s\" source=dhcp", AdapterName);
+
+	si.cbSize = (sizeof(SHELLEXECUTEINFO));
+	si.lpVerb = __TEXT("open");                 //mode : print, write
+	si.lpFile = __TEXT(excutteFile);           //실행파일
+	si.lpParameters = CMDLine;                    //실행파일 인자값.
+	// shellIP.lpDirectory =                        //실핼파일 디렉토리.
+	si.nShow = isShow;                    //SW_HIDE
+	si.fMask = SEE_MASK_NOCLOSEPROCESS|SEE_MASK_FLAG_DDEWAIT;
+
+	BOOL isSuccess = ShellExecuteEx(&si);             //성공시 true
+
+	if(!isSuccess)
+	{
+		DWORD err = GetLastError() ;
+		switch(err)
+		{
+			case ERROR_FILE_NOT_FOUND:
+			{
+
+				MessageBox("지정된 파일을 찾을수 없다.");
+			}
+			break;
+			case ERROR_DDE_FAIL:
+			{
+
+				MessageBox("동적 데이터 교환(DDE) 트랜잭션(transaction)에 실패했습니다.");
+			}
+			break;
+			case ERROR_NO_ASSOCIATION:
+			{
+
+				MessageBox("주어진 파일의 확장명과 연결되는 응용 프로그램이 없다.");
+			}
+			break;
+			case ERROR_ACCESS_DENIED:
+			{
+
+				MessageBox("지정된 파일에 대한 액세스가 거부 되었다.");
+			}
+			break;
+			case ERROR_DLL_NOT_FOUND:
+			{
+
+				MessageBox("응용 프로그램을 실행하는 데 필요한 하나의 라이브러리(library)  파일을 찾을 수없습니다.");
+			}
+			break;
+			case ERROR_CANCELLED:
+			{
+
+				MessageBox("함수가 사용자를 위한 추가정보를 알려주었지만 사용자가 요청을 취소 했다.");
+			}
+			break;
+			case ERROR_NOT_ENOUGH_MEMORY:
+			{
+
+				MessageBox("그곳에 지정된 작업을 수행하기 위한 충분한 메모리가 없다.");
+			}
+			break;
+			case ERROR_SHARING_VIOLATION:
+			{
+
+				MessageBox("공유 위반이 발생했다.");
+			}
+			break;
+		}
+	}
+
+	// 프로세스가 완료될때까지 기다림
+	while(1)
+	{
+		::GetExitCodeProcess( si.hProcess, &dwExitCode );
+
+		if( dwExitCode != STILL_ACTIVE )
+		{
+			//MessageBox("종료");
+			break;
+		}
+	}
+
 }
