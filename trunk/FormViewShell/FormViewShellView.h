@@ -139,6 +139,8 @@ public:
 	//std::vector<CString> vecSearchedFileList;
 	afx_msg void OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult);
 	void ShellCommon(CString excutteFile, CString CMDLine, int isShow);
+	CButton m_ViewList;
+	afx_msg void OnLbnSelchangeListTclFiles();
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

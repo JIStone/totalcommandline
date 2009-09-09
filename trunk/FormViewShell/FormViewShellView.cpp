@@ -63,6 +63,7 @@ ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnClickedButton2)
 //ON_BN_CLICKED(IDC_BUTTON_UP, &CFormViewShellView::OnBnClickedButtonUp)
 //ON_BN_CLICKED(IDC_BUTTON_DN, &CFormViewShellView::OnBnClickedButtonDn)
 ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin2)
+ON_LBN_SELCHANGE(IDC_LIST_TCL_FILES, &CFormViewShellView::OnLbnSelchangeListTclFiles)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -116,6 +117,7 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_TCL_FILES, m_TclFilesListBox);
 	DDX_Control(pDX, IDC_BUTTON2, m_BtnMultiTCLExcute);
 	DDX_Control(pDX, IDC_EXECAPPL, m_BtnExcute);
+	DDX_Control(pDX, IDC_VIEWLIST, m_ViewList);
 }
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
@@ -576,6 +578,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 					m_ExcuteFilePath +=  ".\r\n";
 					findCnt++;
 					// 릴리즈모드 대응(디버그라면 더늘려야함)
+					// 의미가 없게 되었음
+					fileCheckCnt = 0;
 					if(findCnt > fileCheckCnt)
 						break;
 				}	
@@ -588,11 +592,14 @@ void CFormViewShellView::OnBnClickedExecappl()
 				if(bAtiveFileProc)
 				{
 
-					//파일처리 리스트 출력하기
-					m_ExcuteFilePath +=	movingStr + "  \r\n" + fileOp[iExtType - 1] + " -> " + movDest + "\r\n";
-					SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
-					GetDlgItem(IDC_EDIT9)->UpdateWindow();
-					
+					if(m_ViewList.GetCheck())
+					{
+						//파일처리 리스트 출력하기
+						m_ExcuteFilePath +=	movingStr + "  \r\n" + fileOp[iExtType - 1] + " -> " + movDest + "\r\n";
+						SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
+						GetDlgItem(IDC_EDIT9)->UpdateWindow();
+					}
+
 					SHFILEOPSTRUCT shos;
 					ZeroMemory(&shos, sizeof(SHFILEOPSTRUCT));
 					// 파일처리 타입 결정
@@ -629,10 +636,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 						m_ExcuteFilePath +=  ">";
 						tryCount++;
 					}
-					while(tryCount < 400 && shRet != 0);
-
-					
-
+					while(tryCount < 10 && shRet != 0);
 
 					//처리해야할 파일이 없고 에러메세지를 표시한 상태이면
 					if(shRet && m_Check_EnableErrPop.GetCheck())
@@ -718,11 +722,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 		WCHAR       wstring[1024];
 		CString		delFolderPath;
+		
 		delFolderPath = m_FullFileName + vecSearchSubDirList[dirCnt];
 		ZeroMemory(wstring, sizeof(wstring));
-
-		mbstowcs(wstring, (LPCTSTR)(delFolderPath), delFolderPath.GetLength());
-
+		int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, (LPCSTR)delFolderPath , delFolderPath.GetLength(), wstring, 1024 );
 
 		_wrmdir(wstring);
 		int tempErr = errno;//GetLastError();
@@ -1308,7 +1311,7 @@ void CFormViewShellView::OnBnClickedButton2()
 	}
 	// 다수의 설정파일을 로드 했기때문에 처음 설정파일을 재로드		
 	m_bMultiMode = FALSE;
-	GetDocument()->OnOpenDocument(m_SettingFilePath);
+	//GetDocument()->OnOpenDocument(m_SettingFilePath);
 	GetDocument()->SetPathName(m_SettingFilePath,0);
 }
 /*
@@ -1481,4 +1484,20 @@ void CFormViewShellView::ShellCommon(CString excutteFile, CString CMDLine, int i
 		}
 	}
 
+}
+void CFormViewShellView::OnLbnSelchangeListTclFiles()
+{
+	// TODO: Add your control notification handler code here
+
+	int lbIdx = m_TclFilesListBox.GetCurSel();
+
+	CString fPath;	
+	m_TclFilesListBox.GetText(lbIdx, fPath);
+	
+	if(!fPath.IsEmpty())
+	{
+		m_bMultiMode = TRUE;
+		GetDocument()->OnOpenDocument(fPath);
+	//	GetDocument()->SetPathName(fPath,0);
+	}
 }
