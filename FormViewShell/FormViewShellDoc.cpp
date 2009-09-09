@@ -127,6 +127,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		// TODO: 여기에 로딩 코드를 추가합니다.
 
 		BOOL isEmpty = ar.IsBufferEmpty();
+		BOOL isMultiCommand = !(ar.m_strFileName.Right(5)).Compare(".mtcl");
 
 		pView->m_FirstLoaded = FALSE;
 		ar >> execArg;
@@ -223,7 +224,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		isEmpty = ar.IsBufferEmpty();
 
 		// 읽어올 설정이 있고, 멀티실행중이어서 로딩하는 것이 아니면
-		if((!isEmpty && !pView->m_bMultiMode) || !(ar.m_strFileName.Right(5)).Compare(".mtcl"))
+		if((!isEmpty && !pView->m_bMultiMode) || isMultiCommand)
 		{
 			int lbTclFilesCnt = 0;
 			pView->m_TclFilesListBox.ResetContent();
@@ -285,7 +286,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 	{
 		TRACE(_T("File could not be opened %s : %d\n"), m_IniFilePath, e.m_cause);
 	}
-	myFile.Write(ar.m_strFileName, ar.m_strFileName.GetLength());
+	myFile.Write(pView->m_SettingFilePath, pView->m_SettingFilePath.GetLength());
 	myFile.Close();
 }
 
