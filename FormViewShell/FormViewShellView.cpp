@@ -68,7 +68,7 @@ END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
 
-extern "C" __declspec(dllimport) char* GetDateTime();
+extern "C" __declspec(dllimport) char* GetDateTime(BOOL& isTimeOver);
 
 CFormViewShellView::CFormViewShellView()
 	: CFormView(CFormViewShellView::IDD)
@@ -320,13 +320,43 @@ void CFormViewShellView::OnBnClickedExecappl()
 {
 	// TODO: Add your control notification handler code here
 	//GetDlgItemText(IDC_SRC_FILE, m_FullFileName);
+	
+	#define FILEEXISTCHECKCNT (2)
+	
+	// 사용기간 초과 검사
+	BOOL isTimeOver = FALSE;
+	char* t = GetDateTime(isTimeOver);
+	if(isTimeOver)
+	{
+		AfxMessageBox("기간초과");
+		return;
+	}
+	//갱신파일 저장(코드워리어 make용
+	CFile myFile;
+	CFileException e;
+	//AfxMessageBox(m_IniFilePath);
+	if(!myFile.Open(GetDocument()->m_IniFilePath + ".txt", CFile::modeCreate | CFile::modeWrite, &e))
+	{
+		TRACE(_T("File could not be opened %s : %d\n"), GetDocument()->m_IniFilePath + ".txt", e.m_cause);
+	}
+	CString refreshStr = m_SettingFilePath + " //" + t;
+	myFile.Write(refreshStr, refreshStr.GetLength());
+	myFile.Close();
 
 	BOOL bUseShellExCute = TRUE;
+	BOOL isInternalCmd = FALSE;
+
 	GetDlgItemText(IDC_SRC_FILE, m_FullFileName);
 	GetDlgItemText(IDC_EXEC_FILE, m_ExecFilePath);
 	GetDlgItemText(IDC_PATH, m_DestPath);
+	
 
-	if(m_FullFileName.IsEmpty()) 
+	if(!(m_ExecFilePath).Compare("command.com") || !(m_ExecFilePath).Compare("cmd.exe"))
+	{
+		isInternalCmd = TRUE;
+	}
+
+	if(m_FullFileName.IsEmpty() && !isInternalCmd) 
 	{ 
 		AfxMessageBox("변환할 파일을 선택하세요.");
 
@@ -369,7 +399,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 	m_SubDirCnt = 0;
 	// 검색된 갯수 초기화
 	m_SearchedFileCnt = 0;
-	SearchDir(m_FullFileName, vecSearchSubDirList);
+	
+	if(!isInternalCmd)
+		SearchDir(m_FullFileName, vecSearchSubDirList);
 
 	CString searchFileStr = midPath + "\0";
 
@@ -389,11 +421,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 	
 	m_EditProgCnt.ShowWindow(SW_SHOW);
 	
-	BOOL isInternalCmd = FALSE;
+	
 	// 내부 명령어 대응
-	if(!(m_ExecFilePath).Compare("command.com") || !(m_ExecFilePath).Compare("cmd.exe"))
+	if(isInternalCmd)
 	{
-		CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "\\" + searchFileStr +  "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
+		CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "" + searchFileStr +  "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
 
 		ShellCommon(m_ExecFilePath, CMDLine, SW_SHOW);
 
@@ -455,7 +487,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 			if(0 <= oExtStrTop.Find('*',0))
 			{
+				// 파일 처리작업만 한다.
 				bUseShellExCute = FALSE;
+				
+				if(m_DestPath.IsEmpty())
+					m_DestPath = m_FullFileName;
 			}
 			else
 			{
@@ -592,10 +628,19 @@ void CFormViewShellView::OnBnClickedExecappl()
 				if(bAtiveFileProc)
 				{
 
-					if(m_ViewList.GetCheck())
+					if(m_ViewList.GetCheck() && !movingStr.IsEmpty())
 					{
 						//파일처리 리스트 출력하기
-						m_ExcuteFilePath +=	movingStr + "  \r\n" + fileOp[iExtType - 1] + " -> " + movDest + "\r\n";
+						CString fileOp[3]= {" 이동", " 복사", " 삭제"};
+						if(iExtType == FO_DELETE)
+						{
+							m_ExcuteFilePath +=	movingStr + "를" + fileOp[iExtType - 1] +"\r\n";
+						}
+						else
+						{
+							m_ExcuteFilePath +=	movingStr + "를"+ "  \r\n"  + movDest +"로" + fileOp[iExtType - 1] + "\r\n";
+						}
+
 						SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
 						GetDlgItem(IDC_EDIT9)->UpdateWindow();
 					}
@@ -633,10 +678,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 //===================================쉘파일처러===========================================================
 						shRet = SHFileOperation(&shos);
 						//Sleep(10);
-						m_ExcuteFilePath +=  ">";
+						if(tryCount > 0)
+							m_ExcuteFilePath +=  "파일처리 중";
+						
 						tryCount++;
 					}
-					while(tryCount < 10 && shRet != 0);
+					while(tryCount < 2 && shRet != 0);
 
 					//처리해야할 파일이 없고 에러메세지를 표시한 상태이면
 					if(shRet && m_Check_EnableErrPop.GetCheck())
@@ -667,10 +714,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 				while((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist))
 				{
 					isDestFileExist = PathFileExists(movDest);
-
-					Sleep(10);
+					//Sleep(10);
 					findMovedFileCnt++;
-					if(findMovedFileCnt > 10)
+					
+					if(findMovedFileCnt > FILEEXISTCHECKCNT)
 						break;
 				}
 				// 에러메세지 표시여부
@@ -692,7 +739,6 @@ void CFormViewShellView::OnBnClickedExecappl()
 				{
 					iSuccessCnt +=  (lbIndex + 1) / m_ListBox.GetCount();//  ++;
 				}
-
 			}
 			
 			if(bUseShellExCute)
@@ -715,11 +761,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 	}
 	
 	// 폴더도 지우기
-	for(int dirCnt = m_SubDirCnt - 1; dirCnt >= 0; dirCnt--) 
+	for(int dirCnt = m_SubDirCnt - 1; dirCnt >= 1; dirCnt--) // dirCnt >= 1 : 최상위 폴더는 삭제하지않음
 	{
-//더 알아보라우
-//하위에 파일이나 폴더가 있으면 안됨
-
+		//***하위에 파일이나 폴더가 있으면 안됨***
 		WCHAR       wstring[1024];
 		CString		delFolderPath;
 		
@@ -899,9 +943,10 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	
 	GetDlgItemText(IDC_EDIT5, m_PreCmdOptStr);
 
-	CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
+	//CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
+	CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + "\\" + midPath + m_PreCmdOptStr + " " + m_DestPath + execSecondArg;
 	
-	testAllPath.Replace(" ", "□");
+	//testAllPath.Replace(" ", "□");
 
 	//if(m_DestPath.IsEmpty())
 	//{
@@ -1394,13 +1439,11 @@ void CFormViewShellView::OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult)
 			m_TclFilesListBox.SetCurSel(loc + 1);
 		}
 	}
-
 	*pResult = 0;
-	char* t = GetDateTime();
 }
 void CFormViewShellView::ShellCommon(CString excutteFile, CString CMDLine, int isShow)
 {
-	DWORD dwExitCode ;
+	DWORD dwExitCode;
 	SHELLEXECUTEINFO si;
 
 	ZeroMemory(&si, sizeof(SHELLEXECUTEINFO));
@@ -1488,16 +1531,24 @@ void CFormViewShellView::ShellCommon(CString excutteFile, CString CMDLine, int i
 void CFormViewShellView::OnLbnSelchangeListTclFiles()
 {
 	// TODO: Add your control notification handler code here
-
+	
+	int lbTclFilesCnt = m_TclFilesListBox.GetCount();
 	int lbIdx = m_TclFilesListBox.GetCurSel();
 
-	CString fPath;	
-	m_TclFilesListBox.GetText(lbIdx, fPath);
-	
+	CString fPath;
+	if(lbIdx <lbTclFilesCnt)
+	{
+		m_TclFilesListBox.GetText(lbIdx, fPath);
+	}
+	else
+	{
+		return;
+	}
 	if(!fPath.IsEmpty())
 	{
 		m_bMultiMode = TRUE;
 		GetDocument()->OnOpenDocument(fPath);
 	//	GetDocument()->SetPathName(fPath,0);
+		m_bMultiMode = FALSE;
 	}
 }
