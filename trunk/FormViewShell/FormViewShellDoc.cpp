@@ -243,6 +243,56 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				
 				pView->m_BtnMultiTCLExcute.EnableWindow(TRUE);
 				pView->m_BtnExcute.EnableWindow(FALSE);
+				
+				// 단일 설정 초기화 표시
+				CString clrString = "";
+				pView->SetDlgItemText(IDC_EDIT3, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT3))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_EXEC_FILE, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EXEC_FILE))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_SRC_FILE, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_SRC_FILE))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_PATH, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_PATH))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_EDIT4, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT4))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_EDIT6, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT6))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_EDIT7, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT7))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_EDIT8, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT8))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_EDIT_DELAY_TIME, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT_DELAY_TIME))->SetReadOnly(TRUE);
+				
+				pView->SetDlgItemText(IDC_EDIT5, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT5))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_EDIT5, clrString);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT5))->SetReadOnly(TRUE);
+
+				pView->SetDlgItemText(IDC_LIST_OUT, clrString);
+				(pView->GetDlgItem(IDC_BTN_OUT_ADD))->EnableWindow(FALSE);
+				(pView->GetDlgItem(IDC_BTN_OUT_DEL))->EnableWindow(FALSE);
+				(pView->GetDlgItem(IDC_SELFILE))->EnableWindow(FALSE);
+				(pView->GetDlgItem(IDC_SELFILE2))->EnableWindow(FALSE);
+				(pView->GetDlgItem(IDC_SELPATH))->EnableWindow(FALSE);
+				(pView->GetDlgItem(IDC_BUTTON_ADD_FOLDER))->EnableWindow(FALSE);
+				(pView->GetDlgItem(IDC_BUTTON_DEL_FOLDER))->EnableWindow(FALSE);
+
+				pView->m_ListBox.ResetContent();
+				pView->m_ExFolderListBox.ResetContent();
+				pView->m_Check_EnableErrPop.SetCheck(0);
+				pView->m_Check_EnableErrPop.EnableWindow(FALSE);
+				
 			}
 			else
 			{
@@ -253,6 +303,30 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				
 				pView->m_BtnMultiTCLExcute.EnableWindow(FALSE);
 				pView->m_BtnExcute.EnableWindow(TRUE);
+
+
+				// 단일 설정 초기화 표시
+				BOOL _enable = FALSE;
+				((CEdit*)pView->GetDlgItem(IDC_EDIT3))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_EXEC_FILE))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_SRC_FILE))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_PATH))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT4))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT6))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT7))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT8))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT_DELAY_TIME))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT5))->SetReadOnly(_enable);
+				((CEdit*)pView->GetDlgItem(IDC_EDIT5))->SetReadOnly(_enable);
+				(pView->GetDlgItem(IDC_BTN_OUT_ADD))->EnableWindow(!_enable);
+				(pView->GetDlgItem(IDC_BTN_OUT_DEL))->EnableWindow(!_enable);
+				(pView->GetDlgItem(IDC_SELFILE))->EnableWindow(!_enable);
+				(pView->GetDlgItem(IDC_SELFILE2))->EnableWindow(!_enable);
+				(pView->GetDlgItem(IDC_SELPATH))->EnableWindow(!_enable);
+				(pView->GetDlgItem(IDC_BUTTON_ADD_FOLDER))->EnableWindow(!_enable);
+				(pView->GetDlgItem(IDC_BUTTON_DEL_FOLDER))->EnableWindow(!_enable);
+				pView->m_Check_EnableErrPop.EnableWindow(!_enable);
+
 			}
 
 			for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
