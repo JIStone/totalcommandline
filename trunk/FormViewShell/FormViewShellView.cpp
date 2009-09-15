@@ -64,6 +64,8 @@ ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnClickedButton2)
 //ON_BN_CLICKED(IDC_BUTTON_DN, &CFormViewShellView::OnBnClickedButtonDn)
 ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin2)
 ON_LBN_SELCHANGE(IDC_LIST_TCL_FILES, &CFormViewShellView::OnLbnSelchangeListTclFiles)
+//ON_BN_CLICKED(IDC_BUTTON3, &CFormViewShellView::OnBnClickedButton3)
+ON_BN_CLICKED(IDC_DEL_MTCL_LIST, &CFormViewShellView::OnBnClickedDelMtclList)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -339,7 +341,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	{
 		TRACE(_T("File could not be opened %s : %d\n"), GetDocument()->m_IniFilePath + ".txt", e.m_cause);
 	}
-	CString refreshStr = m_SettingFilePath + " //" + t;
+	CString refreshStr = m_SettingFilePath + "\r\n" + t;
 	myFile.Write(refreshStr, refreshStr.GetLength());
 	myFile.Close();
 
@@ -1286,8 +1288,10 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 	char szFullPath[512] = {0,};
 	//--xx 드래그앤 드랍한 파일의 개수 획득
 	int iCount = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
+	int curCnt = m_TclFilesListBox.GetCount();
+	
+	//m_TclFilesListBox.ResetContent();
 
-	m_TclFilesListBox.ResetContent();
 	for(int i=0; i<iCount; i++)
 	{
 		//--xx 드래그앤 드랍한 파일의 경로정보를 하나씩 획득
@@ -1295,7 +1299,7 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 		//AfxMessageBox(szFullPath);
 		
 		CString fPath = szFullPath;
-		if(!fPath.IsEmpty() && i== 0)
+		if(!fPath.IsEmpty() && i + curCnt == 0)
 		{
 			GetDocument()->OnOpenDocument(fPath);
 			GetDocument()->SetPathName(fPath,0);
@@ -1308,8 +1312,9 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 			GetDocument()->SetModifiedFlag(TRUE);
 		}
 	}
-	
-	if(iCount > 1)
+
+	curCnt = m_TclFilesListBox.GetCount();
+	if(curCnt > 1)
 	{
 		CFrameWnd * pWnd = (CFrameWnd*)AfxGetMainWnd();
 		pWnd->SetWindowPos(NULL,0,0,1280,700,SWP_NOMOVE);
@@ -1551,4 +1556,31 @@ void CFormViewShellView::OnLbnSelchangeListTclFiles()
 	//	GetDocument()->SetPathName(fPath,0);
 		m_bMultiMode = FALSE;
 	}
+}
+
+//void CFormViewShellView::OnBnClickedButton3()
+//{
+//	// TODO: Add your control notification handler code here
+//	int loc;
+//	loc = m_TclFilesListBox.GetCurSel();
+//	m_TclFilesListBox.DeleteString(loc);
+//	if(loc == m_TclFilesListBox.GetCount())
+//	{
+//		loc = loc - 1;
+//		GetDocument()->SetModifiedFlag(TRUE);
+//	}
+//	m_TclFilesListBox.SetCurSel(loc);
+//}
+
+void CFormViewShellView::OnBnClickedDelMtclList()
+{
+	int loc;
+	loc = m_TclFilesListBox.GetCurSel();
+	m_TclFilesListBox.DeleteString(loc);
+	if(loc == m_TclFilesListBox.GetCount())
+	{
+		loc = loc - 1;
+		GetDocument()->SetModifiedFlag(TRUE);
+	}
+	m_TclFilesListBox.SetCurSel(loc);
 }
