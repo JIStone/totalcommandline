@@ -143,6 +143,8 @@ public:
 	afx_msg void OnLbnSelchangeListTclFiles();
 //	afx_msg void OnBnClickedButton3();
 	afx_msg void OnBnClickedDelMtclList();
+	afx_msg void OnBnClickedButtonPre();
+	afx_msg void OnBnClickedButtonPrelist();
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

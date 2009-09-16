@@ -204,6 +204,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PreviewDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ResizeDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -243,6 +251,14 @@
 			</File>
 			<File
 				RelativePath=".\MainFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PreviewDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ResizeDlg.h"
 				>
 			</File>
 			<File

@@ -7,6 +7,7 @@
 #define IDD_FORMVIEWSHELL_FORM          101
 #define IDR_MAINFRAME                   128
 #define IDR_FormViewShellTYPE           129
+#define IDD_PREVIEW_DIALOG              130
 #define IDC_SRC_FILE                    1000
 #define IDC_PATH                        1001
 #define IDC_SELFILE                     1002
@@ -48,16 +49,19 @@
 #define IDC_EDIT_DELAY_TIME             1050
 #define IDC_SPIN2                       1053
 #define IDC_LIST2                       1054
-#define IDC_BUTTON1                     1056
 #define IDC_DEL_MTCL_LIST               1057
+#define IDC_BUTTON_PRE                  1058
+#define IDC_EDIT_RESULT                 1060
+#define IDC_BUTTON1                     1064
+#define IDC_BUTTON_PRELIST              1064
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1058
+#define _APS_NEXT_CONTROL_VALUE         1065
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -6,6 +6,7 @@
 
 #include "FormViewShellDoc.h"
 #include "FormViewShellView.h"
+#include "PreviewDlg.h"
 #include <shlwapi.h>
 
 #include <direct.h>
@@ -66,6 +67,8 @@ ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin2)
 ON_LBN_SELCHANGE(IDC_LIST_TCL_FILES, &CFormViewShellView::OnLbnSelchangeListTclFiles)
 //ON_BN_CLICKED(IDC_BUTTON3, &CFormViewShellView::OnBnClickedButton3)
 ON_BN_CLICKED(IDC_DEL_MTCL_LIST, &CFormViewShellView::OnBnClickedDelMtclList)
+ON_BN_CLICKED(IDC_BUTTON_PRE, &CFormViewShellView::OnBnClickedButtonPre)
+ON_BN_CLICKED(IDC_BUTTON_PRELIST, &CFormViewShellView::OnBnClickedButtonPrelist)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -411,7 +414,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	m_ProgressCtrl.SetRange(0, 100);
 	m_ProgressCtrl.SetPos(0);
-	m_ExcuteFilePath = "";
+	// 단일 작업일때는 여기서 작업결과 텍스트 초기화
+	if(m_BtnExcute.IsWindowEnabled())
+		m_ExcuteFilePath = "";
 	
 	int progressCnt = 0;
 	// 변환할 파일의 개수를 결정. 
@@ -643,8 +648,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 							m_ExcuteFilePath +=	movingStr + "를"+ "  \r\n"  + movDest +"로" + fileOp[iExtType - 1] + "\r\n";
 						}
 
-						SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
-						GetDlgItem(IDC_EDIT9)->UpdateWindow();
+						//SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
+						//GetDlgItem(IDC_EDIT9)->UpdateWindow();
 					}
 
 					SHFILEOPSTRUCT shos;
@@ -960,7 +965,10 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	m_ProgressCtrl.SetPos(0);
 	m_EditProgCnt.ShowWindow(SW_HIDE);
 	if(m_FirstLoaded && m_AllCmdLnText.Compare(testAllPath))
+	{
 		GetDocument()->SetModifiedFlag(TRUE);
+		m_AllCmdLnText = testAllPath;
+	}
 	else if(!m_FirstLoaded)
 	{
 		m_AllCmdLnText = testAllPath;
@@ -1333,13 +1341,15 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 	CFormView::OnDropFiles(hDropInfo);
 */
 }
-
+// 다중실행
 void CFormViewShellView::OnBnClickedButton2()
 {
 	// TODO: Add your control notification handler code here
 	
 	int lbTclFilesCnt = m_TclFilesListBox.GetCount();
 	int forceDelay = 0;
+	// 결과 텍스트 초기화
+	m_ExcuteFilePath = "";
 	
 	for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
 	{
@@ -1352,6 +1362,7 @@ void CFormViewShellView::OnBnClickedButton2()
 			m_TclFilesListBox.SetCurSel(lbIndex);
 			GetDocument()->OnOpenDocument(fPath);
 			GetDocument()->SetPathName(fPath,0);
+			m_ExcuteFilePath += "\r\n============== " + fPath + " ===============\r\n";
 			UpdateWindow();
 			OnBnClickedExecappl();
 			forceDelay = GetDlgItemInt(IDC_EDIT_DELAY_TIME);
@@ -1583,4 +1594,21 @@ void CFormViewShellView::OnBnClickedDelMtclList()
 		GetDocument()->SetModifiedFlag(TRUE);
 	}
 	m_TclFilesListBox.SetCurSel(loc);
+}
+
+void CFormViewShellView::OnBnClickedButtonPre()
+{
+	PreviewDlg prevDlg;
+	prevDlg.m_EditText = m_ExcuteFilePath;
+	prevDlg.DoModal();
+}
+
+void CFormViewShellView::OnBnClickedButtonPrelist()
+{
+	PreviewDlg prevDlg;
+	prevDlg.m_EditText = m_AllCmdLnText;
+	prevDlg.m_bIsModiFy = TRUE;
+	prevDlg.m_TitleText = "명령줄";
+	
+	prevDlg.DoModal();
 }
