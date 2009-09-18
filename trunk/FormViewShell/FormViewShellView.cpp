@@ -149,7 +149,9 @@ void CFormViewShellView::OnInitialUpdate()
 		m_toolTip.AddTool(GetDlgItem(IDC_EDIT4), "ex) *.txt, mainBG.nsc");
 		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_OUT), "ex) .NCGR,.NCER ... ");
 		m_toolTip.AddTool(GetDlgItem(IDC_EDIT7), "파일처리후 최종확장자 ex) .nlz");
-		m_toolTip.SetMaxTipWidth(500);
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT1), m_AllCmdLnText);
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_DELAY_TIME), "x10ms");
+		m_toolTip.SetMaxTipWidth(1000);
 		m_IsToolTipInit = true;
 	}
 
@@ -467,7 +469,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			prgCnt.Format( "[ %d / %d ]", listCnt+1, progressCnt);
 			
 			if(listCnt+1 == progressCnt)
-				prgCnt += " Complet!!!";
+				prgCnt += " FIN!!!";
 
 			SetDlgItemText(IDC_EDIT2, prgCnt);
 			
@@ -641,11 +643,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 						CString fileOp[3]= {" 이동", " 복사", " 삭제"};
 						if(iExtType == FO_DELETE)
 						{
-							m_ExcuteFilePath +=	movingStr + "를" + fileOp[iExtType - 1] +"\r\n";
+							m_ExcuteFilePath +=	movingStr + " 를" + fileOp[iExtType - 1] +"\r\n";
 						}
 						else
 						{
-							m_ExcuteFilePath +=	movingStr + "를"+ "  \r\n"  + movDest +"로" + fileOp[iExtType - 1] + "\r\n";
+							m_ExcuteFilePath +=	movingStr + " 를"+ "  \r\n"  + movDest + "로" + fileOp[iExtType - 1] + "\r\n";
 						}
 
 						//SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
@@ -785,7 +787,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	CString resultCnt;
 	//resultCnt.Format( "성공: %d", iSuccessCnt / m_ListBox.GetCount());
-	resultCnt.Format( "성공: %d", iSuccessCnt);
+	resultCnt.Format( "%d / %d 성공", iSuccessCnt, progressCnt);
 	m_Edit_Success_Fail.ShowWindow(SW_SHOW);
 	SetDlgItemText(IDC_EDIT_SUCCESS_FAIL, resultCnt);
 	GetDlgItem(IDC_EDIT_SUCCESS_FAIL)->UpdateWindow();
@@ -953,7 +955,7 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	//CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
 	CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + "\\" + midPath + m_PreCmdOptStr + " " + m_DestPath + execSecondArg;
 	
-	//testAllPath.Replace(" ", "□");
+	//testAllPath.Replace(" ", "∨");
 
 	//if(m_DestPath.IsEmpty())
 	//{
@@ -1317,6 +1319,7 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 		if(!fPath.IsEmpty() && (fPath.Right(5)).Compare(".mtcl"))
 		{
 			m_TclFilesListBox.AddString(fPath);
+			m_TclFilesListBox.SetCheck(curCnt, 1);
 			GetDocument()->SetModifiedFlag(TRUE);
 		}
 	}
@@ -1356,13 +1359,15 @@ void CFormViewShellView::OnBnClickedButton2()
 		CString fPath;	
 		m_TclFilesListBox.GetText(lbIndex, fPath);
 		
-		if(!fPath.IsEmpty())
+		if(!fPath.IsEmpty() && m_TclFilesListBox.GetCheck(lbIndex))
 		{
 			m_bMultiMode = TRUE;
 			m_TclFilesListBox.SetCurSel(lbIndex);
 			GetDocument()->OnOpenDocument(fPath);
 			GetDocument()->SetPathName(fPath,0);
-			m_ExcuteFilePath += "\r\n============== " + fPath + " ===============\r\n";
+			m_ExcuteFilePath += "\r\n================================================================\r\n";
+			m_ExcuteFilePath += " " + fPath + "\r\n"
+								+ "==================================================================\r\n";
 			UpdateWindow();
 			OnBnClickedExecappl();
 			forceDelay = GetDlgItemInt(IDC_EDIT_DELAY_TIME);
@@ -1552,7 +1557,7 @@ void CFormViewShellView::OnLbnSelchangeListTclFiles()
 	int lbIdx = m_TclFilesListBox.GetCurSel();
 
 	CString fPath;
-	if(lbIdx <lbTclFilesCnt)
+	if(lbIdx >= 0  && lbIdx <lbTclFilesCnt)
 	{
 		m_TclFilesListBox.GetText(lbIdx, fPath);
 	}
@@ -1567,6 +1572,7 @@ void CFormViewShellView::OnLbnSelchangeListTclFiles()
 	//	GetDocument()->SetPathName(fPath,0);
 		m_bMultiMode = FALSE;
 	}
+	m_toolTip.AddTool(GetDlgItem(IDC_EDIT1), m_AllCmdLnText);
 }
 
 //void CFormViewShellView::OnBnClickedButton3()
@@ -1594,6 +1600,7 @@ void CFormViewShellView::OnBnClickedDelMtclList()
 		GetDocument()->SetModifiedFlag(TRUE);
 	}
 	m_TclFilesListBox.SetCurSel(loc);
+
 }
 
 void CFormViewShellView::OnBnClickedButtonPre()

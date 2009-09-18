@@ -110,7 +110,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		// 멀티커맨드라인 강제 딜레이
 		pView->GetDlgItemText(IDC_EDIT_DELAY_TIME, execArg);
 		ar << execArg;
-
+		// 멀티커맨드라인 경로 저장
 		int lbTclFilesCnt = pView->m_TclFilesListBox.GetCount();
 		ar << lbTclFilesCnt;
 		for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
@@ -121,6 +121,13 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			// 다중 쉘API 호출시 창 확대
 			((CMainFrame*)(pWnd->GetActiveFrame()))->SetWindowPos(NULL,0,0,1300,700,SWP_NOMOVE);
 		}
+		// 멀티커맨드라인 체그박스저장
+		for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
+		{
+			ar << pView->m_TclFilesListBox.GetCheck(lbIndex);;
+		}
+
+
 	}
 	else
 	{
@@ -334,6 +341,14 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				ar >> execArg;
 				pView->m_TclFilesListBox.AddString(execArg);
 			}
+
+			for(int lbIndex = 0; lbIndex < lbTclFilesCnt && !ar.IsBufferEmpty(); lbIndex++)
+			{
+				int nCheck = 0;
+				ar >> nCheck;
+				pView->m_TclFilesListBox.SetCheck(lbIndex, nCheck);
+			}
+
 			pView->m_SettingFilePath = ar.m_strFileName;
 
 		}

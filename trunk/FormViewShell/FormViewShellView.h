@@ -125,7 +125,8 @@ public:
 	afx_msg void OnBnClickedButtonDelFolder();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	// TCL 파일 리스트
-	CListBox m_TclFilesListBox;
+	//CListBox m_TclFilesListBox;
+	CCheckListBox m_TclFilesListBox;
 	//
 	BOOL m_bMultiMode;
 	CString m_SettingFilePath;
