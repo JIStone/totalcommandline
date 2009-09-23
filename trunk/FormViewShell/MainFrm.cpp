@@ -18,6 +18,7 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -78,7 +79,12 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	//cs.cy = 460;
 	
 	m_cs = cs;
-	
+
+   //최대화버튼 없애기
+    cs.style &=~WS_MAXIMIZEBOX;
+    // TODO: Modify the Window class or styles here by modifying
+    //  the CREATESTRUCT cs
+
 	memcpy(&m_cs, &cs, sizeof(CREATESTRUCT));
 	if( !CFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
@@ -120,4 +126,22 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 	CFrameWnd::OnSize(nType, cx, cy);
 	//UpdateWindow();
 	// TODO: Add your message handler code here
+}
+
+void CMainFrame::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	// TODO: Add your message handler code here and/or call default
+	// 윈도우 크기제한
+	// 최대 크기는 원하는 경우에만 변경하세요.
+	lpMMI->ptMaxSize.x = m_cs.cx;
+	lpMMI->ptMaxSize.y = m_cs.cy;
+
+     lpMMI->ptMaxTrackSize.x = m_cs.cx;
+     lpMMI->ptMaxTrackSize.y = m_cs.cy;
+
+     
+
+     lpMMI->ptMinTrackSize.x=200;       //< 윈도우 최소 크기 설정
+     lpMMI->ptMinTrackSize.y=150;  
+     CFrameWnd::OnGetMinMaxInfo(lpMMI);
 }
