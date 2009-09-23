@@ -154,6 +154,16 @@ void CFormViewShellView::OnInitialUpdate()
 		m_toolTip.SetMaxTipWidth(1000);
 		m_IsToolTipInit = true;
 	}
+	
+	// 폼뷰에 스크롤바 제거
+	ResizeParentToFit(FALSE);
+
+	CRect rect;
+
+	GetClientRect(&rect);
+
+	SetScaleToFitSize(rect.Size());  
+
 
 }
 
@@ -792,6 +802,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 	SetDlgItemText(IDC_EDIT_SUCCESS_FAIL, resultCnt);
 	GetDlgItem(IDC_EDIT_SUCCESS_FAIL)->UpdateWindow();
 	//m_ProgressCtrl.SetPos(100);
+	if(m_ViewList.GetCheck())
+	{
+		OnBnClickedButtonPre();
+	}
+
 	
 }
 int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNameList)
@@ -980,7 +995,7 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	{
 		GetDocument()->SetModifiedFlag(FALSE);
 	}
-	
+	m_toolTip.AddTool(GetDlgItem(IDC_EDIT1), m_AllCmdLnText);
 }
 //void CFormViewShellView::OnBnClickedOk()
 //{
@@ -1572,7 +1587,7 @@ void CFormViewShellView::OnLbnSelchangeListTclFiles()
 	//	GetDocument()->SetPathName(fPath,0);
 		m_bMultiMode = FALSE;
 	}
-	m_toolTip.AddTool(GetDlgItem(IDC_EDIT1), m_AllCmdLnText);
+	//m_toolTip.AddTool(GetDlgItem(IDC_EDIT1), m_AllCmdLnText);
 }
 
 //void CFormViewShellView::OnBnClickedButton3()
@@ -1618,4 +1633,15 @@ void CFormViewShellView::OnBnClickedButtonPrelist()
 	prevDlg.m_TitleText = "명령줄";
 	
 	prevDlg.DoModal();
+
+	CSize sizeTotal;   
+	sizeTotal.cx = 0;   
+	sizeTotal.cy = 0;   
+	SetScrollSizes(MM_TEXT, sizeTotal);   
+	SetScrollRange(SB_VERT,0,sizeTotal.cy);   
+	SetScrollPos(SB_VERT,0);   
+	  
+	SetScrollRange(SB_HORZ,0,sizeTotal.cx);   
+	SetScrollPos(SB_HORZ,0);
+
 }

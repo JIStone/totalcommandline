@@ -243,11 +243,19 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			{
 				// 다중 쉘API 호출시 창 확대
 				//(pWnd)->SetWindowPos(NULL,0,0,1300,700,SWP_NOMOVE);
+
+				((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs.cx = 1280;
+				((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs.cy = 700;
+
 				if(m_bIsFirstLoad)
+				{
 					(pWnd)->SetWindowPos(NULL,0,0,1269,689,SWP_NOMOVE);
+				}
 				else
+				{
 					(pWnd)->SetWindowPos(NULL,0,0,1280,700,SWP_NOMOVE);
-				
+				}
+
 				pView->m_BtnMultiTCLExcute.EnableWindow(TRUE);
 				pView->m_BtnExcute.EnableWindow(FALSE);
 				
@@ -303,6 +311,9 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			}
 			else
 			{
+				((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs.cx = 540;
+				((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs.cy = 700;
+
 				if(m_bIsFirstLoad)
 					(pWnd)->SetWindowPos(NULL,0,0,540,707,SWP_NOMOVE);
 				else
@@ -355,6 +366,10 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		else if(!pView->m_bMultiMode)
 		{
 			pView->m_TclFilesListBox.ResetContent();
+
+			((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs.cx = 540;
+			((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs.cy = 700;
+			
 			if(m_bIsFirstLoad)
 				(pWnd)->SetWindowPos(NULL,0,0,540,707,SWP_NOMOVE);
 			else
