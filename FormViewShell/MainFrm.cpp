@@ -133,13 +133,14 @@ void CMainFrame::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	// TODO: Add your message handler code here and/or call default
 	// 윈도우 크기제한
 	// 최대 크기는 원하는 경우에만 변경하세요.
-	lpMMI->ptMaxSize.x = m_cs.cx;
-	lpMMI->ptMaxSize.y = m_cs.cy;
+	if(m_cs.cx > 0 && m_cs.cy > 0)
+	{
+		lpMMI->ptMaxSize.x = m_cs.cx;
+		lpMMI->ptMaxSize.y = m_cs.cy;
 
-     lpMMI->ptMaxTrackSize.x = m_cs.cx;
-     lpMMI->ptMaxTrackSize.y = m_cs.cy;
-
-     
+		lpMMI->ptMaxTrackSize.x = m_cs.cx;
+		lpMMI->ptMaxTrackSize.y = m_cs.cy;
+	}     
 
      lpMMI->ptMinTrackSize.x=200;       //< 윈도우 최소 크기 설정
      lpMMI->ptMinTrackSize.y=150;  

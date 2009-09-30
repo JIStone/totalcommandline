@@ -117,6 +117,7 @@ char *a1 =	__argv[1];
 		fIni.Open(_T(".\\totalcvtr.cur"), CFile::modeRead);
 		filePath = fIni.GetFilePath();
 		//AfxMessageBox("Å×½ºÆ®.");
+		fIni.Close();
 	}
 	else if(!fIni.Open(_T(".\\totalcvtr.cur"), CFile::modeRead))
 	{
@@ -131,10 +132,9 @@ char *a1 =	__argv[1];
 		fIni.Read(buffer, fileLen);
 		fPath = buffer;
 		filePath = fIni.GetFilePath();
-
-		
+		fIni.Close();
 	}
-	fIni.Close();
+	
 	
 	
 	CFrameWnd * pWnd = (CFrameWnd*)AfxGetMainWnd();
