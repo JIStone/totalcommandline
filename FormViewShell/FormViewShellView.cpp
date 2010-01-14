@@ -494,8 +494,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" +  execArg;
 			}
 			else
-			{
-				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + m_PreCmdOptStr + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
+			{	// 10년01년14일 Avitomoviclipds.exe 대응 경로부분의 공백이 있으면 문제발생 " "로 묶음
+				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" + m_PreCmdOptStr + "\"" + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
 			}
 
 			CString oExtStrTop;
