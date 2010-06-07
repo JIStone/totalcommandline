@@ -123,6 +123,7 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON2, m_BtnMultiTCLExcute);
 	DDX_Control(pDX, IDC_EXECAPPL, m_BtnExcute);
 	DDX_Control(pDX, IDC_VIEWLIST, m_ViewList);
+	DDX_Control(pDX, IDC_SUB_FOLDER, m_ChkSubFolder);
 }
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
@@ -825,7 +826,7 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 		CreateDirectory(sDirName, NULL);
 	}
 
-	while (bWorking)
+	while (bWorking && m_ChkSubFolder.GetCheck())
 	{
 		bWorking = dirFinder.FindNextFile();
 	
@@ -874,7 +875,7 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 				CreateDirectory(path, NULL);
 			}
 		
-
+			//if(m_ChkSubFolder.GetCheck())
 			SearchDir(dirFinder.GetFilePath(), sDirNameList);
 		}
 	}

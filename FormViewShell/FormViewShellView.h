@@ -146,6 +146,8 @@ public:
 	afx_msg void OnBnClickedDelMtclList();
 	afx_msg void OnBnClickedButtonPre();
 	afx_msg void OnBnClickedButtonPrelist();
+	// 하위폴더 검색유무
+	CButton m_ChkSubFolder;
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전
