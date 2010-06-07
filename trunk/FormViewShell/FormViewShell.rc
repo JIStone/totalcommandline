@@ -16,7 +16,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Korean resources
+// 한국어 resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
 #ifdef _WIN32
@@ -175,7 +175,7 @@ CAPTION "TotalCommandLine 정보"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "TotalCommandLine™ Version 1.2.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "TotalCommandLine™ Version 1.2.1",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright SEOK Ent(C) 2008,2009 ",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "확인",IDOK,113,41,50,14,WS_GROUP
 END
@@ -236,6 +236,7 @@ BEGIN
     PUSHBUTTON      "명령줄보기",IDC_BUTTON_PRELIST,697,288,6,9,NOT WS_VISIBLE
     LTEXT           "▶▶",IDC_STATIC,87,149,15,8
     LTEXT           "◀◀",IDC_STATIC,87,177,15,8
+    CONTROL         "하위폴더",IDC_SUB_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,233,197,43,10
 END
 
 IDD_PREVIEW_DIALOG DIALOGEX 0, 0, 548, 288
@@ -438,7 +439,7 @@ BEGIN
     AFX_IDS_SCTASKLIST      "작업 목록을 활성화합니다."
 END
 
-#endif    // Korean resources
+#endif    // 한국어 resources
 /////////////////////////////////////////////////////////////////////////////
 
 

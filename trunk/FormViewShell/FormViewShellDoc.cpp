@@ -110,6 +110,8 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		// 멀티커맨드라인 강제 딜레이
 		pView->GetDlgItemText(IDC_EDIT_DELAY_TIME, execArg);
 		ar << execArg;
+
+
 		// 멀티커맨드라인 경로 저장
 		int lbTclFilesCnt = pView->m_TclFilesListBox.GetCount();
 		ar << lbTclFilesCnt;
@@ -126,8 +128,9 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		{
 			ar << pView->m_TclFilesListBox.GetCheck(lbIndex);;
 		}
-
-
+		// 하위폴더 검색 유무
+		ar << pView->m_ChkSubFolder.GetCheck();
+		//===================== 저장할 데이터를 이하에 구현=====================
 	}
 	else
 	{
@@ -227,15 +230,14 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			ar >> execArg;
 			pView->SetDlgItemText(IDC_EDIT_DELAY_TIME, execArg);
 		}
-	
-		isEmpty = ar.IsBufferEmpty();
-
+		int lbTclFilesCnt = 0;
+		if(!ar.IsBufferEmpty())
+			ar >> lbTclFilesCnt;
 		// 읽어올 설정이 있고, 멀티실행중이어서 로딩하는 것이 아니면
 		if((!isEmpty && !pView->m_bMultiMode) || isMultiCommand)
 		{
-			int lbTclFilesCnt = 0;
+			
 			pView->m_TclFilesListBox.ResetContent();
-			ar >> lbTclFilesCnt;
 			CREATESTRUCT cs;
 			cs = ((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs;
 			
@@ -307,7 +309,8 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				pView->m_ExFolderListBox.ResetContent();
 				pView->m_Check_EnableErrPop.SetCheck(0);
 				pView->m_Check_EnableErrPop.EnableWindow(FALSE);
-				
+				pView->m_ChkSubFolder.SetCheck(0);
+				pView->m_ChkSubFolder.EnableWindow(FALSE);
 			}
 			else
 			{
@@ -344,7 +347,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				(pView->GetDlgItem(IDC_BUTTON_ADD_FOLDER))->EnableWindow(!_enable);
 				(pView->GetDlgItem(IDC_BUTTON_DEL_FOLDER))->EnableWindow(!_enable);
 				pView->m_Check_EnableErrPop.EnableWindow(!_enable);
-
+				pView->m_ChkSubFolder.EnableWindow(!_enable);
 			}
 
 			for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
@@ -359,9 +362,6 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				ar >> nCheck;
 				pView->m_TclFilesListBox.SetCheck(lbIndex, nCheck);
 			}
-
-			pView->m_SettingFilePath = ar.m_strFileName;
-
 		}
 		else if(!pView->m_bMultiMode)
 		{
@@ -378,6 +378,19 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			pView->m_BtnMultiTCLExcute.EnableWindow(FALSE);
 			pView->m_BtnExcute.EnableWindow(TRUE);
 		}
+
+		pView->m_SettingFilePath = ar.m_strFileName;
+		// 하위폴더 찾기유무
+		if(!ar.IsBufferEmpty())
+		{	
+			ar >> nCheck;
+			pView->m_ChkSubFolder.SetCheck(nCheck);	
+		}
+		else
+		{
+			pView->m_ChkSubFolder.SetCheck(TRUE);	
+		}
+		//===================== 불러들일데이터를 이하에 구현=====================
 	}
 	
 	m_bIsFirstLoad = FALSE;

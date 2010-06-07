@@ -21,6 +21,7 @@
 #define IDC_CHECK2                      1010
 #define IDC_VIEWLIST                    1010
 #define IDC_CHECK3                      1011
+#define IDC_SUB_FOLDER                  1011
 #define IDC_EDIT2                       1012
 #define IDC_EDIT1                       1013
 #define IDC_PROGRESS1                   1014
@@ -53,7 +54,6 @@
 #define IDC_BUTTON_PRE                  1058
 #define IDC_EDIT_RESULT                 1060
 #define IDC_BUTTON_PRELIST              1064
-#define IDC_TAB1                        1073
 
 // Next default values for new objects
 // 
