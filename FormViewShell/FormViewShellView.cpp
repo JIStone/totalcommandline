@@ -8,6 +8,7 @@
 #include "FormViewShellView.h"
 #include "PreviewDlg.h"
 #include <shlwapi.h>
+#include "MainFrm.h"
 
 #include <direct.h>
 
@@ -1344,6 +1345,8 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 	if(curCnt > 1)
 	{
 		CFrameWnd * pWnd = (CFrameWnd*)AfxGetMainWnd();
+		((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs.cx = 1280;
+		((CMainFrame*)(pWnd->GetActiveFrame()))->m_cs.cy = 700;	
 		pWnd->SetWindowPos(NULL,0,0,1280,700,SWP_NOMOVE);
 
 		m_BtnMultiTCLExcute.EnableWindow(TRUE);
