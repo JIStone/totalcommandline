@@ -79,11 +79,11 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 
 		ar << pView->m_ExecFileName;
 		ar << pView->m_PreCmdOptStr;
-		int lbCnt = pView->m_ListBox.GetCount();
+		int lbCnt = pView->m_ListBox_Out.GetCount();
 		ar << lbCnt;
 		for(int lbIndex = 0; lbIndex < lbCnt; lbIndex++)
 		{
-			pView->m_ListBox.GetText(lbIndex, execArg);
+			pView->m_ListBox_Out.GetText(lbIndex, execArg);
 			ar << execArg;
 		}
 		
@@ -163,11 +163,11 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		int lbCnt = 0;
 		
 		ar >> lbCnt;
-		pView->m_ListBox.ResetContent();
+		pView->m_ListBox_Out.ResetContent();
 		for(int lbIndex = 0; lbIndex < lbCnt; lbIndex++)
 		{
 			ar >> execArg;
-			pView->m_ListBox.AddString(execArg);
+			pView->m_ListBox_Out.AddString(execArg);
 			
 		}
 		
@@ -305,7 +305,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				(pView->GetDlgItem(IDC_BUTTON_ADD_FOLDER))->EnableWindow(FALSE);
 				(pView->GetDlgItem(IDC_BUTTON_DEL_FOLDER))->EnableWindow(FALSE);
 
-				pView->m_ListBox.ResetContent();
+				pView->m_ListBox_Out.ResetContent();
 				pView->m_ExFolderListBox.ResetContent();
 				pView->m_Check_EnableErrPop.SetCheck(0);
 				pView->m_Check_EnableErrPop.EnableWindow(FALSE);
