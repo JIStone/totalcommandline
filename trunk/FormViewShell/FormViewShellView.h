@@ -88,7 +88,7 @@ public:
 	BOOL m_FirstLoaded;
 //	afx_msg void OnBnClickedOk();
 //	CString m_ListData;
-	CListBox m_ListBox;
+	CListBox m_ListBox_Out;
 	afx_msg void OnBnClickedBtnOutAdd();
 	afx_msg void OnBnClickedBtnOutDel();
 	CString m_ListData;

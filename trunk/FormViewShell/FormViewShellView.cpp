@@ -9,6 +9,7 @@
 #include "PreviewDlg.h"
 #include <shlwapi.h>
 #include "MainFrm.h"
+#include <string>
 
 #include <direct.h>
 
@@ -27,49 +28,37 @@ IMPLEMENT_DYNCREATE(CFormViewShellView, CFormView)
 
 BEGIN_MESSAGE_MAP(CFormViewShellView, CFormView)
 	ON_BN_CLICKED(IDC_SELFILE2, &CFormViewShellView::OnBnClickedSelfile2)
-//	ON_BN_CLICKED(IDC_SELFILE, &CFormViewShellView::OnBnClickedSelfile)
 	ON_BN_CLICKED(IDC_SELPATH, &CFormViewShellView::OnBnClickedSelpath)
-//	ON_EN_CHANGE(IDC_EDIT4, &CFormViewShellView::OnEnChangeEdit4)
-ON_BN_CLICKED(IDC_CHECK1, &CFormViewShellView::OnBnClickedCheck1)
-//ON_BN_CLICKED(IDC_CHECK2, &CFormViewShellView::OnBnClickedCheck2)
-ON_BN_CLICKED(IDC_CHECK3, &CFormViewShellView::OnBnClickedCheck3)
-ON_BN_CLICKED(IDC_EXECAPPL, &CFormViewShellView::OnBnClickedExecappl)
-//ON_BN_CLICKED(IDOK, &CFormViewShellView::OnBnClickedOk)
-ON_EN_CHANGE(IDC_PATH, &CFormViewShellView::OnEnChangePath)
-ON_EN_CHANGE(IDC_SRC_FILE, &CFormViewShellView::OnEnChangeSrcFile)
-ON_EN_CHANGE(IDC_EXEC_FILE, &CFormViewShellView::OnEnChangeExecFile)
-ON_EN_CHANGE(IDC_EDIT3, &CFormViewShellView::OnEnChangeEdit3)
-ON_EN_CHANGE(IDC_EDIT4, &CFormViewShellView::OnEnChangeEdit4)
-ON_NOTIFY(NM_CUSTOMDRAW, IDC_PROGRESS1, &CFormViewShellView::OnNMCustomdrawProgress1)
-
-ON_EN_CHANGE(IDC_EDIT5, &CFormViewShellView::OnEnChangeEdit5)
-
-ON_BN_CLICKED(IDC_BTN_OUT_ADD, &CFormViewShellView::OnBnClickedBtnOutAdd)
-ON_BN_CLICKED(IDC_BTN_OUT_DEL, &CFormViewShellView::OnBnClickedBtnOutDel)
-
-ON_BN_CLICKED(IDC_SELFILE, &CFormViewShellView::OnBnClickedSelfile)
-
-ON_BN_CLICKED(IDC_RADIO1_MOVE, &CFormViewShellView::OnBnClickedRadio1Move)
-ON_BN_CLICKED(IDC_RADIO2_COPY, &CFormViewShellView::OnBnClickedRadio2Copy)
-ON_BN_CLICKED(IDC_RADIO3_DELETE, &CFormViewShellView::OnBnClickedRadio3Delete)
-ON_EN_CHANGE(IDC_EDIT6, &CFormViewShellView::OnEnChangeEdit6)
-ON_EN_CHANGE(IDC_EDIT7, &CFormViewShellView::OnEnChangeEdit7)
-ON_EN_CHANGE(IDC_EDIT8, &CFormViewShellView::OnEnChangeEdit8)
-ON_LBN_SELCHANGE(IDC_LIST_OUT, &CFormViewShellView::OnLbnSelchangeListOut)
-ON_EN_CHANGE(IDC_EDIT_OUT, &CFormViewShellView::OnEnChangeEditOut)
-ON_BN_CLICKED(IDC_BUTTON_ADD_FOLDER, &CFormViewShellView::OnBnClickedButtonAddFolder)
-ON_BN_CLICKED(IDC_BUTTON_DEL_FOLDER, &CFormViewShellView::OnBnClickedButtonDelFolder)
-ON_WM_DROPFILES()
-ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnClickedButton2)
-// IDC_SPIN2로 대체
-//ON_BN_CLICKED(IDC_BUTTON_UP, &CFormViewShellView::OnBnClickedButtonUp)
-//ON_BN_CLICKED(IDC_BUTTON_DN, &CFormViewShellView::OnBnClickedButtonDn)
-ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin2)
-ON_LBN_SELCHANGE(IDC_LIST_TCL_FILES, &CFormViewShellView::OnLbnSelchangeListTclFiles)
-//ON_BN_CLICKED(IDC_BUTTON3, &CFormViewShellView::OnBnClickedButton3)
-ON_BN_CLICKED(IDC_DEL_MTCL_LIST, &CFormViewShellView::OnBnClickedDelMtclList)
-ON_BN_CLICKED(IDC_BUTTON_PRE, &CFormViewShellView::OnBnClickedButtonPre)
-ON_BN_CLICKED(IDC_BUTTON_PRELIST, &CFormViewShellView::OnBnClickedButtonPrelist)
+	ON_BN_CLICKED(IDC_CHECK1, &CFormViewShellView::OnBnClickedCheck1)
+	ON_BN_CLICKED(IDC_CHECK3, &CFormViewShellView::OnBnClickedCheck3)
+	ON_BN_CLICKED(IDC_EXECAPPL, &CFormViewShellView::OnBnClickedExecappl)
+	ON_EN_CHANGE(IDC_PATH, &CFormViewShellView::OnEnChangePath)
+	ON_EN_CHANGE(IDC_SRC_FILE, &CFormViewShellView::OnEnChangeSrcFile)
+	ON_EN_CHANGE(IDC_EXEC_FILE, &CFormViewShellView::OnEnChangeExecFile)
+	ON_EN_CHANGE(IDC_EDIT3, &CFormViewShellView::OnEnChangeEdit3)
+	ON_EN_CHANGE(IDC_EDIT4, &CFormViewShellView::OnEnChangeEdit4)
+	ON_NOTIFY(NM_CUSTOMDRAW, IDC_PROGRESS1, &CFormViewShellView::OnNMCustomdrawProgress1)
+	ON_EN_CHANGE(IDC_EDIT5, &CFormViewShellView::OnEnChangeEdit5)
+	ON_BN_CLICKED(IDC_BTN_OUT_ADD, &CFormViewShellView::OnBnClickedBtnOutAdd)
+	ON_BN_CLICKED(IDC_BTN_OUT_DEL, &CFormViewShellView::OnBnClickedBtnOutDel)
+	ON_BN_CLICKED(IDC_SELFILE, &CFormViewShellView::OnBnClickedSelfile)
+	ON_BN_CLICKED(IDC_RADIO1_MOVE, &CFormViewShellView::OnBnClickedRadio1Move)
+	ON_BN_CLICKED(IDC_RADIO2_COPY, &CFormViewShellView::OnBnClickedRadio2Copy)
+	ON_BN_CLICKED(IDC_RADIO3_DELETE, &CFormViewShellView::OnBnClickedRadio3Delete)
+	ON_EN_CHANGE(IDC_EDIT6, &CFormViewShellView::OnEnChangeEdit6)
+	ON_EN_CHANGE(IDC_EDIT7, &CFormViewShellView::OnEnChangeEdit7)
+	ON_EN_CHANGE(IDC_EDIT8, &CFormViewShellView::OnEnChangeEdit8)
+	ON_LBN_SELCHANGE(IDC_LIST_OUT, &CFormViewShellView::OnLbnSelchangeListOut)
+	ON_EN_CHANGE(IDC_EDIT_OUT, &CFormViewShellView::OnEnChangeEditOut)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_FOLDER, &CFormViewShellView::OnBnClickedButtonAddFolder)
+	ON_BN_CLICKED(IDC_BUTTON_DEL_FOLDER, &CFormViewShellView::OnBnClickedButtonDelFolder)
+	ON_WM_DROPFILES()
+	ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnClickedButton2)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin2)
+	ON_LBN_SELCHANGE(IDC_LIST_TCL_FILES, &CFormViewShellView::OnLbnSelchangeListTclFiles)
+	ON_BN_CLICKED(IDC_DEL_MTCL_LIST, &CFormViewShellView::OnBnClickedDelMtclList)
+	ON_BN_CLICKED(IDC_BUTTON_PRE, &CFormViewShellView::OnBnClickedButtonPre)
+	ON_BN_CLICKED(IDC_BUTTON_PRELIST, &CFormViewShellView::OnBnClickedButtonPrelist)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
@@ -106,15 +95,10 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_CHECK1, m_Check_EnableErrPop);
-	//DDX_Control(pDX, IDC_CHECK2, m_Check_Bmp);
-	//DDX_Control(pDX, IDC_CHECK3, m_ExtName);
 	DDX_Control(pDX, IDC_PROGRESS1, m_ProgressCtrl);
 	DDX_Control(pDX, IDC_EDIT2, m_EditProgCnt);
-	//	DDX_Control(pDX, IDC_EDIT5, m_Eidt_PreCmdOpt);
-	//DDX_Control(pDX, IDC_EDIT_OUT, m_ListData);
-	DDX_Control(pDX, IDC_LIST_OUT, m_ListBox);
+	DDX_Control(pDX, IDC_LIST_OUT, m_ListBox_Out);
 	DDX_Text(pDX, IDC_EDIT_OUT, m_ListData);
-	//	DDX_Control(pDX, IDC_RADIO1_MOVE, m_AddExtTypeRadio);
 	DDX_Radio(pDX, IDC_RADIO1_MOVE, m_AddExtTypeRadio);
 	DDX_Control(pDX, IDC_EDIT_SUCCESS_FAIL, m_Edit_Success_Fail);
 
@@ -232,32 +216,33 @@ void CFormViewShellView::OnBnClickedSelfile2()
 	DisplayCommand(TRUE);
 }
 
-//void CFormViewShellView::OnBnClickedSelfile()
-//{
-//	// TODO: Add your control notification handler code here
-//
-//	LPITEMIDLIST pidlBrowse;
-//
-//	BROWSEINFO BRinfo;
-//	BRinfo.hwndOwner = GetSafeHwnd();
-//	BRinfo.pidlRoot = NULL;
-//	BRinfo.pszDisplayName = m_FullFileName.GetBuffer(MAX_PATH);
-//	BRinfo.lpszTitle = "폴더를 선택하세요.";
-//	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS;
-//	BRinfo.lpfn = NULL;
-//	BRinfo.lParam = 0;
-//
-//	pidlBrowse = SHBrowseForFolder(&BRinfo);
-//	if(pidlBrowse != NULL) 
-//	{
-//		SHGetPathFromIDList(pidlBrowse, m_FullFileName.GetBuffer(MAX_PATH));
-//		SetDlgItemText(IDC_SRC_FILE, m_FullFileName);
-//		char *temp = m_FullFileName.GetBuffer(MAX_PATH);
-//		m_FullFileName = temp;
-//	
-//	}
-//	DisplayCommand(TRUE);
-//}
+/*void CFormViewShellView::OnBnClickedSelfile()
+{
+	TODO: Add your control notification handler code here
+
+	LPITEMIDLIST pidlBrowse;
+
+	BROWSEINFO BRinfo;
+	BRinfo.hwndOwner = GetSafeHwnd();
+	BRinfo.pidlRoot = NULL;
+	BRinfo.pszDisplayName = m_FullFileName.GetBuffer(MAX_PATH);
+	BRinfo.lpszTitle = "폴더를 선택하세요.";
+	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS;
+	BRinfo.lpfn = NULL;
+	BRinfo.lParam = 0;
+
+	pidlBrowse = SHBrowseForFolder(&BRinfo);
+	if(pidlBrowse != NULL) 
+	{
+		SHGetPathFromIDList(pidlBrowse, m_FullFileName.GetBuffer(MAX_PATH));
+		SetDlgItemText(IDC_SRC_FILE, m_FullFileName);
+		char *temp = m_FullFileName.GetBuffer(MAX_PATH);
+		m_FullFileName = temp;
+	
+	}
+	DisplayCommand(TRUE);
+}
+*/
 
 void CFormViewShellView::OnBnClickedSelpath()
 {
@@ -350,7 +335,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 		AfxMessageBox("기간초과");
 		return;
 	}
-	//갱신파일 저장(코드워리어 make용
+	//갱신파일 저장(코드워리어 make용)
 	CFile myFile;
 	CFileException e;
 	//AfxMessageBox(m_IniFilePath);
@@ -501,8 +486,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 			}
 
 			CString oExtStrTop;
-			if(m_ListBox.GetCount())
-				m_ListBox.GetText(0, oExtStrTop);
+			if(m_ListBox_Out.GetCount())
+				m_ListBox_Out.GetText(0, oExtStrTop);
 			
 
 
@@ -523,7 +508,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				//ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, nShowCmd);
 			}
 			
-			for(int lbIndex = 0; lbIndex < m_ListBox.GetCount(); lbIndex++)
+			for(int lbIndex = 0; lbIndex < m_ListBox_Out.GetCount(); lbIndex++)
 			{
 				// 파일처리 타입 설정
 				int iExtType = 0;
@@ -539,7 +524,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				iExtStr = testAllPath.Right(testAllPath.GetLength() - sIndex);
 				iExtStr.Replace("\"", "");
 				
-				m_ListBox.GetText(lbIndex, oExtStr);
+				m_ListBox_Out.GetText(lbIndex, oExtStr);
 
 				CString tExtTypeStr = oExtStr.Left(3);
 
@@ -562,7 +547,6 @@ void CFormViewShellView::OnBnClickedExecappl()
 				sIndex = oExtStr.Find('.', 0);
 				oExtStr = oExtStr.Right(oExtStr.GetLength() - sIndex);
 
-
 				//실행결과로 생성된 파일패스 만들기
 				//sIndex = testAllPath.Find('.',testAllPath.GetLength() - FILE_EXT_LENGTH_MAX);
 				sIndex = testAllPath.Find('.',0);
@@ -582,7 +566,6 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 				outPutResultPath.Replace("\"","");
 
-
 				CString tempOutPutStr = vecFileList[listCnt];
 				// 파일 이름만 분리하기
 				//sIndex = tempOutPutStr.Find('.',tempOutPutStr.GetLength() - FILE_EXT_LENGTH_MAX);
@@ -591,17 +574,16 @@ void CFormViewShellView::OnBnClickedExecappl()
 				// 출력파일이름에 확장자 붙이기
 				tempOutPutStr.Replace(sExte, oExtStr);
 
-				//tempOutPutStr.Replace(iExtStr, oExtStr);
 				tempOutPutStr.Replace(searchRootDirStr, "");
 				//CString movSrc = searchRootDirStr + tempOutPutStr;
 				tempOutPutStr = m_DestPath + tempOutPutStr;
-				// 이름 강제 바꾸고 이동하기////////
+				// 이름 강제 바꾸고 이동하기
 				//CString movSrc = searchRootDirStr + vecSearchSubDirList[dirCnt] + "\\*" + oExtStr;//SE_ERR_ACCESSDENIED
 				CString movDest = tempOutPutStr;
 				//생성된 파일 찾기위한 파일 패스
 				CString movingStr = "";
 				int findCnt = 0;
-				
+				//
 				BOOL bAtiveFileProc = TRUE;
 				// 컨버팅된 파일이 원본 파일이 있는 폴더에 아직 없을 경우 계속 찾음
 				while(movingStr.IsEmpty())
@@ -645,7 +627,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				HINSTANCE movRet = ShellExecute(NULL, "open", "cmd", testSTRING, NULL, SW_HIDE);
 */
 
-//========================================= 결과 파일처리====================================================
+				//========================================= 결과 파일처리 표시====================================================
 				if(bAtiveFileProc)
 				{
 
@@ -696,7 +678,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 					// 생성결과 파일이 큰 이유등으로 SHFileOperation()가 제대로 마치지 못했으면 될때까지한다.
 					do
 					{
-//===================================쉘파일처러===========================================================
+					//===================================쉘파일처러===========================================================
 						shRet = SHFileOperation(&shos);
 						//Sleep(10);
 						if(tryCount > 0)
@@ -723,7 +705,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 					}
 
 				}
-//==============================================================================================================================
+				//==============================================================================================================================
 
 				BOOL isDestFileExist = FALSE;
 				if(iExtType == FO_DELETE)
@@ -758,7 +740,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				}
 				else if(!((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist)))
 				{
-					iSuccessCnt +=  (lbIndex + 1) / m_ListBox.GetCount();//  ++;
+					iSuccessCnt +=  (lbIndex + 1) / m_ListBox_Out.GetCount();//  ++;
 				}
 			}
 			
@@ -781,24 +763,26 @@ void CFormViewShellView::OnBnClickedExecappl()
 		}
 	}
 	
-	// 폴더도 지우기
+	// 소스쪽의 빈폴더 지우기
 	for(int dirCnt = m_SubDirCnt - 1; dirCnt >= 1; dirCnt--) // dirCnt >= 1 : 최상위 폴더는 삭제하지않음
 	{
-		//***하위에 파일이나 폴더가 있으면 안됨***
-		WCHAR       wstring[1024];
+		//***하위에 파일이나 폴더가 있으면 폴더가 지워지지 않음***
+		//WCHAR	wstringTemp[1024];
 		CString		delFolderPath;
-		
 		delFolderPath = m_FullFileName + vecSearchSubDirList[dirCnt];
-		ZeroMemory(wstring, sizeof(wstring));
-		int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, (LPCSTR)delFolderPath , delFolderPath.GetLength(), wstring, 1024 );
 
-		_wrmdir(wstring);
+		//ZeroMemory(wstringTemp, sizeof(wstringTemp));
+		//int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, (LPCSTR)delFolderPath , delFolderPath.GetLength(), wstring, 1024 );
+
+		// convert a cstring to a wstring(http://social.msdn.microsoft.com/Forums/en-US/vcgeneral/thread/def5f69a-57da-456a-bba9-dad0743f5929)
+		std::wstring	wStrigPath =	CStringW(delFolderPath);
+		//_wrmdir(wstringTemp);
+		_wrmdir(wStrigPath.c_str());
 		int tempErr = errno;//GetLastError();
 		errno;
 	}
 
 	CString resultCnt;
-	//resultCnt.Format( "성공: %d", iSuccessCnt / m_ListBox.GetCount());
 	resultCnt.Format( "%d / %d 성공", iSuccessCnt, progressCnt);
 	m_Edit_Success_Fail.ShowWindow(SW_SHOW);
 	SetDlgItemText(IDC_EDIT_SUCCESS_FAIL, resultCnt);
@@ -1107,7 +1091,7 @@ void CFormViewShellView::OnBnClickedBtnOutAdd()
 			m_ListData = "[D]" + m_ListData;
 			break;
 		}
-		m_ListBox.AddString(m_ListData);
+		m_ListBox_Out.AddString(m_ListData);
 		GetDocument()->SetModifiedFlag(TRUE);
 	}
 }
@@ -1116,14 +1100,14 @@ void CFormViewShellView::OnBnClickedBtnOutDel()
 {
 	// TODO: Add your control notification handler code here
 	int loc;
-	loc = m_ListBox.GetCurSel();
-	m_ListBox.DeleteString(loc);
-	if(loc == m_ListBox.GetCount())
+	loc = m_ListBox_Out.GetCurSel();
+	m_ListBox_Out.DeleteString(loc);
+	if(loc == m_ListBox_Out.GetCount())
 	{
 		loc = loc - 1;
 		GetDocument()->SetModifiedFlag(TRUE);
 	}
-	m_ListBox.SetCurSel(loc);
+	m_ListBox_Out.SetCurSel(loc);
 }
 
 //void CFormViewShellView::OnLbnSelchangeListOut()
