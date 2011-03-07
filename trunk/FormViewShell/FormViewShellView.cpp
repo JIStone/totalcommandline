@@ -29,8 +29,8 @@ IMPLEMENT_DYNCREATE(CFormViewShellView, CFormView)
 BEGIN_MESSAGE_MAP(CFormViewShellView, CFormView)
 	ON_BN_CLICKED(IDC_SELFILE2, &CFormViewShellView::OnBnClickedSelfile2)
 	ON_BN_CLICKED(IDC_SELPATH, &CFormViewShellView::OnBnClickedSelpath)
-	ON_BN_CLICKED(IDC_CHECK1, &CFormViewShellView::OnBnClickedCheck1)
-	ON_BN_CLICKED(IDC_CHECK3, &CFormViewShellView::OnBnClickedCheck3)
+	ON_BN_CLICKED(IDC_CHECK1, &CFormViewShellView::OnBnClickedOptionCheck)
+
 	ON_BN_CLICKED(IDC_EXECAPPL, &CFormViewShellView::OnBnClickedExecappl)
 	ON_EN_CHANGE(IDC_PATH, &CFormViewShellView::OnEnChangePath)
 	ON_EN_CHANGE(IDC_SRC_FILE, &CFormViewShellView::OnEnChangeSrcFile)
@@ -53,17 +53,18 @@ BEGIN_MESSAGE_MAP(CFormViewShellView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_FOLDER, &CFormViewShellView::OnBnClickedButtonAddFolder)
 	ON_BN_CLICKED(IDC_BUTTON_DEL_FOLDER, &CFormViewShellView::OnBnClickedButtonDelFolder)
 	ON_WM_DROPFILES()
-	ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnSeqExcuteButton)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin2)
 	ON_LBN_SELCHANGE(IDC_LIST_TCL_FILES, &CFormViewShellView::OnLbnSelchangeListTclFiles)
 	ON_BN_CLICKED(IDC_DEL_MTCL_LIST, &CFormViewShellView::OnBnClickedDelMtclList)
 	ON_BN_CLICKED(IDC_BUTTON_PRE, &CFormViewShellView::OnBnClickedButtonPre)
 	ON_BN_CLICKED(IDC_BUTTON_PRELIST, &CFormViewShellView::OnBnClickedButtonPrelist)
+	ON_BN_CLICKED(IDC_BUTTON_PREVIEW, &CFormViewShellView::OnBnClickedButtonPreview)
 END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
 
-extern "C" __declspec(dllimport) char* GetDateTime(BOOL& isTimeOver);
+extern "C" __declspec(dllimport) char* GetDateTime(bool& isTimeOver);
 
 CFormViewShellView::CFormViewShellView()
 	: CFormView(CFormViewShellView::IDD)
@@ -75,13 +76,12 @@ CFormViewShellView::CFormViewShellView()
 	, m_PreCmdOptStr(_T(""))
 	, m_AllCmdLnText(_T(""))
 	, m_FirstLoaded(FALSE)
-
 	, m_ListData(_T(""))
-
 	, m_IsToolTipInit(false)
 	, m_AddExtTypeRadio(0)
 	, m_ExFolderName(_T(""))
 	, m_bMultiMode(FALSE)
+	, m_bIsPreview(FALSE)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 
@@ -176,7 +176,7 @@ CFormViewShellDoc* CFormViewShellView::GetDocument() const // 디버그되지 않은 버
 
 
 // CFormViewShellView 메시지 처리기
-
+// m_ExecFilePath에 설정한 경로를 찾아감
 void CFormViewShellView::OnBnClickedSelfile2()
 {
 	// TODO: Add your control notification handler code here
@@ -272,17 +272,9 @@ void CFormViewShellView::OnBnClickedSelpath()
 	DisplayCommand(TRUE);
 }
 
-//void CFormViewShellView::OnEnChangeEdit4()
-//{
-//	// TODO:  If this is a RICHEDIT control, the control will not
-//	// send this notification unless you override the CFormView::OnInitDialog()
-//	// function and call CRichEditCtrl().SetEventMask()
-//	// with the ENM_CHANGE flag ORed into the mask.
-//
-//	// TODO:  Add your control notification handler code here
-//}
 
-void CFormViewShellView::OnBnClickedCheck1()
+
+void CFormViewShellView::OnBnClickedOptionCheck()
 {
 	// TODO: Add your control notification handler code here
 	CString opStr;
@@ -302,24 +294,10 @@ void CFormViewShellView::OnBnClickedCheck1()
 */
 }
 
-void CFormViewShellView::OnBnClickedCheck3()
-{
-	// TODO: Add your control notification handler code here
-	/*
-	switch(m_ExtName.GetCheck())
-	{
-	case 0:
-		SetDlgItemText(IDC_EDIT4, "");
-		break;
-	case 1:
-		SetDlgItemText(IDC_EDIT4, "*.ncg");
-		break;
-	}
-	*/
-}
-
-
-
+/*==================================================================
+	실행버튼 누른면 호출
+	명령을 수행한다.
+===================================================================*/
 void CFormViewShellView::OnBnClickedExecappl()
 {
 	// TODO: Add your control notification handler code here
@@ -328,14 +306,16 @@ void CFormViewShellView::OnBnClickedExecappl()
 	#define FILEEXISTCHECKCNT (2)
 	
 	// 사용기간 초과 검사
-	BOOL isTimeOver = FALSE;
-	char* t = GetDateTime(isTimeOver);
+	bool isTimeOver = false;
+
+	char* timeStr = GetDateTime(isTimeOver);
 	if(isTimeOver)
 	{
 		AfxMessageBox("기간초과");
 		return;
 	}
-	//갱신파일 저장(코드워리어 make용)
+	// 갱신파일 저장(코드워리어 make용)
+	// 실행시점, 사용된 파일경로 저장
 	CFile myFile;
 	CFileException e;
 	//AfxMessageBox(m_IniFilePath);
@@ -343,7 +323,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	{
 		TRACE(_T("File could not be opened %s : %d\n"), GetDocument()->m_IniFilePath + ".txt", e.m_cause);
 	}
-	CString refreshStr = m_SettingFilePath + "\r\n" + t;
+	CString refreshStr = m_SettingFilePath + "\r\n" + timeStr;
 	myFile.Write(refreshStr, refreshStr.GetLength());
 	myFile.Close();
 
@@ -437,13 +417,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 		//fMask에 SEE_MASK_NOCLOSEPROCESS를 포함하였다면
 		//hProcesss 멤버를 통하여 새로생긴 프로세스의 핸들을 반환 받을 수 있다.
-		//m_SearchedFileCnt = m_SearchedFileCnt > 0 ? 1 : 0;
 		progressCnt= 1;// 분모가 0이되는걸 막음
 		isInternalCmd = TRUE && m_SearchedFileCnt;
 
-		//HWND hwnd = GetDlgItem(IDC_EDIT9)->m_hWnd;
-		//CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "\\" + searchFileStr +  "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
-		//ShellExecute(hwnd, "open", m_ExecFilePath, CMDLine, NULL, SW_SHOW);
 		return;
 	}
 
@@ -481,16 +457,15 @@ void CFormViewShellView::OnBnClickedExecappl()
 				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" +  execArg;
 			}
 			else
-			{	// 10년01년14일 Avitomoviclipds.exe 대응 경로부분의 공백이 있으면 문제발생 " "로 묶음
+			{	// Avitomoviclipds.exe 대응 경로부분의 공백이 있으면 문제발생 " "로 묶음
 				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" + m_PreCmdOptStr + "\"" + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
 			}
 
 			CString oExtStrTop;
+
 			if(m_ListBox_Out.GetCount())
 				m_ListBox_Out.GetText(0, oExtStrTop);
 			
-
-
 			if(0 <= oExtStrTop.Find('*',0))
 			{
 				// 파일 처리작업만 한다.
@@ -501,24 +476,21 @@ void CFormViewShellView::OnBnClickedExecappl()
 			}
 			else
 			{
-
 				ShellCommon(m_ExecFilePath, testAllPath, SW_HIDE);
-
-				//========g2dcvtr은 한글폴더를 출력폴더를 정할수 없나?==========
-				//ret = ShellExecute(NULL, "open", m_ExecFilePath, testAllPath, NULL, nShowCmd);
 			}
 			
 			for(int lbIndex = 0; lbIndex < m_ListBox_Out.GetCount(); lbIndex++)
 			{
 				// 파일처리 타입 설정
 				int iExtType = 0;
-			
+				// 확장자 추출용
 				int sIndex = 0;
+				// 확장자
 				CString oExtStr;
 				//실행결과로 생성된 파일패스
 				CString outPutResultPath = "";
 				// 입력 파일의 확장자
-				CString iExtStr = "";//searchFileStr;
+				CString iExtStr = "";
 				// 확장자만 추출
 				sIndex = testAllPath.Find('.', 0);
 				iExtStr = testAllPath.Right(testAllPath.GetLength() - sIndex);
@@ -679,7 +651,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 					do
 					{
 					//===================================쉘파일처러===========================================================
-						shRet = SHFileOperation(&shos);
+						// 미리보기
+						if(!m_bIsPreview)
+						{
+							/*!!! 디버그모드시 에러발생가능 릴리즈 모드에서도 테스트 하도록!!!*/						
+							shRet = SHFileOperation(&shos);
+						}
 						//Sleep(10);
 						if(tryCount > 0)
 							m_ExcuteFilePath +=  "파일처리 중";
@@ -1348,7 +1325,7 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 */
 }
 // 다중실행
-void CFormViewShellView::OnBnClickedButton2()
+void CFormViewShellView::OnBnSeqExcuteButton()
 {
 	// TODO: Add your control notification handler code here
 	
@@ -1632,4 +1609,18 @@ void CFormViewShellView::OnBnClickedButtonPrelist()
 	SetScrollRange(SB_HORZ,0,sizeTotal.cx);   
 	SetScrollPos(SB_HORZ,0);
 
+}
+
+// 미리보기
+void CFormViewShellView::OnBnClickedButtonPreview()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	int lbTclFilesCnt = m_TclFilesListBox.GetCount();
+	int forceDelay = 0;
+	// 결과 텍스트 초기화
+	m_ExcuteFilePath = "";
+	m_bIsPreview = TRUE;
+	OnBnClickedExecappl();
+	m_bIsPreview = FALSE;
 }
