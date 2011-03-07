@@ -50,13 +50,10 @@ public:
 	CString m_FullFileName;
 	afx_msg void OnBnClickedSelpath();
 	CString m_DestPath;
-//	afx_msg void OnEnChangeEdit4();
-	afx_msg void OnBnClickedCheck1();
+	afx_msg void OnBnClickedOptionCheck();
 	CButton m_Check_EnableErrPop;
-//	afx_msg void OnBnClickedCheck2();
-	//CButton m_Check_Bmp;
+
 	afx_msg void OnBnClickedCheck3();
-	//CButton m_ExtName;
 	afx_msg void OnBnClickedExecappl();
 	int m_SubDirCnt;
 	int m_SearchedFileCnt;
@@ -78,16 +75,13 @@ public:
 	// 프로그래스카운트 표시
 	CEdit m_EditProgCnt;
 	afx_msg void OnNMCustomdrawProgress1(NMHDR *pNMHDR, LRESULT *pResult);
-//	afx_msg void OnEnChangeEdit2();
+
 //	CButton m_Check_WildDotExt;
 	CString m_ExecFileName;
-//	afx_msg void OnBnClickedCheck4();
 	CString m_PreCmdOptStr;
 	afx_msg void OnEnChangeEdit5();
 	CString m_AllCmdLnText;
 	BOOL m_FirstLoaded;
-//	afx_msg void OnBnClickedOk();
-//	CString m_ListData;
 	CListBox m_ListBox_Out;
 	afx_msg void OnBnClickedBtnOutAdd();
 	afx_msg void OnBnClickedBtnOutDel();
@@ -124,30 +118,35 @@ public:
 	CString m_ExFolderName;
 	afx_msg void OnBnClickedButtonDelFolder();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
-	// TCL 파일 리스트
-	//CListBox m_TclFilesListBox;
-	CCheckListBox m_TclFilesListBox;
-	//
-	BOOL m_bMultiMode;
-	CString m_SettingFilePath;
-	afx_msg void OnBnClickedButton2();
+
+	afx_msg void OnBnSeqExcuteButton();
 	afx_msg void OnBnClickedButtonUp();
 	afx_msg void OnBnClickedButtonDn();
-	// 모두실행 버튼
-	CButton m_BtnMultiTCLExcute;
-	// 실행버튼
-	CButton m_BtnExcute;
+
 	//std::vector<CString> vecSearchedFileList;
 	afx_msg void OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult);
 	void ShellCommon(CString excutteFile, CString CMDLine, int isShow);
-	CButton m_ViewList;
+
 	afx_msg void OnLbnSelchangeListTclFiles();
 //	afx_msg void OnBnClickedButton3();
 	afx_msg void OnBnClickedDelMtclList();
 	afx_msg void OnBnClickedButtonPre();
 	afx_msg void OnBnClickedButtonPrelist();
+	afx_msg void OnBnClickedButtonPreview();
+	// 실행버튼
+	CButton m_BtnExcute;
+	// 모두실행 버튼
+	CButton m_BtnMultiTCLExcute;
+	// TCL 파일 리스트
+	//CListBox m_TclFilesListBox;
+	CCheckListBox m_TclFilesListBox;
+	// 연속실행모드 여부
+	BOOL m_bMultiMode;
+	CString m_SettingFilePath;
+	CButton m_ViewList;
 	// 하위폴더 검색유무
 	CButton m_ChkSubFolder;
+	BOOL m_bIsPreview;
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

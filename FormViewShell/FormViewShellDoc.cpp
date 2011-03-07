@@ -311,6 +311,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				pView->m_Check_EnableErrPop.EnableWindow(FALSE);
 				pView->m_ChkSubFolder.SetCheck(0);
 				pView->m_ChkSubFolder.EnableWindow(FALSE);
+				pView->m_ViewList.EnableWindow(FALSE);
 			}
 			else
 			{
@@ -348,6 +349,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				(pView->GetDlgItem(IDC_BUTTON_DEL_FOLDER))->EnableWindow(!_enable);
 				pView->m_Check_EnableErrPop.EnableWindow(!_enable);
 				pView->m_ChkSubFolder.EnableWindow(!_enable);
+				pView->m_ViewList.EnableWindow(!_enable);
 			}
 
 			for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
