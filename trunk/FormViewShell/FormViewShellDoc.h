@@ -38,6 +38,8 @@ protected:
 public:
 	// 설정파일 경로
 	CString m_IniFilePath;
+	// tcl 파일경로(상대경로위해)
+	CString m_tclFilePath;
 	CString m_TiltleString;
 	// 저장데이터를 최초 로드
 	BOOL m_bIsFirstLoad;

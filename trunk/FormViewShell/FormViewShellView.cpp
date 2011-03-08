@@ -1377,7 +1377,10 @@ void CFormViewShellView::OnBnSeqExcuteButton()
 	{
 		CString fPath;	
 		m_TclFilesListBox.GetText(lbIndex, fPath);
-		
+		// 고정된 폴더에서만 tcl 로드
+		int i = fPath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
+		fPath = fPath.Right(fPath.GetLength() - i);
+		fPath = GetDocument()->m_tclFilePath + fPath;		
 		if(!fPath.IsEmpty() && m_TclFilesListBox.GetCheck(lbIndex))
 		{
 			m_bMultiMode = TRUE;
@@ -1579,6 +1582,10 @@ void CFormViewShellView::OnLbnSelchangeListTclFiles()
 	if(lbIdx >= 0  && lbIdx <lbTclFilesCnt)
 	{
 		m_TclFilesListBox.GetText(lbIdx, fPath);
+		// 고정된 폴더에서만 tcl 로드
+		int i = fPath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
+		fPath = fPath.Right(fPath.GetLength() - i);
+		fPath = GetDocument()->m_tclFilePath + fPath;
 	}
 	else
 	{

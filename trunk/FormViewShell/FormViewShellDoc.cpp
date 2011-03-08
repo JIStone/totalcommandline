@@ -25,6 +25,7 @@ END_MESSAGE_MAP()
 CFormViewShellDoc::CFormViewShellDoc()
 : m_IniFilePath(_T(""))
 , m_TiltleString(_T(""))
+, m_tclFilePath(_T(""))
 , m_bIsFirstLoad(TRUE)
 {
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
@@ -117,9 +118,19 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		ar << lbTclFilesCnt;
 		for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
 		{
-			pView->m_TclFilesListBox.GetText(lbIndex, execArg);
-			ar << execArg;
 			pView->m_SettingFilePath = ar.m_strFileName;
+
+			int i = pView->m_SettingFilePath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
+			CString currPath = pView->m_SettingFilePath.Right(pView->m_SettingFilePath.GetLength() - i);
+			pView->m_SettingFilePath = m_tclFilePath + currPath;
+			
+			pView->m_TclFilesListBox.GetText(lbIndex, execArg);
+			i = execArg.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
+			execArg = execArg.Right(execArg.GetLength() - i);// 파일이름과 확장자만 얻는다.
+			execArg = m_tclFilePath + execArg;
+
+			ar << execArg;
+
 			// 다중 쉘API 호출시 창 확대
 			((CMainFrame*)(pWnd->GetActiveFrame()))->SetWindowPos(NULL,0,0,1300,700,SWP_NOMOVE);
 		}
@@ -382,8 +393,12 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			pView->m_BtnMultiTCLExcute.EnableWindow(FALSE);
 			pView->m_BtnExcute.EnableWindow(TRUE);
 		}
-
 		pView->m_SettingFilePath = ar.m_strFileName;
+		//CString currPath = Path;
+		int i = pView->m_SettingFilePath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
+		CString currPath = pView->m_SettingFilePath.Right(pView->m_SettingFilePath.GetLength() - i);
+		pView->m_SettingFilePath = m_tclFilePath + currPath;
+
 		// 하위폴더 찾기유무
 		if(!ar.IsBufferEmpty())
 		{	
