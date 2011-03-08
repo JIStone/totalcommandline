@@ -130,6 +130,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		}
 		// 하위폴더 검색 유무
 		ar << pView->m_ChkSubFolder.GetCheck();
+		ar << pView->m_ViewList.GetCheck();
 		//===================== 저장할 데이터를 이하에 구현=====================
 	}
 	else
@@ -311,6 +312,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				pView->m_Check_EnableErrPop.EnableWindow(FALSE);
 				pView->m_ChkSubFolder.SetCheck(0);
 				pView->m_ChkSubFolder.EnableWindow(FALSE);
+				pView->m_ViewList.SetCheck(0);
 				pView->m_ViewList.EnableWindow(FALSE);
 			}
 			else
@@ -392,12 +394,23 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		{
 			pView->m_ChkSubFolder.SetCheck(TRUE);	
 		}
+
+		// 하위폴더 찾기유무
+		if(!ar.IsBufferEmpty())
+		{	
+			ar >> nCheck;
+			pView->m_ViewList.SetCheck(nCheck);	
+		}
+		else
+		{
+			pView->m_ViewList.SetCheck(FALSE);	
+		}
 		//===================== 불러들일데이터를 이하에 구현=====================
 	}
 	
 	m_bIsFirstLoad = FALSE;
 	
-		//설정파일 저장
+	//========================!!!!설정파일 저장!!!===============================
 	CFile myFile;
 	CFileException e;
 	//AfxMessageBox(m_IniFilePath);

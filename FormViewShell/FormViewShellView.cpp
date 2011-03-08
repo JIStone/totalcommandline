@@ -27,7 +27,7 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpDa
 IMPLEMENT_DYNCREATE(CFormViewShellView, CFormView)
 
 BEGIN_MESSAGE_MAP(CFormViewShellView, CFormView)
-	ON_BN_CLICKED(IDC_SELFILE2, &CFormViewShellView::OnBnClickedSelfile2)
+	ON_BN_CLICKED(IDC_SELFILE2, &CFormViewShellView::OnBnClickedSelExcfile)
 	ON_BN_CLICKED(IDC_SELPATH, &CFormViewShellView::OnBnClickedSelpath)
 	ON_BN_CLICKED(IDC_CHECK1, &CFormViewShellView::OnBnClickedOptionCheck)
 
@@ -177,7 +177,7 @@ CFormViewShellDoc* CFormViewShellView::GetDocument() const // 디버그되지 않은 버
 
 // CFormViewShellView 메시지 처리기
 // m_ExecFilePath에 설정한 경로를 찾아감
-void CFormViewShellView::OnBnClickedSelfile2()
+void CFormViewShellView::OnBnClickedSelExcfile()
 {
 	// TODO: Add your control notification handler code here
 /*
@@ -294,14 +294,15 @@ void CFormViewShellView::OnBnClickedOptionCheck()
 */
 }
 
-/*==================================================================
-	실행버튼 누른면 호출
-	명령을 수행한다.
-===================================================================*/
+
+/*---------------------------------------------------------------------------*
+  Name:         SearchDir
+
+  Description:  	실행버튼 누른면 호출 명령을 수행한다.
+ *---------------------------------------------------------------------------*/
 void CFormViewShellView::OnBnClickedExecappl()
 {
 	// TODO: Add your control notification handler code here
-	//GetDlgItemText(IDC_SRC_FILE, m_FullFileName);
 	
 	#define FILEEXISTCHECKCNT (2)
 	
@@ -367,14 +368,16 @@ void CFormViewShellView::OnBnClickedExecappl()
 	CString execArg;
 	GetDlgItemText(IDC_EDIT3, execArg);
 
-	CString midPath;
-	GetDlgItemText(IDC_EDIT4, midPath);
-
 	GetDlgItemText(IDC_PATH, m_DestPath);
 
 	int fileCheckCnt = 0;
 	fileCheckCnt = GetDlgItemInt(IDC_EDIT8);
 	
+	CFileFind dirFinder;
+	BOOL bWorking = dirFinder.FindFile(m_DestPath + "\\*.*");	
+	m_DestPath = m_outRootPath = dirFinder.GetRoot();
+	bWorking = dirFinder.FindFile(m_FullFileName + "\\*.*");	
+	m_FullFileName = dirFinder.GetRoot();
 
 	CString searchRootDirStr = m_FullFileName;
 	std::vector<CString> vecSearchSubDirList;
@@ -387,7 +390,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	if(!isInternalCmd)
 		SearchDir(m_FullFileName, vecSearchSubDirList);
 
-	CString searchFileStr = midPath + "\0";
+	CString searchFileStr = m_midPath + "\0";
 
 	std::vector<CString> vecFileList;
 
@@ -567,8 +570,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 					else if(iExtType == FO_DELETE)
 					{
 						// 삭제할 파일의 경로
-						movingStr = tempOutPutStr;
-						bAtiveFileProc = PathFileExists(tempOutPutStr);
+						//movingStr = tempOutPutStr;
+						//bAtiveFileProc = PathFileExists(tempOutPutStr);
+						
+						movingStr = outPutResultPath;
+						bAtiveFileProc = PathFileExists(movingStr);
 						break;
 					}
 					else
@@ -745,8 +751,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	{
 		//***하위에 파일이나 폴더가 있으면 폴더가 지워지지 않음***
 		//WCHAR	wstringTemp[1024];
-		CString		delFolderPath;
-		delFolderPath = m_FullFileName + vecSearchSubDirList[dirCnt];
+		CString		delFolderPath = m_FullFileName + vecSearchSubDirList[dirCnt];
 
 		//ZeroMemory(wstringTemp, sizeof(wstringTemp));
 		//int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, (LPCSTR)delFolderPath , delFolderPath.GetLength(), wstring, 1024 );
@@ -758,7 +763,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 		int tempErr = errno;//GetLastError();
 		errno;
 	}
-
+	// 결과 표시
 	CString resultCnt;
 	resultCnt.Format( "%d / %d 성공", iSuccessCnt, progressCnt);
 	m_Edit_Success_Fail.ShowWindow(SW_SHOW);
@@ -772,11 +777,28 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	
 }
+
+/*---------------------------------------------------------------------------*
+  Name:         SearchDir
+
+  Description:  하위폴더를 찾아 없으면 생성하고 하위 경로를 sDirNameList에 넣는다.
+
+  Arguments:    sDirName:	검사할 상위폴더
+                            
+                sDirNameList:  저장될 하위폴더의 경로
+
+  Returns:      0
+ *---------------------------------------------------------------------------*/
 int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNameList)
 {
 	CFileFind dirFinder;
-	BOOL bWorking = dirFinder.FindFile(sDirName + "\\*.*");
+	BOOL bWorking = dirFinder.FindFile(sDirName + "\\*.*");	
+
 	int dCnt = 0;
+
+	// 목적경로에 하위 폴더가 되면 연쇄적으로 계속 폴더가 생성되는 것을 방지 
+	if(!(m_DestPath.Compare(sDirName)))
+		return dCnt;
 	// 최상위 폴더 추가
 	if(!m_SubDirCnt)
 	{
@@ -786,6 +808,7 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 		m_SubDirCnt++;
 		sDirNameList.push_back("");
 		CreateDirectory(sDirName, NULL);
+
 	}
 
 	while (bWorking && m_ChkSubFolder.GetCheck())
@@ -801,8 +824,13 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 			TRACE(_T("%s\n"), (LPCTSTR)dirFinder.GetFilePath());
 			// 서브폴더 절대경로
 			CString tempfolderPath = dirFinder.GetFilePath();
+			// 목적경로에 하위 폴더가 되면 연쇄적으로 계속 폴더가 생성되는 것을 방지 
+			if(!(m_DestPath.Compare(tempfolderPath)))
+				continue;
+
 			CString exFolderName;
 
+			// 작업에서 제외할 폴더명 검사
 			BOOL isExFolder = FALSE;
 			for(int lbIndex = 0; lbIndex < m_ExFolderListBox.GetCount(); lbIndex++)
 			{
@@ -818,7 +846,7 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 			if(isExFolder)
 				continue;
 
-			tempfolderPath.Replace(m_FullFileName, "");
+			tempfolderPath.Replace(sDirName, "");
 			//sDirNameList[m_SubDirCnt++] = tempfolderPath;
 			m_SubDirCnt++;
 			sDirNameList.push_back(tempfolderPath);
@@ -827,14 +855,13 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 			
 			// 타겟 파일이 있는것만 폴더를 생성해줌
 			// 타겟 파일이 없는데 그 하위폴더에 있는 경우도 폴더를 생성하지 않으므로 주석처리
-/*			CString exetStr;
-			GetDlgItemText(IDC_EDIT4, exetStr);
-			if(SearchFile(sDirName + sDirNameList[m_SubDirCnt-1], exetStr, NULL))
-*/			{
+			//if(SearchFile(sDirName + sDirNameList[m_SubDirCnt-1], m_midPath, NULL))
+			{
 
 				CString path = m_DestPath + sDirNameList[m_SubDirCnt-1];
-				
-				CreateDirectory(path, NULL);
+				// 목적경로에 하위 폴더가 되면 연쇄적으로 계속 폴더가 생성되는 것을 방지 
+				if((m_DestPath.Compare(path)))
+					CreateDirectory(path, NULL);
 			}
 		
 			//if(m_ChkSubFolder.GetCheck())
@@ -844,6 +871,18 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 	return dCnt;
 }
 
+/*---------------------------------------------------------------------------*
+  Name:         SearchFile
+
+  Description:  하위폴더를 찾아 없으면 생성함
+
+  Arguments:    sDirName:		검사할 경로            
+                sFileName:		찾을 파일명
+				vecFileList:	파일의 전체경로
+				searchedFileCnt:실제로 작업할 파일의 개수
+
+  Returns:      찾은 파일의 수
+ *---------------------------------------------------------------------------*/
 int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, std::vector<CString> &vecFileList, int &searchedFileCnt)
 {
 	CFileFind finder;
@@ -922,8 +961,8 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 
 	GetDlgItemText(IDC_EXEC_FILE, m_ExecFilePath);
 	
-	CString midPath;
-	GetDlgItemText(IDC_EDIT4, midPath);
+	
+	GetDlgItemText(IDC_EDIT4, m_midPath);
 
 
 	GetDlgItemText(IDC_PATH, m_DestPath);
@@ -931,7 +970,7 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	GetDlgItemText(IDC_EDIT5, m_PreCmdOptStr);
 
 	//CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
-	CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + "\\" + midPath + m_PreCmdOptStr + " " + m_DestPath + execSecondArg;
+	CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + "\\" + m_midPath + m_PreCmdOptStr + " " + m_DestPath + execSecondArg;
 	
 	//testAllPath.Replace(" ", "∨");
 
