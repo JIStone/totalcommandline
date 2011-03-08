@@ -136,6 +136,17 @@ char *a1 =	__argv[1];
 	}
 	
 	
+
+	TCHAR  Path[1024];
+	GetModuleFileName(NULL, Path, 1024);
+
+	//PathRemoveFileSpec(Path);
+	CString currPath = Path;
+	int i = currPath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
+
+	currPath = currPath.Left(i);//뒤에 있는 현재 실행 파일 이름을 지운다.
+
+
 	
 	CFrameWnd * pWnd = (CFrameWnd*)AfxGetMainWnd();
 	CFormViewShellView* pView = (CFormViewShellView*)pWnd->GetActiveView();

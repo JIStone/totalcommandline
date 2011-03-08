@@ -44,7 +44,7 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedSelfile2();
+	afx_msg void OnBnClickedSelExcfile();
 	CString m_ExecFilePath;
 //	afx_msg void OnBnClickedSelfile();
 	CString m_FullFileName;
@@ -147,6 +147,10 @@ public:
 	// 하위폴더 검색유무
 	CButton m_ChkSubFolder;
 	BOOL m_bIsPreview;
+	// 출력경로 루트패스
+	CString m_outRootPath;
+	//
+	CString m_midPath;
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전
