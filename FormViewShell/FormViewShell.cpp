@@ -164,7 +164,8 @@ char *a1 =	__argv[1];
 	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();	
-	
+	// 현재경로 고정
+	::SetCurrentDirectory(mydoc->m_tclFilePath);
 /*	
 	// 컨버터 셋팅파일 로드
 	CFile myFile;

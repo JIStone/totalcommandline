@@ -336,7 +336,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 	GetDlgItemText(IDC_PATH, m_DestPath);
 	
 
-	if(!(m_ExecFilePath).Compare("command.com") || !(m_ExecFilePath).Compare("cmd.exe"))
+	if(!(m_ExecFilePath).Compare("command.com") || 
+		!(m_ExecFilePath).Compare("cmd.exe") || 
+		!(m_ExecFilePath).Compare("explorer.exe"))
 	{
 		isInternalCmd = TRUE;
 	}
@@ -374,10 +376,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 	fileCheckCnt = GetDlgItemInt(IDC_EDIT8);
 	
 	CFileFind dirFinder;
-	BOOL bWorking = dirFinder.FindFile(m_DestPath + "\\*.*");	
-	m_DestPath = m_outRootPath = dirFinder.GetRoot();
-	bWorking = dirFinder.FindFile(m_FullFileName + "\\*.*");	
-	m_FullFileName = dirFinder.GetRoot();
+	BOOL bWorking = dirFinder.FindFile(m_DestPath + "\\*.*");
+	if(!m_DestPath.IsEmpty())
+		m_DestPath = m_outRootPath = dirFinder.GetRoot();
+	bWorking = dirFinder.FindFile(m_FullFileName + "\\*.*");
+	if(!m_DestPath.IsEmpty())
+		m_FullFileName = dirFinder.GetRoot();
 
 	CString searchRootDirStr = m_FullFileName;
 	std::vector<CString> vecSearchSubDirList;
@@ -414,7 +418,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 	// 내부 명령어 대응
 	if(isInternalCmd)
 	{
-		CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "" + searchFileStr +  "\"" + " "+ "\"" + m_DestPath + execArg + "\"";
+		//CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "" + searchFileStr +  "\"" + ""+ "\"" + m_DestPath + execArg + "\"";
+		CString CMDLine = execFirstArg;
 
 		ShellCommon(m_ExecFilePath, CMDLine, SW_SHOW);
 
