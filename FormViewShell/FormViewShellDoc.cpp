@@ -118,11 +118,12 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		ar << lbTclFilesCnt;
 		for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
 		{
-			pView->m_SettingFilePath = ar.m_strFileName;
+			//pView->m_SettingFilePath = ar.m_strFileName;
+			CString tempFilePath = ar.m_strFileName;
 
-			int i = pView->m_SettingFilePath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
-			CString currPath = pView->m_SettingFilePath.Right(pView->m_SettingFilePath.GetLength() - i);
-			pView->m_SettingFilePath = m_tclFilePath + currPath;
+			int i = tempFilePath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
+			CString currPath = tempFilePath.Right(tempFilePath.GetLength() - i);
+			tempFilePath = m_tclFilePath + currPath;
 			
 			pView->m_TclFilesListBox.GetText(lbIndex, execArg);
 			i = execArg.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
@@ -426,15 +427,30 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 	m_bIsFirstLoad = FALSE;
 	
 	//========================!!!!설정파일 저장!!!===============================
-	CFile myFile;
-	CFileException e;
-	//AfxMessageBox(m_IniFilePath);
-	if(!myFile.Open(m_IniFilePath, CFile::modeCreate | CFile::modeWrite, &e))
+	//	연속실행시에도 로드하므로 로드했던 파일을 로드하기위해 연속실행중이라면
+	//	다음에 실행하면 자동으로 로드될 파일을 저장하지않는다
+	//===========================================================================
+
+	if(!pView->m_bMultiMode)
 	{
-		TRACE(_T("File could not be opened %s : %d\n"), m_IniFilePath, e.m_cause);
+		BOOL isMultiMode = !(ar.m_strFileName.Right(5)).Compare(".mtcl");
+		BOOL isSingleLoaded = !(pView->m_SettingFilePath.Right(4)).Compare(".tcl");
+		CString nextLoad = pView->m_SettingFilePath;
+		// 연속모드인데 단일모드 파일경로를 저장하게 된다면
+		if(isMultiMode && isSingleLoaded)
+			nextLoad = ar.m_strFileName;
+		CFile myFile;
+		CFileException e;
+		//AfxMessageBox(m_IniFilePath);
+		if(!myFile.Open(m_IniFilePath, CFile::modeCreate | CFile::modeWrite, &e))
+		{
+			TRACE(_T("File could not be opened %s : %d\n"), m_IniFilePath, e.m_cause);
+		}
+		myFile.Write(nextLoad, nextLoad.GetLength());
+		// 다음에 실행하면 최후에 로드했던 파일을 로드
+		
+		myFile.Close();
 	}
-	myFile.Write(pView->m_SettingFilePath, pView->m_SettingFilePath.GetLength());
-	myFile.Close();
 }
 
 
