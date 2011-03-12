@@ -237,8 +237,29 @@ void CFormViewShellApp::OnAppAbout()
 
 void CFormViewShellApp::OnFileOpen(void)
 {
-	CWinApp::OnFileOpen();
-	
+	//CWinApp::OnFileOpen();
+	char szFileNameList[1024] = {0,};
+	// 
+	CFileDialog fileDlg( TRUE, NULL, NULL, NULL, "*.tcl|*.tcl|*.stcl|*.stcl|*.mtcl|*.mtcl|*.*|*.*||");
+
+	fileDlg.m_ofn.lpstrFile   = szFileNameList;
+	fileDlg.m_ofn.nMaxFile   = sizeof( szFileNameList ) - 1;
+	fileDlg.m_ofn.lpstrTitle  = "열기";
+	//fileDlg.m_ofn.lpstrInitialDir = "C:\\";
+
+	if( fileDlg.DoModal() == IDOK )
+	{
+		POSITION pos = fileDlg.GetStartPosition( );
+
+		while( pos )
+		{
+			CString strName = fileDlg.GetNextPathName( pos );
+			printf("name : %s\n", strName );
+			//Serialize() 함수를 사용 하려면, 
+			AfxGetApp()->OpenDocumentFile(strName);
+
+		}
+	} 
 	/*
 	// 프레임 클레스에서 대응
 	// 타이틀바 문자열 수정

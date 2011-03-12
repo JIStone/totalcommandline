@@ -43,4 +43,5 @@ public:
 
 	CFont m_bigfont;
 	CFont m_stylefont;
+	afx_msg void OnBnClickedOk();
 };
