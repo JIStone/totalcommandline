@@ -124,7 +124,7 @@ public:
 	afx_msg void OnBnClickedButtonDn();
 
 	//std::vector<CString> vecSearchedFileList;
-	afx_msg void OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult);
 	void ShellCommon(CString excutteFile, CString CMDLine, int isShow);
 
 	afx_msg void OnLbnSelchangeListTclFiles();

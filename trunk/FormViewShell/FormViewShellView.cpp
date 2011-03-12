@@ -54,7 +54,7 @@ BEGIN_MESSAGE_MAP(CFormViewShellView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON_DEL_FOLDER, &CFormViewShellView::OnBnClickedButtonDelFolder)
 	ON_WM_DROPFILES()
 	ON_BN_CLICKED(IDC_BUTTON2, &CFormViewShellView::OnBnSeqExcuteButton)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin2)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFormViewShellView::OnDeltaposSpin)
 	ON_LBN_SELCHANGE(IDC_LIST_TCL_FILES, &CFormViewShellView::OnLbnSelchangeListTclFiles)
 	ON_BN_CLICKED(IDC_DEL_MTCL_LIST, &CFormViewShellView::OnBnClickedDelMtclList)
 	ON_BN_CLICKED(IDC_BUTTON_PRE, &CFormViewShellView::OnBnClickedButtonPre)
@@ -1391,7 +1391,7 @@ void CFormViewShellView::OnBnSeqExcuteButton()
 			m_bMultiMode = TRUE;
 			m_TclFilesListBox.SetCurSel(lbIndex);
 			GetDocument()->OnOpenDocument(fPath);
-			GetDocument()->SetPathName(fPath,0);
+			//GetDocument()->SetPathName(fPath,0);
 			m_ExcuteFilePath += "\r\n================================================================\r\n";
 			m_ExcuteFilePath += " " + fPath + "\r\n"
 								+ "==================================================================\r\n";
@@ -1405,7 +1405,9 @@ void CFormViewShellView::OnBnSeqExcuteButton()
 	// 다수의 설정파일을 로드 했기때문에 처음 설정파일을 재로드		
 	m_bMultiMode = FALSE;
 	//GetDocument()->OnOpenDocument(m_SettingFilePath);
-	GetDocument()->SetPathName(m_SettingFilePath,0);
+	// 여러개 실행후 타이틀이름이 바뀌어 저장할때 마지막이름으로 저장되어 버림
+	//GetDocument()->SetPathName(m_SettingFilePath,0);
+	//GetDocument()->SetPathName(m_SettingFilePath + "여기",0);
 }
 /*
 void CFormViewShellView::OnBnClickedButtonUp()
@@ -1449,40 +1451,54 @@ void CFormViewShellView::OnBnClickedButtonDn()
 }
 */
 
-void CFormViewShellView::OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult)
+void CFormViewShellView::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	// TODO: Add your control notification handler code here
+	int loc;
+	CString tempUp;
+	CString tempDn;
+	int checkUp;
+	int checkDn;
+
 	if(pNMUpDown->iDelta < 0)
 	{
-		int loc;
-		CString tempUp;
-		CString tempDn;
+
+
 		loc = m_TclFilesListBox.GetCurSel();
 		UpdateData(TRUE);
 		if(loc > 0)
 		{
+			checkUp = m_TclFilesListBox.GetCheck(loc - 1);
+			checkDn = m_TclFilesListBox.GetCheck(loc);
 			m_TclFilesListBox.GetText(loc - 1, tempUp);
 			m_TclFilesListBox.GetText(loc, tempDn);
+
 			m_TclFilesListBox.DeleteString(loc - 1);
 			m_TclFilesListBox.InsertString(loc, tempUp);
+			m_TclFilesListBox.SetCheck(loc - 1, checkDn);
+			m_TclFilesListBox.SetCheck(loc, checkUp);
+
 			GetDocument()->SetModifiedFlag(TRUE);
 			m_TclFilesListBox.SetCurSel(loc - 1);
 		}
 	}
 	else if(pNMUpDown->iDelta > 0)
 	{
-		int loc;
-		CString tempUp;
-		CString tempDn;
 		loc = m_TclFilesListBox.GetCurSel();
 		UpdateData(TRUE);
 		if(loc >= 0 && loc < m_TclFilesListBox.GetCount() - 1)
 		{
+			checkUp = m_TclFilesListBox.GetCheck(loc);
+			checkDn = m_TclFilesListBox.GetCheck(loc + 1);
 			m_TclFilesListBox.GetText(loc, tempUp);
 			m_TclFilesListBox.GetText(loc + 1, tempDn);
+	
 			m_TclFilesListBox.DeleteString(loc + 1);
 			m_TclFilesListBox.InsertString(loc, tempDn);
+			m_TclFilesListBox.SetCheck(loc, checkDn);
+			m_TclFilesListBox.SetCheck(loc + 1, checkUp);
+
 			GetDocument()->SetModifiedFlag(TRUE);
 			m_TclFilesListBox.SetCurSel(loc + 1);
 		}
