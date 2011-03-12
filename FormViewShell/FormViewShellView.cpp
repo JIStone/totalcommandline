@@ -64,7 +64,7 @@ END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
 
-extern "C" __declspec(dllimport) char* GetDateTime(bool& isTimeOver);
+extern "C" __declspec(dllimport) char* GetDateTime(BOOL& isTimeOver);
 
 CFormViewShellView::CFormViewShellView()
 	: CFormView(CFormViewShellView::IDD)
@@ -304,22 +304,20 @@ void CFormViewShellView::OnBnClickedExecappl()
 {
 	// TODO: Add your control notification handler code here
 	
-	#define FILEEXISTCHECKCNT (2)
-	
+	const int FILE_EXIST_CHECK_CNT = 2;
 	// 사용기간 초과 검사
-	bool isTimeOver = false;
-
+	BOOL isTimeOver = false;
 	char* timeStr = GetDateTime(isTimeOver);
 	if(isTimeOver)
 	{
-		AfxMessageBox("기간초과");
+		AfxMessageBox("사용기간 초과");
 		return;
 	}
+
 	// 갱신파일 저장(코드워리어 make용)
 	// 실행시점, 사용된 파일경로 저장
 	CFile myFile;
 	CFileException e;
-	//AfxMessageBox(m_IniFilePath);
 	if(!myFile.Open(GetDocument()->m_IniFilePath + ".txt", CFile::modeCreate | CFile::modeWrite, &e))
 	{
 		TRACE(_T("File could not be opened %s : %d\n"), GetDocument()->m_IniFilePath + ".txt", e.m_cause);
@@ -335,14 +333,14 @@ void CFormViewShellView::OnBnClickedExecappl()
 	GetDlgItemText(IDC_EXEC_FILE, m_ExecFilePath);
 	GetDlgItemText(IDC_PATH, m_DestPath);
 	
-
+	// 외부명령어인지 검사함
 	if(!(m_ExecFilePath).Compare("command.com") || 
 		!(m_ExecFilePath).Compare("cmd.exe") || 
 		!(m_ExecFilePath).Compare("explorer.exe"))
 	{
 		isInternalCmd = TRUE;
 	}
-
+	// 외부명령어 모드가 안닌데 작업할 파일이 지정되지 않았으면
 	if(m_FullFileName.IsEmpty() && !isInternalCmd) 
 	{ 
 		AfxMessageBox("변환할 파일을 선택하세요.");
@@ -353,6 +351,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			return;
 		}
 	}
+	// 외부명령어 모드가 안닌데 실행파일이 없으면
 	else if(m_ExecFilePath.IsEmpty())// && (fPath.Right(5)).Compare(".mtcl")) 
 	{ 
 		AfxMessageBox("실행파일을 선택하세요.");
@@ -363,6 +362,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			return;
 		}
 	}
+	std::vector<CString> vecSearchSubDirList;
 	// 실행 파일 다음 옵션 파라미터
 	CString execFirstArg;
 	GetDlgItemText(IDC_EDIT6, execFirstArg);
@@ -374,7 +374,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	int fileCheckCnt = 0;
 	fileCheckCnt = GetDlgItemInt(IDC_EDIT8);
-	
+	// 목적경로를 상대경로로 표시했을경우 대응
 	CFileFind dirFinder;
 	BOOL bWorking = dirFinder.FindFile(m_DestPath + "\\*.*");
 	if(!m_DestPath.IsEmpty())
@@ -384,7 +384,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 		m_FullFileName = dirFinder.GetRoot();
 
 	CString searchRootDirStr = m_FullFileName;
-	std::vector<CString> vecSearchSubDirList;
+
 	int iSuccessCnt = 0;
 	// 하위 폴더 갯수 초기화
 	m_SubDirCnt = 0;
@@ -708,7 +708,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 					//Sleep(10);
 					findMovedFileCnt++;
 					
-					if(findMovedFileCnt > FILEEXISTCHECKCNT)
+					if(findMovedFileCnt > FILE_EXIST_CHECK_CNT)
 						break;
 				}
 				// 에러메세지 표시여부
