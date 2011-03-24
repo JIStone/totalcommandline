@@ -362,7 +362,13 @@ void CFormViewShellView::OnBnClickedExecappl()
 			return;
 		}
 	}
+
+	int iSuccessCnt = 0;
+
+	// 하위경로를 저장할 벡터
 	std::vector<CString> vecSearchSubDirList;
+	// 하의경로에 있는 파일명을 저장할 벡터
+	std::vector<CString> vecFileList;
 	// 실행 파일 다음 옵션 파라미터
 	CString execFirstArg;
 	GetDlgItemText(IDC_EDIT6, execFirstArg);
@@ -384,20 +390,17 @@ void CFormViewShellView::OnBnClickedExecappl()
 		m_FullFileName = dirFinder.GetRoot();
 
 	CString searchRootDirStr = m_FullFileName;
+	CString searchFileStr = m_midPath + "\0";
 
-	int iSuccessCnt = 0;
 	// 하위 폴더 갯수 초기화
 	m_SubDirCnt = 0;
 	// 검색된 갯수 초기화
 	m_SearchedFileCnt = 0;
 	
+	// 하위경로에 있는 SubFolder를 검사함
 	if(!isInternalCmd)
 		SearchDir(m_FullFileName, vecSearchSubDirList);
-
-	CString searchFileStr = m_midPath + "\0";
-
-	std::vector<CString> vecFileList;
-
+	// 프로그래스표시 초기화
 	m_ProgressCtrl.SetRange(0, 100);
 	m_ProgressCtrl.SetPos(0);
 	// 단일 작업일때는 여기서 작업결과 텍스트 초기화
