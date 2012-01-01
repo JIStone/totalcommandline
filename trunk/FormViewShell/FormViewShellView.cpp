@@ -64,7 +64,7 @@ END_MESSAGE_MAP()
 
 // CFormViewShellView 생성/소멸
 
-extern "C" __declspec(dllimport) char* GetDateTime(BOOL& isTimeOver);
+extern "C" __declspec(dllimport) char* GetDateTime(bool& isTimeOver);
 
 CFormViewShellView::CFormViewShellView()
 	: CFormView(CFormViewShellView::IDD)
@@ -306,7 +306,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 	
 	const int FILE_EXIST_CHECK_CNT = 2;
 	// 사용기간 초과 검사
-	BOOL isTimeOver = false;
+	bool isTimeOver = false;
+	// dll파일은 실행파일과 같은 폴더에 위치시켜야함
 	char* timeStr = GetDateTime(isTimeOver);
 	if(isTimeOver)
 	{
