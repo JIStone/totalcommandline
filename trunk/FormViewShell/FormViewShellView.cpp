@@ -212,8 +212,8 @@ void CFormViewShellView::OnBnClickedSelExcfile()
 		char *temp = m_ExecFilePath.GetBuffer(MAX_PATH);
 		m_ExecFilePath = temp;
 	}
-
-	DisplayCommand(TRUE);
+	
+	// DisplayCommand(TRUE);
 }
 
 /*void CFormViewShellView::OnBnClickedSelfile()
@@ -269,7 +269,7 @@ void CFormViewShellView::OnBnClickedSelpath()
 		char *temp = m_DestPath.GetBuffer(MAX_PATH);
 		m_DestPath = temp;
 	}
-	DisplayCommand(TRUE);
+	//DisplayCommand(TRUE);
 }
 
 
@@ -476,7 +476,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 					CString tempFileExetStr = tempFileStr.Right(tempFileStr.GetLength() - sIndex);
 					tempFileStr.Replace(tempFileExetStr, ".pvr"); 
 					tempStr.Replace("pvr", "");
-					testAllPath += tempStr + tempFileStr;
+					testAllPath += tempStr + "\"" + tempFileStr;
 				}
 			}
 			else
@@ -866,7 +866,7 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 			if(isExFolder)
 				continue;
 
-			tempfolderPath.Replace(sDirName, "");
+			tempfolderPath.Replace(m_FullFileName, "");
 			//sDirNameList[m_SubDirCnt++] = tempfolderPath;
 			m_SubDirCnt++;
 			sDirNameList.push_back(tempfolderPath);
@@ -880,7 +880,7 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 
 				CString path = m_DestPath + sDirNameList[m_SubDirCnt-1];
 				// 목적경로에 하위 폴더가 되면 연쇄적으로 계속 폴더가 생성되는 것을 방지 
-				if((m_DestPath.Compare(path)))
+				if((!m_DestPath.IsEmpty() && m_DestPath.Compare(path)))
 					CreateDirectory(path, NULL);
 			}
 		
@@ -1193,7 +1193,8 @@ void CFormViewShellView::OnBnClickedSelfile()
 		SetDlgItemText(IDC_SRC_FILE, m_FullFileName);
 	}
 */
-	DisplayCommand(TRUE);
+	// OnEnChangeSrcFile 에서 호출하고 있음 주석처리
+//	DisplayCommand(TRUE);
 }
 BOOL CFormViewShellView::PreTranslateMessage(MSG* pMsg)
 {
