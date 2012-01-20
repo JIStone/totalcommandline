@@ -368,7 +368,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	// 하위경로를 저장할 벡터
 	std::vector<CString> vecSearchSubDirList;
-	// 하의경로에 있는 파일명을 저장할 벡터
+	// 하위경로에 있는 파일명을 저장할 벡터
 	std::vector<CString> vecFileList;
 	// 실행 파일 다음 옵션 파라미터
 	CString execFirstArg;
@@ -382,14 +382,15 @@ void CFormViewShellView::OnBnClickedExecappl()
 	int fileCheckCnt = 0;
 	fileCheckCnt = GetDlgItemInt(IDC_EDIT8);
 	// 목적경로를 상대경로로 표시했을경우 대응
+	/*// 추후대응
 	CFileFind dirFinder;
 	BOOL bWorking = dirFinder.FindFile(m_DestPath + "\\*.*");
-	if(!m_DestPath.IsEmpty())
+	if(!m_DestPath.IsEmpty() && !m_DestPath.Compare(".."))
 		m_DestPath = m_outRootPath = dirFinder.GetRoot();
 	bWorking = dirFinder.FindFile(m_FullFileName + "\\*.*");
-	if(!m_DestPath.IsEmpty())
+	if(!m_DestPath.IsEmpty() && !m_DestPath.Compare(".."))
 		m_FullFileName = dirFinder.GetRoot();
-
+`*/
 	CString searchRootDirStr = m_FullFileName;
 	CString searchFileStr = m_midPath + "\0";
 
@@ -467,6 +468,16 @@ void CFormViewShellView::OnBnClickedExecappl()
 			if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
 			{
 				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" +  execArg;
+			  // PVRTexTool 커맨드라인대응
+				if(!(m_PreCmdOptStr.Left(3)).Compare("pvr")){
+					CString tempStr = m_PreCmdOptStr;
+					CString tempFileStr =  vecFileList[listCnt];
+					int sIndex = tempFileStr.Find('.', 0);
+					CString tempFileExetStr = tempFileStr.Right(tempFileStr.GetLength() - sIndex);
+					tempFileStr.Replace(tempFileExetStr, ".pvr"); 
+					tempStr.Replace("pvr", "");
+					testAllPath += tempStr + tempFileStr;
+				}
 			}
 			else
 			{	// Avitomoviclipds.exe 대응 경로부분의 공백이 있으면 문제발생 " "로 묶음

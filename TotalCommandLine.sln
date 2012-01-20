@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FormViewShell", "FormViewShell\FormViewShell.vcproj", "{8453CA79-ED10-4418-9D85-B4DCBB480E7A}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TotalCommandLine", "FormViewShell\FormViewShell.vcxproj", "{8453CA79-ED10-4418-9D85-B4DCBB480E7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
