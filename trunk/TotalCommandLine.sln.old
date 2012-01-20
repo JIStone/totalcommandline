@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TotalCommandLine", "FormViewShell\FormViewShell.vcproj", "{8453CA79-ED10-4418-9D85-B4DCBB480E7A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "aniTool", "..\..\..\work\ensony\tool\aniTool.vcproj", "{C059A586-60B4-3656-8B3D-EA8563E23D42}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8453CA79-ED10-4418-9D85-B4DCBB480E7A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8453CA79-ED10-4418-9D85-B4DCBB480E7A}.Debug|Win32.Build.0 = Debug|Win32
+		{8453CA79-ED10-4418-9D85-B4DCBB480E7A}.Release|Win32.ActiveCfg = Release|Win32
+		{8453CA79-ED10-4418-9D85-B4DCBB480E7A}.Release|Win32.Build.0 = Release|Win32
+		{C059A586-60B4-3656-8B3D-EA8563E23D42}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C059A586-60B4-3656-8B3D-EA8563E23D42}.Debug|Win32.Build.0 = Debug|Win32
+		{C059A586-60B4-3656-8B3D-EA8563E23D42}.Release|Win32.ActiveCfg = Release|Win32
+		{C059A586-60B4-3656-8B3D-EA8563E23D42}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
