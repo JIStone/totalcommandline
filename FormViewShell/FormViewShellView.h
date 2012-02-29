@@ -151,6 +151,9 @@ public:
 	CString m_outRootPath;
 	//
 	CString m_midPath;
+	afx_msg void OnBnClickedSubFolder();
+	afx_msg void OnBnClickedEmptyfoldercheck();
+	CButton m_EmptyFolderCheck;
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전

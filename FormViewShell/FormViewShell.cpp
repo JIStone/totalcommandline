@@ -240,7 +240,7 @@ void CFormViewShellApp::OnFileOpen(void)
 	//CWinApp::OnFileOpen();
 	char szFileNameList[1024] = {0,};
 	// 
-	CFileDialog fileDlg( TRUE, NULL, NULL, NULL, "*.tcl|*.tcl|*.stcl|*.stcl|*.mtcl|*.mtcl|*.*|*.*||");
+	CFileDialog fileDlg( TRUE, NULL, NULL, NULL, "*.stcl|*.stcl|*.mtcl|*.mtcl|*.tcl|*.tcl|*.*|*.*||");
 
 	fileDlg.m_ofn.lpstrFile   = szFileNameList;
 	fileDlg.m_ofn.nMaxFile   = sizeof( szFileNameList ) - 1;
