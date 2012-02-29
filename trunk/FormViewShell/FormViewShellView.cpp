@@ -109,6 +109,7 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EXECAPPL, m_BtnExcute);
 	DDX_Control(pDX, IDC_VIEWLIST, m_ViewList);
 	DDX_Control(pDX, IDC_SUB_FOLDER, m_ChkSubFolder);
+	DDX_Control(pDX, IDC_EmptyFolderCheck, m_EmptyFolderCheck);
 }
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
@@ -436,7 +437,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 		return;
 	}
 
-	for(int dirCnt = 0; dirCnt < m_SubDirCnt; dirCnt++) 
+	for(int dirCnt = 0; dirCnt < m_SubDirCnt; dirCnt++)
 	{
 		int starIndex = m_SearchedFileCnt;
 		//대상파일 검색
@@ -762,12 +763,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 					}
 					break;
 				}
-			}			
+			}
 		}
 	}
 	
 	// 소스쪽의 빈폴더 지우기
-	for(int dirCnt = m_SubDirCnt - 1; dirCnt >= 1; dirCnt--) // dirCnt >= 1 : 최상위 폴더는 삭제하지않음
+	for(int dirCnt = m_SubDirCnt - 1; m_EmptyFolderCheck.GetCheck() && dirCnt >= 1; dirCnt--) // dirCnt >= 1 : 최상위 폴더는 삭제하지않음
 	{
 		//***하위에 파일이나 폴더가 있으면 폴더가 지워지지 않음***
 		//WCHAR	wstringTemp[1024];
@@ -783,6 +784,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 		int tempErr = errno;//GetLastError();
 		errno;
 	}
+	
 	// 결과 표시
 	CString resultCnt;
 	resultCnt.Format( "%d / %d 성공", iSuccessCnt, progressCnt);
@@ -1707,3 +1709,5 @@ void CFormViewShellView::OnBnClickedButtonPreview()
 	OnBnClickedExecappl();
 	m_bIsPreview = FALSE;
 }
+
+

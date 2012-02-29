@@ -142,7 +142,10 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		}
 		// 하위폴더 검색 유무
 		ar << pView->m_ChkSubFolder.GetCheck();
+		// 결과리스트 보기 유무
 		ar << pView->m_ViewList.GetCheck();
+		// 빈폴더 제거 유무
+		ar << pView->m_EmptyFolderCheck.GetCheck();
 		//===================== 저장할 데이터를 이하에 구현=====================
 	}
 	else
@@ -326,6 +329,8 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				pView->m_ChkSubFolder.EnableWindow(FALSE);
 				pView->m_ViewList.SetCheck(0);
 				pView->m_ViewList.EnableWindow(FALSE);
+				pView->m_EmptyFolderCheck.SetCheck(0);
+				pView->m_EmptyFolderCheck.EnableWindow(FALSE);
 			}
 			else
 			{
@@ -364,6 +369,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				pView->m_Check_EnableErrPop.EnableWindow(!_enable);
 				pView->m_ChkSubFolder.EnableWindow(!_enable);
 				pView->m_ViewList.EnableWindow(!_enable);
+				pView->m_EmptyFolderCheck.EnableWindow(!_enable);
 			}
 
 			for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
@@ -411,7 +417,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			pView->m_ChkSubFolder.SetCheck(TRUE);	
 		}
 
-		// 하위폴더 찾기유무
+		// 결과리스트 보기 유무
 		if(!ar.IsBufferEmpty())
 		{	
 			ar >> nCheck;
@@ -420,6 +426,17 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		else
 		{
 			pView->m_ViewList.SetCheck(FALSE);	
+		}
+
+		// 빈폴더 제거 유무
+		if(!ar.IsBufferEmpty())
+		{	
+			ar >> nCheck;
+			pView->m_EmptyFolderCheck.SetCheck(nCheck);	
+		}
+		else
+		{
+			pView->m_EmptyFolderCheck.SetCheck(FALSE);	
 		}
 		//===================== 불러들일데이터를 이하에 구현=====================
 	}
