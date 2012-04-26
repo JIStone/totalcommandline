@@ -204,6 +204,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OperPlus.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PreviewDlg.cpp"
 				>
 			</File>
@@ -251,6 +255,10 @@
 			</File>
 			<File
 				RelativePath=".\MainFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OperPlus.h"
 				>
 			</File>
 			<File
