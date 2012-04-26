@@ -12,6 +12,8 @@
 #include <string>
 
 #include <direct.h>
+#include "OperPlus.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -82,6 +84,7 @@ CFormViewShellView::CFormViewShellView()
 	, m_ExFolderName(_T(""))
 	, m_bMultiMode(FALSE)
 	, m_bIsPreview(FALSE)
+	, m_OperPlus(0)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 
@@ -453,6 +456,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			HINSTANCE ret = 0;
 			
 			m_ProgressCtrl.SetPos(((listCnt + 1) * 100) / progressCnt);
+			m_ProgressCtrl.UpdateWindow();
 			prgCnt.Format( "[ %d / %d ]", listCnt+1, progressCnt);
 			
 			if(listCnt+1 == progressCnt)
@@ -1707,6 +1711,13 @@ void CFormViewShellView::OnBnClickedButtonPreview()
 	m_ExcuteFilePath = "";
 	m_bIsPreview = TRUE;
 	OnBnClickedExecappl();
+
+	//m_OperPlus = (COperPlus*)AfxBeginThread(RUNTIME_CLASS(COperPlus),
+	//THREAD_PRIORITY_NORMAL,
+	//0, CREATE_SUSPENDED);
+	//m_OperPlus->SetDialogPointer(this);
+	//m_OperPlus->ResumeThread();
+
 	m_bIsPreview = FALSE;
 }
 

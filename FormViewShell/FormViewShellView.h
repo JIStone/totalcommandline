@@ -5,7 +5,11 @@
 #pragma once
 #include "afxwin.h"
 #include "afxcmn.h"
+#include "afxmt.h"
 #include <vector>
+#include "FormViewShellDoc.h"
+class COperPlus;
+
 
 class CFormViewShellView : public CFormView
 {
@@ -154,6 +158,8 @@ public:
 	afx_msg void OnBnClickedSubFolder();
 	afx_msg void OnBnClickedEmptyfoldercheck();
 	CButton m_EmptyFolderCheck;
+	COperPlus* m_OperPlus;
+	CCriticalSection m_CS;
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전
