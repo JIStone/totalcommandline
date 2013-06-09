@@ -469,11 +469,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 			
 			CString testAllPath;// = execFirstArg + "\"" + vecFileList[listCnt] + m_PreCmdOptStr + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
 			INT nShowCmd = SW_HIDE;	
-			
+
+		//================================ 특수 상황 커맨드=======================================================================================================================
 			if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
 			{
 				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" +  execArg;
-			  // PVRTexTool 커맨드라인대응
+			  // PVRTexTool 커맨드라인대응(cocos2d-x)
 				if(!(m_PreCmdOptStr.Left(3)).Compare("pvr")){
 					CString tempStr = m_PreCmdOptStr;
 					CString tempFileStr =  vecFileList[listCnt];
@@ -482,6 +483,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 					tempFileStr.Replace(tempFileExetStr, ".pvr"); 
 					tempStr.Replace("pvr", "");
 					testAllPath += tempStr + "\"" + tempFileStr;
+				
+				}
+				// A2d 컨버트(Aztool)
+				else if(!(m_PreCmdOptStr.Left(3)).Compare("A2d"))
+				{
 				}
 			}
 			else
