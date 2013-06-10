@@ -476,6 +476,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" +  execArg;
 			  // PVRTexTool 커맨드라인대응(cocos2d-x)
 				if(!(m_PreCmdOptStr.Left(3)).Compare("pvr")){
+					
 					CString tempStr = m_PreCmdOptStr;
 					CString tempFileStr =  vecFileList[listCnt];
 					int sIndex = tempFileStr.Find('.', 0);
@@ -486,8 +487,16 @@ void CFormViewShellView::OnBnClickedExecappl()
 				
 				}
 				// A2d 컨버트(Aztool)
-				else if(!(m_PreCmdOptStr.Left(3)).Compare("A2d"))
+				else if((!(m_PreCmdOptStr.Left(3)).Compare("A2d")) || (!(m_PreCmdOptStr.Left(3)).Compare("a2d")))
 				{
+					testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"";
+					CString tempStr = m_PreCmdOptStr;
+					CString tempFileStr =  vecFileList[listCnt];
+					int sIndex = tempFileStr.Find('.', 0);
+					CString tempFileExetStr = tempFileStr.Right(tempFileStr.GetLength() - sIndex);
+					tempFileStr.Replace(tempFileExetStr, ".vrp"); 
+					tempStr.Replace("vrp", "");
+					testAllPath +=  " \"" + tempFileStr  + "\"" +  execArg;
 				}
 			}
 			else
