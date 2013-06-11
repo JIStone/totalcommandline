@@ -622,8 +622,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 						CString extModify;
 						GetDlgItemText(IDC_EDIT7, extModify);
 						// 파일이동처리시 특정확장자로 변경 
-						if(!extModify.IsEmpty())
-							movDest.Replace(oExtStr, iExtStr + extModify);
+						if(!extModify.IsEmpty()){
+							//movDest.Replace(oExtStr, iExtStr + extModify);
+							movDest.Replace(oExtStr, extModify);
+						}
 							//movDest += extModify;
 						// 파일이동 올바르게 하려면 하나의 파일만 선택되도록 해야함
 						if(bUseShellExCute)
