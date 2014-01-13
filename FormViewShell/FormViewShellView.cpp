@@ -648,6 +648,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 */
 
 				//========================================= 결과 파일처리 표시====================================================
+				BOOL isDestFileExist = FALSE;
 				if(bAtiveFileProc)
 				{
 
@@ -702,7 +703,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 						// 미리보기
 						if(!m_bIsPreview)
 						{
-							/*!!! 디버그모드시 에러발생가능 릴리즈 모드에서도 테스트 하도록!!!*/						
+							/*!!! 디버그모드시 에러발생가능 릴리즈 모드에서도 테스트 하도록!!!*/
+							// shRet이 0 이외의 값이면 실패
 							shRet = SHFileOperation(&shos);
 						}
 						//Sleep(10);
@@ -712,11 +714,25 @@ void CFormViewShellView::OnBnClickedExecappl()
 						tryCount++;
 					}
 					while(tryCount < 2 && shRet != 0);
-
+					isDestFileExist = PathFileExists(movingStr);// 처리할 파일(결과파일)이 경로에 있는지 검사
+					if(!isDestFileExist && m_Check_EnableErrPop.GetCheck())
+					{
+						int popRet = MessageBox(movDest + " \n파일이 없습니다. 계속 하시겠습니까?","파일처리 에러", MB_OKCANCEL);
+						
+						if(popRet == 1)
+						{
+							continue;
+						}
+						else if(popRet == 2)
+						{
+							m_ProgressCtrl.SetPos(0);
+							return;
+						}
+					}
 					//처리해야할 파일이 없고 에러메세지를 표시한 상태이면
 					if(shRet && m_Check_EnableErrPop.GetCheck())
 					{
-						int popRet = MessageBox(movDest + " \n작업을 마치지 못했습니다. 계속 하시겠습니까?","파일이동 에러", MB_OKCANCEL);
+						int popRet = MessageBox(movDest + " \n작업을 마치지 못했습니다. 계속 하시겠습니까?","파일처리 에러", MB_OKCANCEL);
 						
 						if(popRet == 1)
 						{
@@ -732,7 +748,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				}
 				//==============================================================================================================================
 
-				BOOL isDestFileExist = FALSE;
+
 				if(iExtType == FO_DELETE)
 				{
 					isDestFileExist = PathFileExists(movingStr);// 삭제할 파일이 경로에 있는지 검사
@@ -751,7 +767,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				// 에러메세지 표시여부
 				if(m_Check_EnableErrPop.GetCheck() && ((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist)))
 				{
-					int popRet = MessageBox(tempOutPutStr + " \n에대한 작업을 마치지 못했습니다. \n계속 하시겠습니까?","일지 정지", MB_OKCANCEL);
+					int popRet = MessageBox(outPutResultPath + " \n에대한 작업을 마치지 못했습니다. \n계속 하시겠습니까?","일지 정지", MB_OKCANCEL);
 					if(popRet == 1)
 					{
 						continue;
