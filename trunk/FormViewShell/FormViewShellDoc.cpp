@@ -146,6 +146,10 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		ar << pView->m_ViewList.GetCheck();
 		// 빈폴더 제거 유무
 		ar << pView->m_EmptyFolderCheck.GetCheck();
+		// stcl 창닫기
+		ar << pView->m_ExitCheckBox.GetCheck();
+		// mtcl 창닫기
+		ar << pView->m_MTCL_ExitCheckBox.GetCheck();
 		//===================== 저장할 데이터를 이하에 구현=====================
 	}
 	else
@@ -331,6 +335,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				pView->m_ViewList.EnableWindow(FALSE);
 				pView->m_EmptyFolderCheck.SetCheck(0);
 				pView->m_EmptyFolderCheck.EnableWindow(FALSE);
+				pView->m_ExitCheckBox.EnableWindow(FALSE);
 			}
 			else
 			{
@@ -370,6 +375,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				pView->m_ChkSubFolder.EnableWindow(!_enable);
 				pView->m_ViewList.EnableWindow(!_enable);
 				pView->m_EmptyFolderCheck.EnableWindow(!_enable);
+				pView->m_ExitCheckBox.EnableWindow(!_enable);
 			}
 
 			for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
@@ -437,6 +443,27 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		else
 		{
 			pView->m_EmptyFolderCheck.SetCheck(FALSE);	
+		}
+
+		// 창닫기
+		if(!ar.IsBufferEmpty())
+		{	
+			ar >> nCheck;
+			pView->m_ExitCheckBox.SetCheck(nCheck);	
+		}
+		else
+		{
+			pView->m_ExitCheckBox.SetCheck(FALSE);	
+		}
+		// 창닫기
+		if(!ar.IsBufferEmpty())
+		{	
+			ar >> nCheck;
+			pView->m_MTCL_ExitCheckBox.SetCheck(nCheck);	
+		}
+		else if(!pView->m_MTCL_ExitCheckBox.GetCheck())
+		{
+			pView->m_MTCL_ExitCheckBox.SetCheck(FALSE);	
 		}
 		//===================== 불러들일데이터를 이하에 구현=====================
 	}

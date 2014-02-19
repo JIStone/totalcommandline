@@ -113,6 +113,8 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_VIEWLIST, m_ViewList);
 	DDX_Control(pDX, IDC_SUB_FOLDER, m_ChkSubFolder);
 	DDX_Control(pDX, IDC_EmptyFolderCheck, m_EmptyFolderCheck);
+	DDX_Control(pDX, IDC_CHECK4, m_ExitCheckBox);
+	DDX_Control(pDX, IDC_CHECK5, m_MTCL_ExitCheckBox);
 }
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
@@ -833,8 +835,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 	{
 		OnBnClickedButtonPre();
 	}
-
-	
+	if(m_ExitCheckBox.GetCheck())
+		exit(0);
 }
 
 /*---------------------------------------------------------------------------*
@@ -1463,6 +1465,10 @@ void CFormViewShellView::OnBnSeqExcuteButton()
 	// 여러개 실행후 타이틀이름이 바뀌어 저장할때 마지막이름으로 저장되어 버림
 	//GetDocument()->SetPathName(m_SettingFilePath,0);
 	//GetDocument()->SetPathName(m_SettingFilePath + "여기",0);
+	if(m_MTCL_ExitCheckBox.GetCheck()){
+		MessageBox("==== 완료! ====", "TotalCommandLine");
+		exit(0);
+	}
 }
 /*
 void CFormViewShellView::OnBnClickedButtonUp()

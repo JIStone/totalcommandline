@@ -54,6 +54,7 @@ BOOL CFormViewShellApp::InitInstance()
 	
 char *a0 =	__argv[0];
 char *a1 =	__argv[1];
+char *a2 =	__argv[2];
 
 
 	CWinApp::InitInstance();
@@ -109,15 +110,21 @@ char *a1 =	__argv[1];
 	CFileException e;
 	CString fPath;
 	CString filePath;
+	CString	argumentExcute;
 
-
+	BOOL isMultiMode = false;
+	BOOL isExcute = false;
 	if(a1)
 	{
 		fPath = a1;
+		argumentExcute = a2;
 		fIni.Open(_T(".\\totalcvtr.cur"), CFile::modeRead);
 		filePath = fIni.GetFilePath();
 		//AfxMessageBox("테스트.");
 		fIni.Close();
+
+		isMultiMode = !(fPath.Right(5)).Compare(".mtcl");
+		isExcute = !(argumentExcute).Compare("-go");
 	}
 	else if(!fIni.Open(_T(".\\totalcvtr.cur"), CFile::modeRead))
 	{
@@ -166,6 +173,13 @@ char *a1 =	__argv[1];
 	m_pMainWnd->UpdateWindow();	
 	// 현재경로 고정
 	::SetCurrentDirectory(mydoc->m_tclFilePath);
+	if(isExcute){
+		if(!isMultiMode)
+			pView->OnBnClickedExecappl();
+		else
+			pView->OnBnSeqExcuteButton();
+	}
+
 /*	
 	// 컨버터 셋팅파일 로드
 	CFile myFile;
@@ -189,6 +203,8 @@ char *a1 =	__argv[1];
 		myFile.Close();
 	}
 */
+
+
 	return TRUE;
 }
 
