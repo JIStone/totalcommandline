@@ -153,6 +153,7 @@ public:
 	BOOL m_bIsPreview;
 	// 출력경로 루트패스
 	CString m_outRootPath;
+
 	//
 	CString m_midPath;
 	afx_msg void OnBnClickedSubFolder();
@@ -160,6 +161,8 @@ public:
 	CButton m_EmptyFolderCheck;
 	COperPlus* m_OperPlus;
 	CCriticalSection m_CS;
+	CButton m_ExitCheckBox;
+	CButton m_MTCL_ExitCheckBox;
 };
 
 #ifndef _DEBUG  // FormViewShellView.cpp의 디버그 버전
