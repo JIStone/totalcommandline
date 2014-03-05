@@ -140,16 +140,20 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		{
 			ar << pView->m_TclFilesListBox.GetCheck(lbIndex);;
 		}
-		// 하위폴더 검색 유무
-		ar << pView->m_ChkSubFolder.GetCheck();
-		// 결과리스트 보기 유무
-		ar << pView->m_ViewList.GetCheck();
-		// 빈폴더 제거 유무
-		ar << pView->m_EmptyFolderCheck.GetCheck();
-		// stcl 창닫기
-		ar << pView->m_ExitCheckBox.GetCheck();
-		// mtcl 창닫기
-		ar << pView->m_MTCL_ExitCheckBox.GetCheck();
+		// 멀티커맨드라인라면 생략
+		if(lbTclFilesCnt){
+			// mtcl 창닫기
+			ar << pView->m_MTCL_ExitCheckBox.GetCheck();
+		}else{
+			// 하위폴더 검색 유무
+			ar << pView->m_ChkSubFolder.GetCheck();
+			// 결과리스트 보기 유무
+			ar << pView->m_ViewList.GetCheck();
+			// 빈폴더 제거 유무
+			ar << pView->m_EmptyFolderCheck.GetCheck();
+			// stcl 창닫기
+			ar << pView->m_ExitCheckBox.GetCheck();
+		}
 		//===================== 저장할 데이터를 이하에 구현=====================
 	}
 	else
@@ -390,6 +394,16 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				ar >> nCheck;
 				pView->m_TclFilesListBox.SetCheck(lbIndex, nCheck);
 			}
+			// 다중실행 창닫기
+			if(lbTclFilesCnt && !ar.IsBufferEmpty())
+			{	
+				ar >> nCheck;
+				pView->m_MTCL_ExitCheckBox.SetCheck(nCheck);	
+			}
+			else if(!pView->m_MTCL_ExitCheckBox.GetCheck())
+			{
+				pView->m_MTCL_ExitCheckBox.SetCheck(FALSE);	
+			}
 		}
 		else if(!pView->m_bMultiMode)
 		{
@@ -455,16 +469,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		{
 			pView->m_ExitCheckBox.SetCheck(FALSE);	
 		}
-		// 창닫기
-		if(!ar.IsBufferEmpty())
-		{	
-			ar >> nCheck;
-			pView->m_MTCL_ExitCheckBox.SetCheck(nCheck);	
-		}
-		else if(!pView->m_MTCL_ExitCheckBox.GetCheck())
-		{
-			pView->m_MTCL_ExitCheckBox.SetCheck(FALSE);	
-		}
+
 		//===================== 불러들일데이터를 이하에 구현=====================
 	}
 	
