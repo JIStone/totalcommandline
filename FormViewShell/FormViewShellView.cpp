@@ -430,7 +430,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	if(isInternalCmd)
 	{
 		//CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "" + searchFileStr +  "\"" + ""+ "\"" + m_DestPath + execArg + "\"";
-		CString CMDLine = execFirstArg;
+		CString CMDLine = execFirstArg; //하나의 컨트롤에서 처리하는 것인가?
 
 		ShellCommon(m_ExecFilePath, CMDLine, SW_SHOW);
 

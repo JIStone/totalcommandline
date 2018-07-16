@@ -16,13 +16,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 한국어 resources
+// 한국어(대한민국) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
-#ifdef _WIN32
 LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 #pragma code_page(949)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -71,7 +69,9 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\FormViewShell.ico"
+
 IDR_FormViewShellTYPE   ICON                    "res\\FormViewShellDoc.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -80,6 +80,7 @@ IDR_FormViewShellTYPE   ICON                    "res\\FormViewShellDoc.ico"
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // RT_MANIFEST
@@ -87,12 +88,13 @@ IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 
 1                       RT_MANIFEST             "totalcommandline.exe.manifest"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR  16, 15
+IDR_MAINFRAME TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILE_OPEN
     BUTTON      ID_FILE_SAVE
@@ -111,7 +113,7 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU 
+IDR_MAINFRAME MENU
 BEGIN
     POPUP "파일(&F)"
     BEGIN
@@ -148,7 +150,7 @@ END
 // Accelerator
 //
 
-IDC_PATH ACCELERATORS 
+IDC_PATH ACCELERATORS
 BEGIN
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
@@ -175,7 +177,7 @@ CAPTION "TotalCommandLine 정보"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "TotalCommandLine™ Version 1.2.1",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "TotalCommandLine™ Version 1.2.5",IDC_VERSION,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright SEOK Ent(C) 2008,2009 ",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "확인",IDOK,113,41,50,14,WS_GROUP
 END
@@ -260,8 +262,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,0,0
+ FILEVERSION 1,2,5,0
+ PRODUCTVERSION 1,2,5,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -278,12 +280,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "SEOK"
             VALUE "FileDescription", "토탈커맨드라인"
-            VALUE "FileVersion", "1, 2, 0, 0"
+            VALUE "FileVersion", "1.2.5.0"
             VALUE "InternalName", "TotalCommandLine.exe"
             VALUE "LegalCopyright", "(c) SEOK.  All rights reserved."
             VALUE "OriginalFilename", "TotalCommandLine.exe"
             VALUE "ProductName", "TotalCommandLine"
-            VALUE "ProductVersion", "1, 2, 0, 0"
+            VALUE "ProductVersion", "1.2.5.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -299,7 +301,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -330,26 +332,37 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDP_OLE_INIT_FAILED     "OLE를 초기화할 수 없습니다. OLE 라이브러리 버전이 올바른지 확인하십시오."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "FormViewShell\n\nFormViewShell\n\n\nFormViewShell.Document\nFormViewShell.Document"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_APP_TITLE       "TotalCommandLine"
     AFX_IDS_IDLEMESSAGE     "준비"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -359,7 +372,7 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_NEW             "새 문서를 만듭니다.\n새로 만들기"
     ID_FILE_OPEN            "기존 문서를 엽니다.\n열기"
@@ -368,13 +381,13 @@ BEGIN
     ID_FILE_SAVE_AS         "활성 문서를 새 이름으로 저장합니다.\n다른 이름으로 저장"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "프로그램 정보, 버전 번호, 저작권을 표시합니다.\n정보"
     ID_APP_EXIT             "문서를 저장할지를 묻고 응용 프로그램을 끝냅니다.\n끝내기"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_MRU_FILE1       "현재 문서를 엽니다."
     ID_FILE_MRU_FILE2       "현재 문서를 엽니다."
@@ -394,18 +407,18 @@ BEGIN
     ID_FILE_MRU_FILE16      "현재 문서를 엽니다."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_NEXT_PANE            "다음 창으로 전환합니다.\n다음 창"
     ID_PREV_PANE            "이전 창으로 전환합니다.\n이전 창"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_WINDOW_SPLIT         "활성 창을 여러 개의 창으로 분할합니다.\n분할"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_CLEAR           "선택 영역을 지웁니다.\n지우기"
     ID_EDIT_CLEAR_ALL       "모두 지웁니다.\n모두 지우기"
@@ -420,13 +433,13 @@ BEGIN
     ID_EDIT_REDO            "이전에 실행 취소된 작업을 다시 실행합니다.\n다시 실행"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_TOOLBAR         "도구 모음을 표시하거나 숨깁니다.\n도구 모음 설정/해제"
     ID_VIEW_STATUS_BAR      "상태 표시줄을 표시하거나 숨깁니다.\n상태 표시줄 설정/해제"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCSIZE          "창 크기를 변경합니다."
     AFX_IDS_SCMOVE          "창 위치를 변경합니다."
@@ -437,13 +450,13 @@ BEGIN
     AFX_IDS_SCCLOSE         "문서를 저장할 것인지 확인하고 활성 창을 닫습니다."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCRESTORE       "창을 보통 크기로 복원합니다."
     AFX_IDS_SCTASKLIST      "작업 목록을 활성화합니다."
 END
 
-#endif    // 한국어 resources
+#endif    // 한국어(대한민국) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
