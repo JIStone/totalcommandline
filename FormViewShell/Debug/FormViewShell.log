@@ -1,4 +1,3 @@
-﻿  MainFrm.cpp
-  FormViewShellView.cpp
-  코드를 생성하고 있습니다...
+﻿  FormViewShellDoc.cpp
+cl : 명령줄 warning D9028: 최소 다시 빌드에 실패했습니다. 정상 빌드로 되돌립니다.
   FormViewShell.vcxproj -> E:\work\GitHub\totalcommandline\Debug\TotalCommandLine.exe

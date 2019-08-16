@@ -51,10 +51,21 @@ BOOL CFormViewShellApp::InitInstance()
 	// 이 항목을 설정하십시오.
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
-	
-char *a0 =	__argv[0];
-char *a1 =	__argv[1];
-char *a2 =	__argv[2];
+	char *a0 = NULL;
+	char *a1 = NULL;
+	char *a2 = NULL;
+	if (__argv) {
+		if(__argv[0])
+			a0 = __argv[0];
+		if (__argv[1])
+			a1 = __argv[1];
+		if (__argv[2])
+			a2 = __argv[2];
+	}
+		 
+//char *a0 = __argv[0];
+//char *a1 = __argv[1];
+//char *a2 = __argv[2];
 
 
 	CWinApp::InitInstance();
@@ -123,8 +134,8 @@ char *a2 =	__argv[2];
 		//AfxMessageBox("테스트.");
 		fIni.Close();
 
-		isMultiMode = !(fPath.Right(5)).Compare(".mtcl");
-		isExcute = !(argumentExcute).Compare("-go");
+		isMultiMode = !(fPath.Right(5)).Compare(_T(".mtcl"));
+		isExcute = !(argumentExcute).Compare(_T("-go"));
 	}
 	else if(!fIni.Open(_T(".\\totalcvtr.cur"), CFile::modeRead))
 	{
@@ -137,7 +148,11 @@ char *a2 =	__argv[2];
 		BYTE buffer[1024] = {0,};
 		int fileLen = (int)fIni.GetLength();
 		fIni.Read(buffer, fileLen);
-		fPath = buffer;
+		
+		CString bufstr((TCHAR*)buffer, fileLen);
+		//memcpy(&fPath, buffer, fileLen);
+		fPath = bufstr;
+		
 		filePath = fIni.GetFilePath();
 		fIni.Close();
 	}
@@ -154,7 +169,7 @@ char *a2 =	__argv[2];
 	int i = currPath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
 	currPath = currPath.Left(i);//뒤에 있는 현재 실행 파일 이름을 지운다.
 	// tcl전용폴더(실행파일폴더\tcl)
-	mydoc->m_tclFilePath = currPath + "\\tcl";
+	mydoc->m_tclFilePath = currPath + _T("\\tcl");
 
 	i = fPath.ReverseFind('\\');//실행 파일 이름을 지우기 위해서 왼쪽에 있는 '/'를 찾는다.
 	// 전용폴더\파일.확장자 로 저장
@@ -226,6 +241,8 @@ protected:
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnStnClickedVersion();
 };
 
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
@@ -238,6 +255,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
+	ON_STN_CLICKED(IDC_VERSION, &CAboutDlg::OnStnClickedVersion)
 END_MESSAGE_MAP()
 
 // 대화 상자를 실행하기 위한 응용 프로그램 명령입니다.
@@ -254,13 +272,13 @@ void CFormViewShellApp::OnAppAbout()
 void CFormViewShellApp::OnFileOpen(void)
 {
 	//CWinApp::OnFileOpen();
-	char szFileNameList[1024] = {0,};
+	TCHAR szFileNameList[1024] = {0,};
 	// 
-	CFileDialog fileDlg( TRUE, NULL, NULL, NULL, "*.stcl|*.stcl|*.mtcl|*.mtcl|*.tcl|*.tcl|*.*|*.*||");
+	CFileDialog fileDlg( TRUE, NULL, NULL, NULL, _T("*.stcl|*.stcl|*.mtcl|*.mtcl|*.tcl|*.tcl|*.*|*.*||"));
 
-	fileDlg.m_ofn.lpstrFile   = szFileNameList;
-	fileDlg.m_ofn.nMaxFile   = sizeof( szFileNameList ) - 1;
-	fileDlg.m_ofn.lpstrTitle  = "열기";
+	//fileDlg.m_ofn.lpstrFile   = szFileNameList;
+	//fileDlg.m_ofn.nMaxFile   = sizeof( szFileNameList ) - 1;
+	fileDlg.m_ofn.lpstrTitle  = _T("열기");
 	//fileDlg.m_ofn.lpstrInitialDir = "C:\\";
 
 	if( fileDlg.DoModal() == IDOK )
@@ -270,7 +288,7 @@ void CFormViewShellApp::OnFileOpen(void)
 		while( pos )
 		{
 			CString strName = fileDlg.GetNextPathName( pos );
-			printf("name : %s\n", strName );
+			//printf("name : %s\n", strName );
 			//Serialize() 함수를 사용 하려면, 
 			AfxGetApp()->OpenDocumentFile(strName);
 
@@ -284,4 +302,10 @@ void CFormViewShellApp::OnFileOpen(void)
 	CFormViewShellDoc* mydoc = pView->GetDocument();	
 	SetWindowText(*pWnd ,mydoc->m_TiltleString);
 	*/
+}
+
+
+void CAboutDlg::OnStnClickedVersion()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }

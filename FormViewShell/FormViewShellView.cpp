@@ -1,4 +1,4 @@
-// FormViewShellView.cpp : CFormViewShellView Å¬·¡½ºÀÇ ±¸Çö
+ï»¿// FormViewShellView.cpp : CFormViewShellView í´ë˜ìŠ¤ì˜ êµ¬í˜„
 //
 
 #include "stdafx.h"
@@ -13,13 +13,14 @@
 
 #include <direct.h>
 #include "OperPlus.h"
+#include <atlstr.h>
 
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-// È®ÀåÀÚÀÇ ÃÖ´ë±æÀÌ´Â 6À¸·Î °¡Á¤				
+// í™•ì¥ìì˜ ìµœëŒ€ê¸¸ì´ëŠ” 6ìœ¼ë¡œ ê°€ì •				
 #define FILE_EXT_LENGTH_MAX (6)
 
 // CFormViewShellView
@@ -64,7 +65,7 @@ BEGIN_MESSAGE_MAP(CFormViewShellView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON_PREVIEW, &CFormViewShellView::OnBnClickedButtonPreview)
 END_MESSAGE_MAP()
 
-// CFormViewShellView »ı¼º/¼Ò¸ê
+// CFormViewShellView ìƒì„±/ì†Œë©¸
 
 extern "C" __declspec(dllimport) char* GetDateTime(bool& isTimeOver);
 
@@ -86,7 +87,7 @@ CFormViewShellView::CFormViewShellView()
 	, m_bIsPreview(FALSE)
 	, m_OperPlus(0)
 {
-	// TODO: ¿©±â¿¡ »ı¼º ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ìƒì„± ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 
 }
 
@@ -119,8 +120,8 @@ void CFormViewShellView::DoDataExchange(CDataExchange* pDX)
 
 BOOL CFormViewShellView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: CREATESTRUCT cs¸¦ ¼öÁ¤ÇÏ¿© ¿©±â¿¡¼­
-	//  Window Å¬·¡½º ¶Ç´Â ½ºÅ¸ÀÏÀ» ¼öÁ¤ÇÕ´Ï´Ù.
+	// TODO: CREATESTRUCT csë¥¼ ìˆ˜ì •í•˜ì—¬ ì—¬ê¸°ì—ì„œ
+	//  Window í´ë˜ìŠ¤ ë˜ëŠ” ìŠ¤íƒ€ì¼ì„ ìˆ˜ì •í•©ë‹ˆë‹¤.
 	
 
 
@@ -135,19 +136,19 @@ void CFormViewShellView::OnInitialUpdate()
 	
 	if(!m_IsToolTipInit)
 	{
-		// ÅøÆÁ ¼³Á¤
+		// íˆ´íŒ ì„¤ì •
 		m_toolTip.Create(this);
 		m_toolTip.Activate(TRUE);
-		m_toolTip.AddTool(GetDlgItem(IDC_EDIT4), "ex) *.txt, mainBG.nsc");
-		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_OUT), "ex) .NCGR,.NCER ... ");
-		m_toolTip.AddTool(GetDlgItem(IDC_EDIT7), "ÆÄÀÏÃ³¸®ÈÄ ÃÖÁ¾È®ÀåÀÚ ex) .nlz");
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT4), _T("ex) *.txt, mainBG.nsc"));
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_OUT), _T("ex) .NCGR,.NCER ... "));
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT7), _T("íŒŒì¼ì²˜ë¦¬í›„ ìµœì¢…í™•ì¥ì ex) .nlz"));
 		m_toolTip.AddTool(GetDlgItem(IDC_EDIT1), m_AllCmdLnText);
-		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_DELAY_TIME), "x10ms");
+		m_toolTip.AddTool(GetDlgItem(IDC_EDIT_DELAY_TIME), _T("x10ms"));
 		m_toolTip.SetMaxTipWidth(1000);
 		m_IsToolTipInit = true;
 	}
 	
-	// Æûºä¿¡ ½ºÅ©·Ñ¹Ù Á¦°Å
+	// í¼ë·°ì— ìŠ¤í¬ë¡¤ë°” ì œê±°
 	ResizeParentToFit(FALSE);
 
 	CRect rect;
@@ -160,7 +161,7 @@ void CFormViewShellView::OnInitialUpdate()
 }
 
 
-// CFormViewShellView Áø´Ü
+// CFormViewShellView ì§„ë‹¨
 
 #ifdef _DEBUG
 void CFormViewShellView::AssertValid() const
@@ -173,7 +174,7 @@ void CFormViewShellView::Dump(CDumpContext& dc) const
 	CFormView::Dump(dc);
 }
 
-CFormViewShellDoc* CFormViewShellView::GetDocument() const // µğ¹ö±×µÇÁö ¾ÊÀº ¹öÀüÀº ÀÎ¶óÀÎÀ¸·Î ÁöÁ¤µË´Ï´Ù.
+CFormViewShellDoc* CFormViewShellView::GetDocument() const // ë””ë²„ê·¸ë˜ì§€ ì•Šì€ ë²„ì „ì€ ì¸ë¼ì¸ìœ¼ë¡œ ì§€ì •ë©ë‹ˆë‹¤.
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CFormViewShellDoc)));
 	return (CFormViewShellDoc*)m_pDocument;
@@ -181,8 +182,8 @@ CFormViewShellDoc* CFormViewShellView::GetDocument() const // µğ¹ö±×µÇÁö ¾ÊÀº ¹ö
 #endif //_DEBUG
 
 
-// CFormViewShellView ¸Ş½ÃÁö Ã³¸®±â
-// m_ExecFilePath¿¡ ¼³Á¤ÇÑ °æ·Î¸¦ Ã£¾Æ°¨
+// CFormViewShellView ë©”ì‹œì§€ ì²˜ë¦¬ê¸°
+// m_ExecFilePathì— ì„¤ì •í•œ ê²½ë¡œë¥¼ ì°¾ì•„ê°
 void CFormViewShellView::OnBnClickedSelExcfile()
 {
 	// TODO: Add your control notification handler code here
@@ -203,9 +204,9 @@ void CFormViewShellView::OnBnClickedSelExcfile()
 	BRinfo.hwndOwner = GetSafeHwnd();
 	BRinfo.pidlRoot = 0;
 	BRinfo.pszDisplayName = m_ExecFilePath.GetBuffer(MAX_PATH);
-	BRinfo.lpszTitle = "ÆÄÀÏÀ» ¼±ÅØÇÏ¼¼¿ä.";
+	BRinfo.lpszTitle = _T("íŒŒì¼ì„ ì„ í…í•˜ì„¸ìš”.");
 	BRinfo.ulFlags = BIF_NEWDIALOGSTYLE | BIF_STATUSTEXT | BIF_UAHINT | BIF_RETURNFSANCESTORS | BIF_BROWSEINCLUDEFILES;
-	// m_ExecFilePath¿¡ ¼³Á¤ÇÑ °æ·Î¸¦ Ã£¾Æ°¨
+	// m_ExecFilePathì— ì„¤ì •í•œ ê²½ë¡œë¥¼ ì°¾ì•„ê°
 	BRinfo.lpfn = BrowseCallbackProc;
 	BRinfo.lParam = (LPARAM)BRinfo.pszDisplayName;
 
@@ -215,7 +216,7 @@ void CFormViewShellView::OnBnClickedSelExcfile()
 	{
 		SHGetPathFromIDList(pidlBrowse, m_ExecFilePath.GetBuffer(MAX_PATH));
 		SetDlgItemText(IDC_EXEC_FILE, m_ExecFilePath);
-		char *temp = m_ExecFilePath.GetBuffer(MAX_PATH);
+		CString temp = m_ExecFilePath.GetBuffer(MAX_PATH);
 		m_ExecFilePath = temp;
 	}
 	
@@ -232,7 +233,7 @@ void CFormViewShellView::OnBnClickedSelExcfile()
 	BRinfo.hwndOwner = GetSafeHwnd();
 	BRinfo.pidlRoot = NULL;
 	BRinfo.pszDisplayName = m_FullFileName.GetBuffer(MAX_PATH);
-	BRinfo.lpszTitle = "Æú´õ¸¦ ¼±ÅÃÇÏ¼¼¿ä.";
+	BRinfo.lpszTitle = "í´ë”ë¥¼ ì„ íƒí•˜ì„¸ìš”.";
 	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS;
 	BRinfo.lpfn = NULL;
 	BRinfo.lParam = 0;
@@ -260,9 +261,9 @@ void CFormViewShellView::OnBnClickedSelpath()
 	BRinfo.hwndOwner = GetSafeHwnd();
 	BRinfo.pidlRoot = NULL;
 	BRinfo.pszDisplayName = m_DestPath.GetBuffer(MAX_PATH);
-	BRinfo.lpszTitle = "Æú´õ¸¦ ¼±ÅÃÇÏ¼¼¿ä.";
+	BRinfo.lpszTitle = _T("í´ë”ë¥¼ ì„ íƒí•˜ì„¸ìš”.");
 	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_STATUSTEXT | BIF_UAHINT;
-	// m_DestPath¿¡ ¼³Á¤ÇÑ °æ·Î¸¦ Ã£¾Æ°¨
+	// m_DestPathì— ì„¤ì •í•œ ê²½ë¡œë¥¼ ì°¾ì•„ê°
 	BRinfo.lpfn = BrowseCallbackProc;
 	BRinfo.lParam = (LPARAM)BRinfo.pszDisplayName;
 
@@ -272,7 +273,7 @@ void CFormViewShellView::OnBnClickedSelpath()
 	{
 		SHGetPathFromIDList(pidlBrowse, m_DestPath.GetBuffer(MAX_PATH));
 		SetDlgItemText(IDC_PATH, m_DestPath);
-		char *temp = m_DestPath.GetBuffer(MAX_PATH);
+		CString temp = m_DestPath.GetBuffer(MAX_PATH);
 		m_DestPath = temp;
 	}
 	//DisplayCommand(TRUE);
@@ -304,33 +305,34 @@ void CFormViewShellView::OnBnClickedOptionCheck()
 /*---------------------------------------------------------------------------*
   Name:         SearchDir
 
-  Description:  	½ÇÇà¹öÆ° ´©¸¥¸é È£Ãâ ¸í·ÉÀ» ¼öÇàÇÑ´Ù.
+  Description:  	ì‹¤í–‰ë²„íŠ¼ ëˆ„ë¥¸ë©´ í˜¸ì¶œ ëª…ë ¹ì„ ìˆ˜í–‰í•œë‹¤.
  *---------------------------------------------------------------------------*/
 void CFormViewShellView::OnBnClickedExecappl()
 {
 	// TODO: Add your control notification handler code here
 	
 	const int FILE_EXIST_CHECK_CNT = 2;
-	// »ç¿ë±â°£ ÃÊ°ú °Ë»ç
+	// ì‚¬ìš©ê¸°ê°„ ì´ˆê³¼ ê²€ì‚¬
 	bool isTimeOver = false;
-	// dllÆÄÀÏÀº ½ÇÇàÆÄÀÏ°ú °°Àº Æú´õ¿¡ À§Ä¡½ÃÄÑ¾ßÇÔ
+	// dllíŒŒì¼ì€ ì‹¤í–‰íŒŒì¼ê³¼ ê°™ì€ í´ë”ì— ìœ„ì¹˜ì‹œì¼œì•¼í•¨
 	char* timeStr = GetDateTime(isTimeOver);
 	if(isTimeOver)
 	{
-		AfxMessageBox("»ç¿ë±â°£ ÃÊ°ú");
+		AfxMessageBox(_T("ì‚¬ìš©ê¸°ê°„ ì´ˆê³¼"));
 		return;
 	}
 
-	// °»½ÅÆÄÀÏ ÀúÀå(ÄÚµå¿ö¸®¾î make¿ë)
-	// ½ÇÇà½ÃÁ¡, »ç¿ëµÈ ÆÄÀÏ°æ·Î ÀúÀå
+	// ê°±ì‹ íŒŒì¼ ì €ì¥(ì½”ë“œì›Œë¦¬ì–´ makeìš©)
+	// ì‹¤í–‰ì‹œì , ì‚¬ìš©ëœ íŒŒì¼ê²½ë¡œ ì €ì¥
 	CFile myFile;
 	CFileException e;
-	if(!myFile.Open(GetDocument()->m_IniFilePath + ".txt", CFile::modeCreate | CFile::modeWrite, &e))
+	if(!myFile.Open(GetDocument()->m_IniFilePath + _T(".txt"), CFile::modeCreate | CFile::modeWrite, &e))
 	{
-		TRACE(_T("File could not be opened %s : %d\n"), GetDocument()->m_IniFilePath + ".txt", e.m_cause);
+		TRACE(_T("File could not be opened %s : %d\n"), GetDocument()->m_IniFilePath + _T(".txt"), e.m_cause);
 	}
-	CString refreshStr = m_SettingFilePath + "\r\n" + timeStr;
-	myFile.Write(refreshStr, refreshStr.GetLength());
+	CString refreshStr = m_SettingFilePath + _T("\r\n");
+	refreshStr += (timeStr);
+	myFile.Write(refreshStr, refreshStr.GetLength() * sizeof(*refreshStr));
 	myFile.Close();
 
 	BOOL bUseShellExCute = TRUE;
@@ -340,17 +342,17 @@ void CFormViewShellView::OnBnClickedExecappl()
 	GetDlgItemText(IDC_EXEC_FILE, m_ExecFilePath);
 	GetDlgItemText(IDC_PATH, m_DestPath);
 	
-	// ¿ÜºÎ¸í·É¾îÀÎÁö °Ë»çÇÔ
-	if(!(m_ExecFilePath).Compare("command.com") || 
-		!(m_ExecFilePath).Compare("cmd.exe") || 
-		!(m_ExecFilePath).Compare("explorer.exe"))
+	// ì™¸ë¶€ëª…ë ¹ì–´ì¸ì§€ ê²€ì‚¬í•¨
+	if(!(m_ExecFilePath).Compare(_T("command.com")) || 
+		!(m_ExecFilePath).Compare(_T("cmd.exe")) ||
+		!(m_ExecFilePath).Compare(_T("explorer.exe")))
 	{
 		isInternalCmd = TRUE;
 	}
-	// ¿ÜºÎ¸í·É¾î ¸ğµå°¡ ¾È´Ñµ¥ ÀÛ¾÷ÇÒ ÆÄÀÏÀÌ ÁöÁ¤µÇÁö ¾Ê¾ÒÀ¸¸é
+	// ì™¸ë¶€ëª…ë ¹ì–´ ëª¨ë“œê°€ ì•ˆë‹Œë° ì‘ì—…í•  íŒŒì¼ì´ ì§€ì •ë˜ì§€ ì•Šì•˜ìœ¼ë©´
 	if(m_FullFileName.IsEmpty() && !isInternalCmd) 
 	{ 
-		AfxMessageBox("º¯È¯ÇÒ ÆÄÀÏÀ» ¼±ÅÃÇÏ¼¼¿ä.");
+		AfxMessageBox(_T("ë³€í™˜í•  íŒŒì¼ì„ ì„ íƒí•˜ì„¸ìš”."));
 
 		OnBnClickedSelfile();
 		if(m_FullFileName.IsEmpty())
@@ -358,10 +360,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 			return;
 		}
 	}
-	// ¿ÜºÎ¸í·É¾î ¸ğµå°¡ ¾È´Ñµ¥ ½ÇÇàÆÄÀÏÀÌ ¾øÀ¸¸é
+	// ì™¸ë¶€ëª…ë ¹ì–´ ëª¨ë“œê°€ ì•ˆë‹Œë° ì‹¤í–‰íŒŒì¼ì´ ì—†ìœ¼ë©´
 	else if(m_ExecFilePath.IsEmpty())// && (fPath.Right(5)).Compare(".mtcl")) 
 	{ 
-		AfxMessageBox("½ÇÇàÆÄÀÏÀ» ¼±ÅÃÇÏ¼¼¿ä.");
+		AfxMessageBox(_T("ì‹¤í–‰íŒŒì¼ì„ ì„ íƒí•˜ì„¸ìš”."));
 
 		OnBnClickedSelfile();
 		if(m_ExecFilePath.IsEmpty())
@@ -372,11 +374,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	int iSuccessCnt = 0;
 
-	// ÇÏÀ§°æ·Î¸¦ ÀúÀåÇÒ º¤ÅÍ
+	// í•˜ìœ„ê²½ë¡œë¥¼ ì €ì¥í•  ë²¡í„°
 	std::vector<CString> vecSearchSubDirList;
-	// ÇÏÀ§°æ·Î¿¡ ÀÖ´Â ÆÄÀÏ¸íÀ» ÀúÀåÇÒ º¤ÅÍ
+	// í•˜ìœ„ê²½ë¡œì— ìˆëŠ” íŒŒì¼ëª…ì„ ì €ì¥í•  ë²¡í„°
 	std::vector<CString> vecFileList;
-	// ½ÇÇà ÆÄÀÏ ´ÙÀ½ ¿É¼Ç ÆÄ¶ó¹ÌÅÍ
+	// ì‹¤í–‰ íŒŒì¼ ë‹¤ìŒ ì˜µì…˜ íŒŒë¼ë¯¸í„°
 	CString execFirstArg;
 	GetDlgItemText(IDC_EDIT6, execFirstArg);
 
@@ -387,8 +389,8 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 	int fileCheckCnt = 0;
 	fileCheckCnt = GetDlgItemInt(IDC_EDIT8);
-	// ¸ñÀû°æ·Î¸¦ »ó´ë°æ·Î·Î Ç¥½ÃÇßÀ»°æ¿ì ´ëÀÀ
-	/*// ÃßÈÄ´ëÀÀ
+	// ëª©ì ê²½ë¡œë¥¼ ìƒëŒ€ê²½ë¡œë¡œ í‘œì‹œí–ˆì„ê²½ìš° ëŒ€ì‘
+	/*// ì¶”í›„ëŒ€ì‘
 	CFileFind dirFinder;
 	BOOL bWorking = dirFinder.FindFile(m_DestPath + "\\*.*");
 	if(!m_DestPath.IsEmpty() && !m_DestPath.Compare(".."))
@@ -398,25 +400,25 @@ void CFormViewShellView::OnBnClickedExecappl()
 		m_FullFileName = dirFinder.GetRoot();
 `*/
 	CString searchRootDirStr = m_FullFileName;
-	CString searchFileStr = m_midPath + "\0";
+	CString searchFileStr = m_midPath + _T("\0");
 
-	// ÇÏÀ§ Æú´õ °¹¼ö ÃÊ±âÈ­
+	// í•˜ìœ„ í´ë” ê°¯ìˆ˜ ì´ˆê¸°í™”
 	m_SubDirCnt = 0;
-	// °Ë»öµÈ °¹¼ö ÃÊ±âÈ­
+	// ê²€ìƒ‰ëœ ê°¯ìˆ˜ ì´ˆê¸°í™”
 	m_SearchedFileCnt = 0;
 	
-	// ÇÏÀ§°æ·Î¿¡ ÀÖ´Â SubFolder¸¦ °Ë»çÇÔ
+	// í•˜ìœ„ê²½ë¡œì— ìˆëŠ” SubFolderë¥¼ ê²€ì‚¬í•¨
 	if(!isInternalCmd)
 		SearchDir(m_FullFileName, vecSearchSubDirList);
-	// ÇÁ·Î±×·¡½ºÇ¥½Ã ÃÊ±âÈ­
+	// í”„ë¡œê·¸ë˜ìŠ¤í‘œì‹œ ì´ˆê¸°í™”
 	m_ProgressCtrl.SetRange(0, 100);
 	m_ProgressCtrl.SetPos(0);
-	// ´ÜÀÏ ÀÛ¾÷ÀÏ¶§´Â ¿©±â¼­ ÀÛ¾÷°á°ú ÅØ½ºÆ® ÃÊ±âÈ­
+	// ë‹¨ì¼ ì‘ì—…ì¼ë•ŒëŠ” ì—¬ê¸°ì„œ ì‘ì—…ê²°ê³¼ í…ìŠ¤íŠ¸ ì´ˆê¸°í™”
 	if(m_BtnExcute.IsWindowEnabled())
 		m_ExcuteFilePath = "";
 	
 	int progressCnt = 0;
-	// º¯È¯ÇÒ ÆÄÀÏÀÇ °³¼ö¸¦ °áÁ¤. 
+	// ë³€í™˜í•  íŒŒì¼ì˜ ê°œìˆ˜ë¥¼ ê²°ì •. 
 	for(int dirCnt = 0;dirCnt < m_SubDirCnt; dirCnt++) 
 	{	
 		int noUse = -1;
@@ -426,17 +428,17 @@ void CFormViewShellView::OnBnClickedExecappl()
 	m_EditProgCnt.ShowWindow(SW_SHOW);
 	
 	
-	// ³»ºÎ ¸í·É¾î ´ëÀÀ
+	// ë‚´ë¶€ ëª…ë ¹ì–´ ëŒ€ì‘
 	if(isInternalCmd)
 	{
 		//CString CMDLine = execFirstArg + "\"" + searchRootDirStr + "" + searchFileStr +  "\"" + ""+ "\"" + m_DestPath + execArg + "\"";
-		CString CMDLine = execFirstArg; //ÇÏ³ªÀÇ ÄÁÆ®·Ñ¿¡¼­ Ã³¸®ÇÏ´Â °ÍÀÎ°¡?
+		CString CMDLine = execFirstArg; //í•˜ë‚˜ì˜ ì»¨íŠ¸ë¡¤ì—ì„œ ì²˜ë¦¬í•˜ëŠ” ê²ƒì¸ê°€?
 
 		ShellCommon(m_ExecFilePath, CMDLine, SW_SHOW);
 
-		//fMask¿¡ SEE_MASK_NOCLOSEPROCESS¸¦ Æ÷ÇÔÇÏ¿´´Ù¸é
-		//hProcesss ¸â¹ö¸¦ ÅëÇÏ¿© »õ·Î»ı±ä ÇÁ·Î¼¼½ºÀÇ ÇÚµéÀ» ¹İÈ¯ ¹ŞÀ» ¼ö ÀÖ´Ù.
-		progressCnt= 1;// ºĞ¸ğ°¡ 0ÀÌµÇ´Â°É ¸·À½
+		//fMaskì— SEE_MASK_NOCLOSEPROCESSë¥¼ í¬í•¨í•˜ì˜€ë‹¤ë©´
+		//hProcesss ë©¤ë²„ë¥¼ í†µí•˜ì—¬ ìƒˆë¡œìƒê¸´ í”„ë¡œì„¸ìŠ¤ì˜ í•¸ë“¤ì„ ë°˜í™˜ ë°›ì„ ìˆ˜ ìˆë‹¤.
+		progressCnt= 1;// ë¶„ëª¨ê°€ 0ì´ë˜ëŠ”ê±¸ ë§‰ìŒ
 		isInternalCmd = TRUE && m_SearchedFileCnt;
 
 		return;
@@ -445,7 +447,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 	for(int dirCnt = 0; dirCnt < m_SubDirCnt; dirCnt++)
 	{
 		int starIndex = m_SearchedFileCnt;
-		//´ë»óÆÄÀÏ °Ë»ö
+		//ëŒ€ìƒíŒŒì¼ ê²€ìƒ‰
 		SearchFile(searchRootDirStr + vecSearchSubDirList[dirCnt], searchFileStr, vecFileList, m_SearchedFileCnt);
 		
 		if(isInternalCmd)
@@ -454,12 +456,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 		for(int listCnt = starIndex; listCnt < m_SearchedFileCnt || isInternalCmd; listCnt++)
 		{
 			CString prgCnt;
-			// ¼¿ÇÔ¼ö ¹İÈ¯°ª
+			// ì…€í•¨ìˆ˜ ë°˜í™˜ê°’
 			HINSTANCE ret = 0;
 			
 			m_ProgressCtrl.SetPos(((listCnt + 1) * 100) / progressCnt);
 			m_ProgressCtrl.UpdateWindow();
-			prgCnt.Format( "[ %d / %d ]", listCnt+1, progressCnt);
+			prgCnt.Format(_T("[ %d / %d ]"), listCnt+1, progressCnt);
 			
 			if(listCnt+1 == progressCnt)
 				prgCnt += " FIN!!!";
@@ -472,38 +474,38 @@ void CFormViewShellView::OnBnClickedExecappl()
 			CString testAllPath;// = execFirstArg + "\"" + vecFileList[listCnt] + m_PreCmdOptStr + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
 			INT nShowCmd = SW_HIDE;	
 
-		//================================ Æ¯¼ö »óÈ² Ä¿¸Çµå=======================================================================================================================
+		//================================ íŠ¹ìˆ˜ ìƒí™© ì»¤ë§¨ë“œ=======================================================================================================================
 			if(m_DestPath.IsEmpty() || m_PreCmdOptStr.IsEmpty())
 			{
-				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" +  execArg;
-			  // PVRTexTool Ä¿¸Çµå¶óÀÎ´ëÀÀ(cocos2d-x)
-				if(!(m_PreCmdOptStr.Left(3)).Compare("pvr")){
+				testAllPath = execFirstArg + _T("\"") + vecFileList[listCnt] + _T("\"") +  execArg;
+			  // PVRTexTool ì»¤ë§¨ë“œë¼ì¸ëŒ€ì‘(cocos2d-x)
+				if(!(m_PreCmdOptStr.Left(3)).Compare(_T("pvr"))){
 					
 					CString tempStr = m_PreCmdOptStr;
 					CString tempFileStr =  vecFileList[listCnt];
 					int sIndex = tempFileStr.Find('.', 0);
 					CString tempFileExetStr = tempFileStr.Right(tempFileStr.GetLength() - sIndex);
-					tempFileStr.Replace(tempFileExetStr, ".pvr"); 
-					tempStr.Replace("pvr", "");
-					testAllPath += tempStr + "\"" + tempFileStr;
+					tempFileStr.Replace(tempFileExetStr, _T(".pvr"));
+					tempStr.Replace(_T("pvr"), _T(""));
+					testAllPath += tempStr + _T("\"") + tempFileStr;
 				
 				}
-				// A2d ÄÁ¹öÆ®(Aztool)
-				else if((!(m_PreCmdOptStr.Left(3)).Compare("A2d")) || (!(m_PreCmdOptStr.Left(3)).Compare("a2d")))
+				// A2d ì»¨ë²„íŠ¸(Aztool)
+				else if((!(m_PreCmdOptStr.Left(3)).Compare(_T("A2d")) || (!(m_PreCmdOptStr.Left(3)).Compare(_T("a2d")))))
 				{
-					testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"";
+					testAllPath = execFirstArg + _T("\"") + vecFileList[listCnt] + _T("\"");
 					CString tempStr = m_PreCmdOptStr;
 					CString tempFileStr =  vecFileList[listCnt];
 					int sIndex = tempFileStr.Find('.', 0);
 					CString tempFileExetStr = tempFileStr.Right(tempFileStr.GetLength() - sIndex);
-					tempFileStr.Replace(tempFileExetStr, ".vrp"); 
-					tempStr.Replace("vrp", "");
-					testAllPath +=  " \"" + tempFileStr  + "\"" +  execArg;
+					tempFileStr.Replace(tempFileExetStr, _T(".vrp"));
+					tempStr.Replace(_T("vrp"), _T(""));
+					testAllPath += _T(" \"") + tempFileStr  + _T("\"") +  execArg;
 				}
 			}
 			else
-			{	// Avitomoviclipds.exe ´ëÀÀ °æ·ÎºÎºĞÀÇ °ø¹éÀÌ ÀÖÀ¸¸é ¹®Á¦¹ß»ı " "·Î ¹­À½
-				testAllPath = execFirstArg + "\"" + vecFileList[listCnt] + "\"" + m_PreCmdOptStr + "\"" + m_DestPath + vecSearchSubDirList[dirCnt] +"\"" + execArg;
+			{	// Avitomoviclipds.exe ëŒ€ì‘ ê²½ë¡œë¶€ë¶„ì˜ ê³µë°±ì´ ìˆìœ¼ë©´ ë¬¸ì œë°œìƒ " "ë¡œ ë¬¶ìŒ
+				testAllPath = execFirstArg + _T("\"") + vecFileList[listCnt] + _T("\"") + m_PreCmdOptStr + _T("\"") + m_DestPath + vecSearchSubDirList[dirCnt] + _T("\"") + execArg;
 			}
 
 			CString oExtStrTop;
@@ -513,7 +515,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 			
 			if(0 <= oExtStrTop.Find('*',0))
 			{
-				// ÆÄÀÏ Ã³¸®ÀÛ¾÷¸¸ ÇÑ´Ù.
+				// íŒŒì¼ ì²˜ë¦¬ì‘ì—…ë§Œ í•œë‹¤.
 				bUseShellExCute = FALSE;
 				
 				if(m_DestPath.IsEmpty())
@@ -526,26 +528,26 @@ void CFormViewShellView::OnBnClickedExecappl()
 			
 			for(int lbIndex = 0; lbIndex < m_ListBox_Out.GetCount(); lbIndex++)
 			{
-				// ÆÄÀÏÃ³¸® Å¸ÀÔ ¼³Á¤
+				// íŒŒì¼ì²˜ë¦¬ íƒ€ì… ì„¤ì •
 				int iExtType = 0;
-				// È®ÀåÀÚ ÃßÃâ¿ë
+				// í™•ì¥ì ì¶”ì¶œìš©
 				int sIndex = 0;
-				// È®ÀåÀÚ
+				// í™•ì¥ì
 				CString oExtStr;
-				//½ÇÇà°á°ú·Î »ı¼ºµÈ ÆÄÀÏÆĞ½º
-				CString outPutResultPath = "";
-				// ÀÔ·Â ÆÄÀÏÀÇ È®ÀåÀÚ
-				CString iExtStr = "";
-				// È®ÀåÀÚ¸¸ ÃßÃâ
+				//ì‹¤í–‰ê²°ê³¼ë¡œ ìƒì„±ëœ íŒŒì¼íŒ¨ìŠ¤
+				CString outPutResultPath = _T("");
+				// ì…ë ¥ íŒŒì¼ì˜ í™•ì¥ì
+				CString iExtStr = _T("");
+				// í™•ì¥ìë§Œ ì¶”ì¶œ
 				sIndex = testAllPath.Find('.', 0);
 				iExtStr = testAllPath.Right(testAllPath.GetLength() - sIndex);
-				iExtStr.Replace("\"", "");
+				iExtStr.Replace(_T("\""), _T(""));
 				
 				m_ListBox_Out.GetText(lbIndex, oExtStr);
 
 				CString tExtTypeStr = oExtStr.Left(3);
 
-				char *fileOp[3]= {"[M]", "[C]", "[D]"};
+				TCHAR *fileOp[3]= {_T("[M]"), _T("[C]"), _T("[D]")};
 				
 				if(!(oExtStr.Left(3)).Compare(fileOp[FO_MOVE - 1]))
 				{
@@ -560,11 +562,11 @@ void CFormViewShellView::OnBnClickedExecappl()
 					iExtType = FO_DELETE;
 				}
 				
-				//È®ÀåÀÚ¿¡¼­ ÆÄÀÏÃ³¸®¸¦ À§ÇÑ ½ºÆ®¸µ¸¸ Á¦°Å
+				//í™•ì¥ìì—ì„œ íŒŒì¼ì²˜ë¦¬ë¥¼ ìœ„í•œ ìŠ¤íŠ¸ë§ë§Œ ì œê±°
 				sIndex = oExtStr.Find('.', 0);
 				oExtStr = oExtStr.Right(oExtStr.GetLength() - sIndex);
 
-				//½ÇÇà°á°ú·Î »ı¼ºµÈ ÆÄÀÏÆĞ½º ¸¸µé±â
+				//ì‹¤í–‰ê²°ê³¼ë¡œ ìƒì„±ëœ íŒŒì¼íŒ¨ìŠ¤ ë§Œë“¤ê¸°
 				//sIndex = testAllPath.Find('.',testAllPath.GetLength() - FILE_EXT_LENGTH_MAX);
 				sIndex = testAllPath.Find('.',0);
 				
@@ -572,7 +574,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 				{
 					sIndex = testAllPath.Find('.',0);
 					CString sExte = testAllPath.Right(testAllPath.GetLength() - sIndex);
-					sExte.Replace("\"","");
+					sExte.Replace(_T("\""), _T(""));
 					oExtStr = sExte;
 					outPutResultPath = testAllPath;
 				}
@@ -581,28 +583,28 @@ void CFormViewShellView::OnBnClickedExecappl()
 					outPutResultPath = testAllPath.Left(sIndex) + oExtStr;
 				}
 
-				outPutResultPath.Replace("\"","");
+				outPutResultPath.Replace(_T("\""), _T(""));
 
 				CString tempOutPutStr = vecFileList[listCnt];
-				// ÆÄÀÏ ÀÌ¸§¸¸ ºĞ¸®ÇÏ±â
+				// íŒŒì¼ ì´ë¦„ë§Œ ë¶„ë¦¬í•˜ê¸°
 				//sIndex = tempOutPutStr.Find('.',tempOutPutStr.GetLength() - FILE_EXT_LENGTH_MAX);
 				sIndex = tempOutPutStr.Find('.',0);
 				CString sExte = tempOutPutStr.Right(tempOutPutStr.GetLength() - sIndex);
-				// Ãâ·ÂÆÄÀÏÀÌ¸§¿¡ È®ÀåÀÚ ºÙÀÌ±â
+				// ì¶œë ¥íŒŒì¼ì´ë¦„ì— í™•ì¥ì ë¶™ì´ê¸°
 				tempOutPutStr.Replace(sExte, oExtStr);
 
-				tempOutPutStr.Replace(searchRootDirStr, "");
+				tempOutPutStr.Replace(searchRootDirStr, _T(""));
 				//CString movSrc = searchRootDirStr + tempOutPutStr;
 				tempOutPutStr = m_DestPath + tempOutPutStr;
-				// ÀÌ¸§ °­Á¦ ¹Ù²Ù°í ÀÌµ¿ÇÏ±â
+				// ì´ë¦„ ê°•ì œ ë°”ê¾¸ê³  ì´ë™í•˜ê¸°
 				//CString movSrc = searchRootDirStr + vecSearchSubDirList[dirCnt] + "\\*" + oExtStr;//SE_ERR_ACCESSDENIED
 				CString movDest = tempOutPutStr;
-				//»ı¼ºµÈ ÆÄÀÏ Ã£±âÀ§ÇÑ ÆÄÀÏ ÆĞ½º
-				CString movingStr = "";
+				//ìƒì„±ëœ íŒŒì¼ ì°¾ê¸°ìœ„í•œ íŒŒì¼ íŒ¨ìŠ¤
+				CString movingStr = _T("");
 				int findCnt = 0;
 				//
 				BOOL bAtiveFileProc = TRUE;
-				// ÄÁ¹öÆÃµÈ ÆÄÀÏÀÌ ¿øº» ÆÄÀÏÀÌ ÀÖ´Â Æú´õ¿¡ ¾ÆÁ÷ ¾øÀ» °æ¿ì °è¼Ó Ã£À½
+				// ì»¨ë²„íŒ…ëœ íŒŒì¼ì´ ì›ë³¸ íŒŒì¼ì´ ìˆëŠ” í´ë”ì— ì•„ì§ ì—†ì„ ê²½ìš° ê³„ì† ì°¾ìŒ
 				while(movingStr.IsEmpty())
 				{	
 					if(iExtType == FO_COPY)
@@ -611,11 +613,20 @@ void CFormViewShellView::OnBnClickedExecappl()
 					}
 					else if(iExtType == FO_DELETE)
 					{
-						// »èÁ¦ÇÒ ÆÄÀÏÀÇ °æ·Î
+						// ì‚­ì œí•  íŒŒì¼ì˜ ê²½ë¡œ
 						//movingStr = tempOutPutStr;
 						//bAtiveFileProc = PathFileExists(tempOutPutStr);
 						
 						movingStr = outPutResultPath;
+						CStringW strw(movingStr);
+
+						//CStringW wstr = CA2W(movingStr);
+						//CStringW myTestStr(L"(C93) [ã¯ã‚ˆã—ã­ã¾ (è¶Šå±±å¼±è¡°)] éƒ½æ©‹å…ˆç”Ÿã¯ä»Šæ—¥ã‚‚é‡¦ã‚’é£›ã°ã™ã€‚ (ã‚ªãƒªã‚¸ãƒŠãƒ«).torrent");
+						//CString myTestStr_("(C93) [ã¯ã‚ˆã—ã­ã¾ (è¶Šå±±å¼±è¡°)] éƒ½æ©‹å…ˆç”Ÿã¯ä»Šæ—¥ã‚‚é‡¦ã‚’é£›ã°ã™ã€‚ (ã‚ªãƒªã‚¸ãƒŠãƒ«).torrent");
+						//
+						//bAtiveFileProc = PathFileExistsW(myTestStr);
+						//bAtiveFileProc = PathFileExistsW(strw);
+
 						bAtiveFileProc = PathFileExists(movingStr);
 						break;
 					}
@@ -623,48 +634,48 @@ void CFormViewShellView::OnBnClickedExecappl()
 					{
 						CString extModify;
 						GetDlgItemText(IDC_EDIT7, extModify);
-						// ÆÄÀÏÀÌµ¿Ã³¸®½Ã Æ¯Á¤È®ÀåÀÚ·Î º¯°æ 
+						// íŒŒì¼ì´ë™ì²˜ë¦¬ì‹œ íŠ¹ì •í™•ì¥ìë¡œ ë³€ê²½ 
 						if(!extModify.IsEmpty()){
 							//movDest.Replace(oExtStr, iExtStr + extModify);
 							movDest.Replace(oExtStr, extModify);
 						}
 							//movDest += extModify;
-						// ÆÄÀÏÀÌµ¿ ¿Ã¹Ù¸£°Ô ÇÏ·Á¸é ÇÏ³ªÀÇ ÆÄÀÏ¸¸ ¼±ÅÃµÇµµ·Ï ÇØ¾ßÇÔ
+						// íŒŒì¼ì´ë™ ì˜¬ë°”ë¥´ê²Œ í•˜ë ¤ë©´ í•˜ë‚˜ì˜ íŒŒì¼ë§Œ ì„ íƒë˜ë„ë¡ í•´ì•¼í•¨
 						if(bUseShellExCute)
 							SearchOneFile(searchRootDirStr + vecSearchSubDirList[dirCnt], oExtStr, &movingStr);
 						else
 							movingStr = outPutResultPath;
 					}
 					//Sleep(10);
-					m_ExcuteFilePath +=  ".\r\n";
+					m_ExcuteFilePath += _T(".\r\n");
 					findCnt++;
-					// ¸±¸®Áî¸ğµå ´ëÀÀ(µğ¹ö±×¶ó¸é ´õ´Ã·Á¾ßÇÔ)
-					// ÀÇ¹Ì°¡ ¾ø°Ô µÇ¾úÀ½
+					// ë¦´ë¦¬ì¦ˆëª¨ë“œ ëŒ€ì‘(ë””ë²„ê·¸ë¼ë©´ ë”ëŠ˜ë ¤ì•¼í•¨)
+					// ì˜ë¯¸ê°€ ì—†ê²Œ ë˜ì—ˆìŒ
 					fileCheckCnt = 0;
 					if(findCnt > fileCheckCnt)
 						break;
 				}	
-				// CMD ¸í·É
+				// CMD ëª…ë ¹
 /*				CString testSTRING ="/c move " + movSrc + " " + movDest;
 				HINSTANCE movRet = ShellExecute(NULL, "open", "cmd", testSTRING, NULL, SW_HIDE);
 */
 
-				//========================================= °á°ú ÆÄÀÏÃ³¸® Ç¥½Ã====================================================
+				//========================================= ê²°ê³¼ íŒŒì¼ì²˜ë¦¬ í‘œì‹œ====================================================
 				BOOL isDestFileExist = FALSE;
 				if(bAtiveFileProc)
 				{
 
 					if(m_ViewList.GetCheck() && !movingStr.IsEmpty())
 					{
-						//ÆÄÀÏÃ³¸® ¸®½ºÆ® Ãâ·ÂÇÏ±â
-						CString fileOp[3]= {" ÀÌµ¿", " º¹»ç", " »èÁ¦"};
+						//íŒŒì¼ì²˜ë¦¬ ë¦¬ìŠ¤íŠ¸ ì¶œë ¥í•˜ê¸°
+						CString fileOp[3]= {_T(" ì´ë™"), _T(" ë³µì‚¬"), _T(" ì‚­ì œ")};
 						if(iExtType == FO_DELETE)
 						{
-							m_ExcuteFilePath +=	movingStr + " ¸¦" + fileOp[iExtType - 1] +"\r\n";
+							m_ExcuteFilePath +=	movingStr + _T(" ë¥¼") + fileOp[iExtType - 1] + _T("\r\n");
 						}
 						else
 						{
-							m_ExcuteFilePath +=	movingStr + " ¸¦"+ "  \r\n"  + movDest + "·Î" + fileOp[iExtType - 1] + "\r\n";
+							m_ExcuteFilePath +=	movingStr + _T(" ë¥¼") + _T("  \r\n")  + movDest + _T("ë¡œ") + fileOp[iExtType - 1] + _T("\r\n");
 						}
 
 						//SetDlgItemText(IDC_EDIT9, m_ExcuteFilePath);
@@ -673,53 +684,53 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 					SHFILEOPSTRUCT shos;
 					ZeroMemory(&shos, sizeof(SHFILEOPSTRUCT));
-					// ÆÄÀÏÃ³¸® Å¸ÀÔ °áÁ¤
+					// íŒŒì¼ì²˜ë¦¬ íƒ€ì… ê²°ì •
 					shos.wFunc = iExtType;
 
 					//movingStr = "\"" + movingStr + "\"";
-					movingStr.Append("\0", 1);
-					movDest.Append("\0", 1);
+					movingStr.Append(_T("\0"), 1);
+					movDest.Append(_T("\0"), 1);
 					shos.pFrom = NULL;
 					shos.pTo = NULL;
-					// ÀÌ·±½ÄÀ¸·Î ³Ö¾îÁà¾ßÇÔ!!!
+					// ì´ëŸ°ì‹ìœ¼ë¡œ ë„£ì–´ì¤˜ì•¼í•¨!!!
 					TCHAR        pszFrom[1024] = {0}; 
-					strcpy_s(pszFrom , movingStr);
+					wcscpy_s(pszFrom , movingStr);
 					shos.pFrom = pszFrom;//"D:\\WORK\\Macheon_Trial\\MC\\Program\\NC\\MainUi\\2d\\MainUI_bottom.NCER";
 
 					TCHAR        pszTo[1024] = {0};
 					//movDest = "\"" + movDest + "\"";
-					strcpy_s(pszTo , movDest);
+					wcscpy_s(pszTo , movDest);
 				
 					if(iExtType != FO_DELETE)
 						shos.pTo = pszTo;
 
-					// ÀÛ¾÷°úÁ¤ Á¤º¸¸¦ Ç¥½Ã¾ÈÇÔ
+					// ì‘ì—…ê³¼ì • ì •ë³´ë¥¼ í‘œì‹œì•ˆí•¨
 					shos.fFlags = FOF_NOCONFIRMATION | FOF_NOERRORUI;
 
 					int shRet = 0;
 					int tryCount = 0;
-					// »ı¼º°á°ú ÆÄÀÏÀÌ Å« ÀÌÀ¯µîÀ¸·Î SHFileOperation()°¡ Á¦´ë·Î ¸¶Ä¡Áö ¸øÇßÀ¸¸é µÉ¶§±îÁöÇÑ´Ù.
+					// ìƒì„±ê²°ê³¼ íŒŒì¼ì´ í° ì´ìœ ë“±ìœ¼ë¡œ SHFileOperation()ê°€ ì œëŒ€ë¡œ ë§ˆì¹˜ì§€ ëª»í–ˆìœ¼ë©´ ë ë•Œê¹Œì§€í•œë‹¤.
 					do
 					{
-					//===================================½©ÆÄÀÏÃ³·¯===========================================================
-						// ¹Ì¸®º¸±â
+					//===================================ì‰˜íŒŒì¼ì²˜ëŸ¬===========================================================
+						// ë¯¸ë¦¬ë³´ê¸°
 						if(!m_bIsPreview)
 						{
-							/*!!! µğ¹ö±×¸ğµå½Ã ¿¡·¯¹ß»ı°¡´É ¸±¸®Áî ¸ğµå¿¡¼­µµ Å×½ºÆ® ÇÏµµ·Ï!!!*/
-							// shRetÀÌ 0 ÀÌ¿ÜÀÇ °ªÀÌ¸é ½ÇÆĞ
+							/*!!! ë””ë²„ê·¸ëª¨ë“œì‹œ ì—ëŸ¬ë°œìƒê°€ëŠ¥ ë¦´ë¦¬ì¦ˆ ëª¨ë“œì—ì„œë„ í…ŒìŠ¤íŠ¸ í•˜ë„ë¡!!!*/
+							// shRetì´ 0 ì´ì™¸ì˜ ê°’ì´ë©´ ì‹¤íŒ¨
 							shRet = SHFileOperation(&shos);
 						}
 						//Sleep(10);
 						if(tryCount > 0)
-							m_ExcuteFilePath +=  "ÆÄÀÏÃ³¸® Áß";
+							m_ExcuteFilePath +=  "íŒŒì¼ì²˜ë¦¬ ì¤‘";
 						
 						tryCount++;
 					}
 					while(tryCount < 2 && shRet != 0);
-					isDestFileExist = PathFileExists(movingStr);// Ã³¸®ÇÒ ÆÄÀÏ(°á°úÆÄÀÏ)ÀÌ °æ·Î¿¡ ÀÖ´ÂÁö °Ë»ç
+					isDestFileExist = PathFileExists(movDest);// ì²˜ë¦¬í•  íŒŒì¼(ê²°ê³¼íŒŒì¼)ì´ ê²½ë¡œì— ìˆëŠ”ì§€ ê²€ì‚¬
 					if(!isDestFileExist && m_Check_EnableErrPop.GetCheck())
 					{
-						int popRet = MessageBox(movDest + " \nÆÄÀÏÀÌ ¾ø½À´Ï´Ù. °è¼Ó ÇÏ½Ã°Ú½À´Ï±î?","ÆÄÀÏÃ³¸® ¿¡·¯", MB_OKCANCEL);
+						int popRet = MessageBox(movDest + _T(" \níŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤. ê³„ì† í•˜ì‹œê² ìŠµë‹ˆê¹Œ?"), _T("íŒŒì¼ì²˜ë¦¬ ì—ëŸ¬"), MB_OKCANCEL);
 						
 						if(popRet == 1)
 						{
@@ -731,10 +742,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 							return;
 						}
 					}
-					//Ã³¸®ÇØ¾ßÇÒ ÆÄÀÏÀÌ ¾ø°í ¿¡·¯¸Ş¼¼Áö¸¦ Ç¥½ÃÇÑ »óÅÂÀÌ¸é
+					//ì²˜ë¦¬í•´ì•¼í•  íŒŒì¼ì´ ì—†ê³  ì—ëŸ¬ë©”ì„¸ì§€ë¥¼ í‘œì‹œí•œ ìƒíƒœì´ë©´
 					if(shRet && m_Check_EnableErrPop.GetCheck())
 					{
-						int popRet = MessageBox(movDest + " \nÀÛ¾÷À» ¸¶Ä¡Áö ¸øÇß½À´Ï´Ù. °è¼Ó ÇÏ½Ã°Ú½À´Ï±î?","ÆÄÀÏÃ³¸® ¿¡·¯", MB_OKCANCEL);
+						int popRet = MessageBox(movDest + _T(" \nì‘ì—…ì„ ë§ˆì¹˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. ê³„ì† í•˜ì‹œê² ìŠµë‹ˆê¹Œ?"), _T("íŒŒì¼ì²˜ë¦¬ ì—ëŸ¬"), MB_OKCANCEL);
 						
 						if(popRet == 1)
 						{
@@ -753,7 +764,7 @@ void CFormViewShellView::OnBnClickedExecappl()
 
 				if(iExtType == FO_DELETE)
 				{
-					isDestFileExist = PathFileExists(movingStr);// »èÁ¦ÇÒ ÆÄÀÏÀÌ °æ·Î¿¡ ÀÖ´ÂÁö °Ë»ç
+					isDestFileExist = PathFileExists(movingStr);// ì‚­ì œí•  íŒŒì¼ì´ ê²½ë¡œì— ìˆëŠ”ì§€ ê²€ì‚¬
 				}
 
 				int findMovedFileCnt = 0;
@@ -766,10 +777,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 					if(findMovedFileCnt > FILE_EXIST_CHECK_CNT)
 						break;
 				}
-				// ¿¡·¯¸Ş¼¼Áö Ç¥½Ã¿©ºÎ
+				// ì—ëŸ¬ë©”ì„¸ì§€ í‘œì‹œì—¬ë¶€
 				if(m_Check_EnableErrPop.GetCheck() && ((iExtType == FO_DELETE && isDestFileExist) || (iExtType != FO_DELETE && !isDestFileExist)))
 				{
-					int popRet = MessageBox(outPutResultPath + " \n¿¡´ëÇÑ ÀÛ¾÷À» ¸¶Ä¡Áö ¸øÇß½À´Ï´Ù. \n°è¼Ó ÇÏ½Ã°Ú½À´Ï±î?","ÀÏÁö Á¤Áö", MB_OKCANCEL);
+					int popRet = MessageBox(outPutResultPath + _T(" \nì—ëŒ€í•œ ì‘ì—…ì„ ë§ˆì¹˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. \nê³„ì† í•˜ì‹œê² ìŠµë‹ˆê¹Œ?"), _T("ì¼ì§€ ì •ì§€"), MB_OKCANCEL);
 					if(popRet == 1)
 					{
 						continue;
@@ -793,12 +804,12 @@ void CFormViewShellView::OnBnClickedExecappl()
 				{
 					case SE_ERR_NOASSOC:
 					{
-						MessageBox("ÁöÁ¤µÈ ÆÄÀÏ È®ÀåÀÚ·Î ½ÇÇàÇÒ ¼ö ÀÖ´Â ÇÁ·Î±×·¥ÀÌ ¾ø½À´Ï´Ù.","ÆÄÀÏ È®ÀåÀÚ ¿À·ù", MB_OKCANCEL);
+						MessageBox(_T("ì§€ì •ëœ íŒŒì¼ í™•ì¥ìë¡œ ì‹¤í–‰í•  ìˆ˜ ìˆëŠ” í”„ë¡œê·¸ë¨ì´ ì—†ìŠµë‹ˆë‹¤."), _T("íŒŒì¼ í™•ì¥ì ì˜¤ë¥˜"), MB_OKCANCEL);
 					}
 					break;
 					case SE_ERR_FNF:
 					{
-						MessageBox("ÁöÁ¤µÈ ÆÄÀÏÀ» Ã£À»¼ö ¾ø½À´Ï´Ù.","ÆÄÀÏ ¿À·ù", MB_OKCANCEL);
+						MessageBox(_T("ì§€ì •ëœ íŒŒì¼ì„ ì°¾ì„ìˆ˜ ì—†ìŠµë‹ˆë‹¤."), _T("íŒŒì¼ ì˜¤ë¥˜"), MB_OKCANCEL);
 					}
 					break;
 				}
@@ -806,10 +817,10 @@ void CFormViewShellView::OnBnClickedExecappl()
 		}
 	}
 	
-	// ¼Ò½ºÂÊÀÇ ºóÆú´õ Áö¿ì±â
-	for(int dirCnt = m_SubDirCnt - 1; m_EmptyFolderCheck.GetCheck() && dirCnt >= 1; dirCnt--) // dirCnt >= 1 : ÃÖ»óÀ§ Æú´õ´Â »èÁ¦ÇÏÁö¾ÊÀ½
+	// ì†ŒìŠ¤ìª½ì˜ ë¹ˆí´ë” ì§€ìš°ê¸°
+	for(int dirCnt = m_SubDirCnt - 1; m_EmptyFolderCheck.GetCheck() && dirCnt >= 1; dirCnt--) // dirCnt >= 1 : ìµœìƒìœ„ í´ë”ëŠ” ì‚­ì œí•˜ì§€ì•ŠìŒ
 	{
-		//***ÇÏÀ§¿¡ ÆÄÀÏÀÌ³ª Æú´õ°¡ ÀÖÀ¸¸é Æú´õ°¡ Áö¿öÁöÁö ¾ÊÀ½***
+		//***í•˜ìœ„ì— íŒŒì¼ì´ë‚˜ í´ë”ê°€ ìˆìœ¼ë©´ í´ë”ê°€ ì§€ì›Œì§€ì§€ ì•ŠìŒ***
 		//WCHAR	wstringTemp[1024];
 		CString		delFolderPath = m_FullFileName + vecSearchSubDirList[dirCnt];
 
@@ -824,9 +835,9 @@ void CFormViewShellView::OnBnClickedExecappl()
 		errno;
 	}
 	
-	// °á°ú Ç¥½Ã
+	// ê²°ê³¼ í‘œì‹œ
 	CString resultCnt;
-	resultCnt.Format( "%d / %d ¼º°ø", iSuccessCnt, progressCnt);
+	resultCnt.Format(_T("%d / %d ì„±ê³µ"), iSuccessCnt, progressCnt);
 	m_Edit_Success_Fail.ShowWindow(SW_SHOW);
 	SetDlgItemText(IDC_EDIT_SUCCESS_FAIL, resultCnt);
 	GetDlgItem(IDC_EDIT_SUCCESS_FAIL)->UpdateWindow();
@@ -842,32 +853,32 @@ void CFormViewShellView::OnBnClickedExecappl()
 /*---------------------------------------------------------------------------*
   Name:         SearchDir
 
-  Description:  ÇÏÀ§Æú´õ¸¦ Ã£¾Æ ¾øÀ¸¸é »ı¼ºÇÏ°í ÇÏÀ§ °æ·Î¸¦ sDirNameList¿¡ ³Ö´Â´Ù.
+  Description:  í•˜ìœ„í´ë”ë¥¼ ì°¾ì•„ ì—†ìœ¼ë©´ ìƒì„±í•˜ê³  í•˜ìœ„ ê²½ë¡œë¥¼ sDirNameListì— ë„£ëŠ”ë‹¤.
 
-  Arguments:    sDirName:	°Ë»çÇÒ »óÀ§Æú´õ
+  Arguments:    sDirName:	ê²€ì‚¬í•  ìƒìœ„í´ë”
                             
-                sDirNameList:  ÀúÀåµÉ ÇÏÀ§Æú´õÀÇ °æ·Î
+                sDirNameList:  ì €ì¥ë  í•˜ìœ„í´ë”ì˜ ê²½ë¡œ
 
   Returns:      0
  *---------------------------------------------------------------------------*/
 int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNameList)
 {
 	CFileFind dirFinder;
-	BOOL bWorking = dirFinder.FindFile(sDirName + "\\*.*");	
+	BOOL bWorking = dirFinder.FindFile(sDirName + _T("\\*.*"));
 
 	int dCnt = 0;
 
-	// ¸ñÀû°æ·Î¿¡ ÇÏÀ§ Æú´õ°¡ µÇ¸é ¿¬¼âÀûÀ¸·Î °è¼Ó Æú´õ°¡ »ı¼ºµÇ´Â °ÍÀ» ¹æÁö 
+	// ëª©ì ê²½ë¡œì— í•˜ìœ„ í´ë”ê°€ ë˜ë©´ ì—°ì‡„ì ìœ¼ë¡œ ê³„ì† í´ë”ê°€ ìƒì„±ë˜ëŠ” ê²ƒì„ ë°©ì§€ 
 	if(!(m_DestPath.Compare(sDirName)))
 		return dCnt;
-	// ÃÖ»óÀ§ Æú´õ Ãß°¡
+	// ìµœìƒìœ„ í´ë” ì¶”ê°€
 	if(!m_SubDirCnt)
 	{
 		//CString tempfolderPath = sDirName;
 		//tempfolderPath.Replace(m_FullFileName, "");
 		//sDirNameList[m_SubDirCnt++];// = tempfolderPath;
 		m_SubDirCnt++;
-		sDirNameList.push_back("");
+		sDirNameList.push_back(_T(""));
 		CreateDirectory(sDirName, NULL);
 
 	}
@@ -883,15 +894,15 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 		{
 			TRACE(_T("%s\n"), (LPCTSTR)dirFinder.GetFileName());
 			TRACE(_T("%s\n"), (LPCTSTR)dirFinder.GetFilePath());
-			// ¼­ºêÆú´õ Àı´ë°æ·Î
+			// ì„œë¸Œí´ë” ì ˆëŒ€ê²½ë¡œ
 			CString tempfolderPath = dirFinder.GetFilePath();
-			// ¸ñÀû°æ·Î¿¡ ÇÏÀ§ Æú´õ°¡ µÇ¸é ¿¬¼âÀûÀ¸·Î °è¼Ó Æú´õ°¡ »ı¼ºµÇ´Â °ÍÀ» ¹æÁö 
+			// ëª©ì ê²½ë¡œì— í•˜ìœ„ í´ë”ê°€ ë˜ë©´ ì—°ì‡„ì ìœ¼ë¡œ ê³„ì† í´ë”ê°€ ìƒì„±ë˜ëŠ” ê²ƒì„ ë°©ì§€ 
 			if(!(m_DestPath.Compare(tempfolderPath)))
 				continue;
 
 			CString exFolderName;
 
-			// ÀÛ¾÷¿¡¼­ Á¦¿ÜÇÒ Æú´õ¸í °Ë»ç
+			// ì‘ì—…ì—ì„œ ì œì™¸í•  í´ë”ëª… ê²€ì‚¬
 			BOOL isExFolder = FALSE;
 			for(int lbIndex = 0; lbIndex < m_ExFolderListBox.GetCount(); lbIndex++)
 			{
@@ -907,20 +918,20 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 			if(isExFolder)
 				continue;
 
-			tempfolderPath.Replace(m_FullFileName, "");
+			tempfolderPath.Replace(m_FullFileName, _T(""));
 			//sDirNameList[m_SubDirCnt++] = tempfolderPath;
 			m_SubDirCnt++;
 			sDirNameList.push_back(tempfolderPath);
-			// ¼­ºêÆú´õ¸í¸¸ ÀúÀå
+			// ì„œë¸Œí´ë”ëª…ë§Œ ì €ì¥
 			
 			
-			// Å¸°Ù ÆÄÀÏÀÌ ÀÖ´Â°Í¸¸ Æú´õ¸¦ »ı¼ºÇØÁÜ
-			// Å¸°Ù ÆÄÀÏÀÌ ¾ø´Âµ¥ ±× ÇÏÀ§Æú´õ¿¡ ÀÖ´Â °æ¿ìµµ Æú´õ¸¦ »ı¼ºÇÏÁö ¾ÊÀ¸¹Ç·Î ÁÖ¼®Ã³¸®
+			// íƒ€ê²Ÿ íŒŒì¼ì´ ìˆëŠ”ê²ƒë§Œ í´ë”ë¥¼ ìƒì„±í•´ì¤Œ
+			// íƒ€ê²Ÿ íŒŒì¼ì´ ì—†ëŠ”ë° ê·¸ í•˜ìœ„í´ë”ì— ìˆëŠ” ê²½ìš°ë„ í´ë”ë¥¼ ìƒì„±í•˜ì§€ ì•Šìœ¼ë¯€ë¡œ ì£¼ì„ì²˜ë¦¬
 			//if(SearchFile(sDirName + sDirNameList[m_SubDirCnt-1], m_midPath, NULL))
 			{
 
 				CString path = m_DestPath + sDirNameList[m_SubDirCnt-1];
-				// ¸ñÀû°æ·Î¿¡ ÇÏÀ§ Æú´õ°¡ µÇ¸é ¿¬¼âÀûÀ¸·Î °è¼Ó Æú´õ°¡ »ı¼ºµÇ´Â °ÍÀ» ¹æÁö 
+				// ëª©ì ê²½ë¡œì— í•˜ìœ„ í´ë”ê°€ ë˜ë©´ ì—°ì‡„ì ìœ¼ë¡œ ê³„ì† í´ë”ê°€ ìƒì„±ë˜ëŠ” ê²ƒì„ ë°©ì§€ 
 				if((!m_DestPath.IsEmpty() && m_DestPath.Compare(path)))
 					CreateDirectory(path, NULL);
 			}
@@ -935,19 +946,19 @@ int CFormViewShellView::SearchDir(CString sDirName, std::vector<CString> &sDirNa
 /*---------------------------------------------------------------------------*
   Name:         SearchFile
 
-  Description:  ÇÏÀ§Æú´õ¸¦ Ã£¾Æ ¾øÀ¸¸é »ı¼ºÇÔ
+  Description:  í•˜ìœ„í´ë”ë¥¼ ì°¾ì•„ ì—†ìœ¼ë©´ ìƒì„±í•¨
 
-  Arguments:    sDirName:		°Ë»çÇÒ °æ·Î            
-                sFileName:		Ã£À» ÆÄÀÏ¸í
-				vecFileList:	ÆÄÀÏÀÇ ÀüÃ¼°æ·Î
-				searchedFileCnt:½ÇÁ¦·Î ÀÛ¾÷ÇÒ ÆÄÀÏÀÇ °³¼ö
+  Arguments:    sDirName:		ê²€ì‚¬í•  ê²½ë¡œ            
+                sFileName:		ì°¾ì„ íŒŒì¼ëª…
+				vecFileList:	íŒŒì¼ì˜ ì „ì²´ê²½ë¡œ
+				searchedFileCnt:ì‹¤ì œë¡œ ì‘ì—…í•  íŒŒì¼ì˜ ê°œìˆ˜
 
-  Returns:      Ã£Àº ÆÄÀÏÀÇ ¼ö
+  Returns:      ì°¾ì€ íŒŒì¼ì˜ ìˆ˜
  *---------------------------------------------------------------------------*/
 int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, std::vector<CString> &vecFileList, int &searchedFileCnt)
 {
 	CFileFind finder;
-	CString findFileStr = sDirName + "\\" + sFileName;
+	CString findFileStr = sDirName + _T("\\") + sFileName;
 	BOOL bWorking = finder.FindFile(findFileStr);
 	int fCnt = 0;
 	while (bWorking)
@@ -966,7 +977,7 @@ int CFormViewShellView::SearchFile(CString sDirName, CString sFileName, std::vec
 		}
 		else
 		{
-			// º¯È¯ÇÒ ÆÄÀÏÀÇ °¹¼ö¸¸ Áõ°¡½ÃÅ´
+			// ë³€í™˜í•  íŒŒì¼ì˜ ê°¯ìˆ˜ë§Œ ì¦ê°€ì‹œí‚´
 			fCnt++;
 		}
 	} 
@@ -981,7 +992,7 @@ int CFormViewShellView::SearchOneFile(CString sDirName, CString sFileName, CStri
 
 	CString findFileStr;
 	if(!sDirName.IsEmpty())
-		findFileStr = sDirName + "\\*" + sFileName;
+		findFileStr = sDirName + _T("\\*") + sFileName;
 	else
 		findFileStr = sFileName;
 	BOOL bWorking = finder.FindFile(findFileStr);
@@ -1001,17 +1012,17 @@ int CFormViewShellView::SearchOneFile(CString sDirName, CString sFileName, CStri
 		}
 		else
 		{
-			// º¯È¯ÇÒ ÆÄÀÏl °¹¼ö¸¸ Áõ°¡½ÃÅ´
+			// ë³€í™˜í•  íŒŒì¼ë¦ ê°¯ìˆ˜ë§Œ ì¦ê°€ì‹œí‚´
 			fCnt++;
 		}
 	} 
 	return fCnt;
 }
 
-// // Ä¿¸Çµå ¸í·É Ç¥½Ã
+// // ì»¤ë§¨ë“œ ëª…ë ¹ í‘œì‹œ
 void CFormViewShellView::DisplayCommand(BOOL modifyed)
 {
-	// ½ÇÇà ÆÄÀÏ ¹Ù·Î ´ÙÀ½ ¿É¼Ç	
+	// ì‹¤í–‰ íŒŒì¼ ë°”ë¡œ ë‹¤ìŒ ì˜µì…˜	
 	CString execFirstArg;
 	GetDlgItemText(IDC_EDIT6, execFirstArg);
 
@@ -1031,9 +1042,9 @@ void CFormViewShellView::DisplayCommand(BOOL modifyed)
 	GetDlgItemText(IDC_EDIT5, m_PreCmdOptStr);
 
 	//CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + " " + "[" + midPath +"]"+ m_PreCmdOptStr + " " + "[" + m_DestPath + "]" + execSecondArg;
-	CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + " " + execFirstArg + m_FullFileName + "\\" + m_midPath + m_PreCmdOptStr + " " + m_DestPath + execSecondArg;
+	CString testAllPath = /*m_ExecFileName */ m_ExecFilePath + _T(" ") + execFirstArg + m_FullFileName + _T("\\") + m_midPath + m_PreCmdOptStr + _T(" ") + m_DestPath + execSecondArg;
 	
-	//testAllPath.Replace(" ", "¡ı");
+	//testAllPath.Replace(" ", "âˆ¨");
 
 	//if(m_DestPath.IsEmpty())
 	//{
@@ -1155,17 +1166,17 @@ void CFormViewShellView::OnBnClickedBtnOutAdd()
 	{
 		switch(m_AddExtTypeRadio)
 		{
-		//¼±ÅÃµÈ È®ÀåÀÚ ÀÌµ¿
+		//ì„ íƒëœ í™•ì¥ì ì´ë™
 		case 0:
-			m_ListData = "[M]" + m_ListData;
+			m_ListData = _T("[M]") + m_ListData;
 			break;
-		//¼±ÅÃµÈ È®ÀåÀÚ º¹»ç
+		//ì„ íƒëœ í™•ì¥ì ë³µì‚¬
 		case 1:
-			m_ListData = "[C]" + m_ListData;
+			m_ListData = _T("[C]") + m_ListData;
 			break;
-		//¼±ÅÃµÈ È®ÀåÀÚ Á¦°Å
+		//ì„ íƒëœ í™•ì¥ì ì œê±°
 		case 2:
-			m_ListData = "[D]" + m_ListData;
+			m_ListData = _T("[D]") + m_ListData;
 			break;
 		}
 		m_ListBox_Out.AddString(m_ListData);
@@ -1205,9 +1216,9 @@ void CFormViewShellView::OnBnClickedSelfile()
 	BRinfo.hwndOwner = GetSafeHwnd();
 	BRinfo.pidlRoot = 0;
 	BRinfo.pszDisplayName = m_FullFileName.GetBuffer(MAX_PATH);
-	BRinfo.lpszTitle = "Æú´õ¸¦ ¼±ÅÃÇÏ¼¼¿ä.";
+	BRinfo.lpszTitle = _T("í´ë”ë¥¼ ì„ íƒí•˜ì„¸ìš”.");
 	BRinfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_STATUSTEXT | BIF_UAHINT;
-	// m_FullFileName¿¡ ¼³Á¤ÇÑ °æ·Î¸¦ Ã£¾Æ°¨
+	// m_FullFileNameì— ì„¤ì •í•œ ê²½ë¡œë¥¼ ì°¾ì•„ê°
 	BRinfo.lpfn = BrowseCallbackProc;
 	BRinfo.lParam = (LPARAM)BRinfo.pszDisplayName;
 
@@ -1217,7 +1228,7 @@ void CFormViewShellView::OnBnClickedSelfile()
 	{
 		SHGetPathFromIDList(pidlBrowse, m_FullFileName.GetBuffer(MAX_PATH));
 		SetDlgItemText(IDC_SRC_FILE, m_FullFileName);
-		char *temp = m_FullFileName.GetBuffer(MAX_PATH);
+		CString temp = m_FullFileName.GetBuffer(MAX_PATH);
 		m_FullFileName = temp;
 	
 	}
@@ -1234,7 +1245,7 @@ void CFormViewShellView::OnBnClickedSelfile()
 		SetDlgItemText(IDC_SRC_FILE, m_FullFileName);
 	}
 */
-	// OnEnChangeSrcFile ¿¡¼­ È£ÃâÇÏ°í ÀÖÀ½ ÁÖ¼®Ã³¸®
+	// OnEnChangeSrcFile ì—ì„œ í˜¸ì¶œí•˜ê³  ìˆìŒ ì£¼ì„ì²˜ë¦¬
 //	DisplayCommand(TRUE);
 }
 BOOL CFormViewShellView::PreTranslateMessage(MSG* pMsg)
@@ -1279,7 +1290,7 @@ void CFormViewShellView::OnBnClickedRadio3Delete()
 
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
 {
-	CHAR lpszDir[MAX_PATH];
+	TCHAR lpszDir[MAX_PATH];
 	switch(uMsg)
 	{
 	case BFFM_INITIALIZED:
@@ -1374,8 +1385,8 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 
 	//CFormView::OnDropFiles(hDropInfo);
 
-	char szFullPath[512] = {0,};
-	//--xx µå·¡±×¾Ø µå¶øÇÑ ÆÄÀÏÀÇ °³¼ö È¹µæ
+	TCHAR szFullPath[512] = {0,};
+	//--xx ë“œë˜ê·¸ì•¤ ë“œëí•œ íŒŒì¼ì˜ ê°œìˆ˜ íšë“
 	int iCount = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
 	int curCnt = m_TclFilesListBox.GetCount();
 	
@@ -1383,7 +1394,7 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 
 	for(int i=0; i<iCount; i++)
 	{
-		//--xx µå·¡±×¾Ø µå¶øÇÑ ÆÄÀÏÀÇ °æ·ÎÁ¤º¸¸¦ ÇÏ³ª¾¿ È¹µæ
+		//--xx ë“œë˜ê·¸ì•¤ ë“œëí•œ íŒŒì¼ì˜ ê²½ë¡œì •ë³´ë¥¼ í•˜ë‚˜ì”© íšë“
 		DragQueryFile(hDropInfo, i, szFullPath, sizeof(szFullPath));
 		//AfxMessageBox(szFullPath);
 		
@@ -1395,7 +1406,7 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 		}
 		
 		UpdateData(TRUE);
-		if(!fPath.IsEmpty() && (fPath.Right(5)).Compare(".mtcl"))
+		if(!fPath.IsEmpty() && (fPath.Right(5)).Compare(_T(".mtcl")))
 		{
 			m_TclFilesListBox.AddString(fPath);
 			m_TclFilesListBox.SetCheck(curCnt, 1);
@@ -1425,22 +1436,22 @@ void CFormViewShellView::OnDropFiles(HDROP hDropInfo)
 	CFormView::OnDropFiles(hDropInfo);
 */
 }
-// ´ÙÁß½ÇÇà
+// ë‹¤ì¤‘ì‹¤í–‰
 void CFormViewShellView::OnBnSeqExcuteButton()
 {
 	// TODO: Add your control notification handler code here
 	
 	int lbTclFilesCnt = m_TclFilesListBox.GetCount();
 	int forceDelay = 0;
-	// °á°ú ÅØ½ºÆ® ÃÊ±âÈ­
+	// ê²°ê³¼ í…ìŠ¤íŠ¸ ì´ˆê¸°í™”
 	m_ExcuteFilePath = "";
 	
 	for(int lbIndex = 0; lbIndex < lbTclFilesCnt; lbIndex++)
 	{
 		CString fPath;	
 		m_TclFilesListBox.GetText(lbIndex, fPath);
-		// °íÁ¤µÈ Æú´õ¿¡¼­¸¸ tcl ·Îµå
-		int i = fPath.ReverseFind('\\');//½ÇÇà ÆÄÀÏ ÀÌ¸§À» Áö¿ì±â À§ÇØ¼­ ¿ŞÂÊ¿¡ ÀÖ´Â '/'¸¦ Ã£´Â´Ù.
+		// ê³ ì •ëœ í´ë”ì—ì„œë§Œ tcl ë¡œë“œ
+		int i = fPath.ReverseFind('\\');//ì‹¤í–‰ íŒŒì¼ ì´ë¦„ì„ ì§€ìš°ê¸° ìœ„í•´ì„œ ì™¼ìª½ì— ìˆëŠ” '/'ë¥¼ ì°¾ëŠ”ë‹¤.
 		fPath = fPath.Right(fPath.GetLength() - i);
 		fPath = GetDocument()->m_tclFilePath + fPath;		
 		if(!fPath.IsEmpty() && m_TclFilesListBox.GetCheck(lbIndex))
@@ -1450,8 +1461,8 @@ void CFormViewShellView::OnBnSeqExcuteButton()
 			GetDocument()->OnOpenDocument(fPath);
 			//GetDocument()->SetPathName(fPath,0);
 			m_ExcuteFilePath += "\r\n================================================================\r\n";
-			m_ExcuteFilePath += " " + fPath + "\r\n"
-								+ "==================================================================\r\n";
+			m_ExcuteFilePath += _T(" ") + fPath + _T("\r\n")
+								+ _T("==================================================================\r\n");
 			UpdateWindow();
 			OnBnClickedExecappl();
 			forceDelay = GetDlgItemInt(IDC_EDIT_DELAY_TIME);
@@ -1459,14 +1470,14 @@ void CFormViewShellView::OnBnSeqExcuteButton()
 				Sleep(forceDelay * 10);
 		}
 	}
-	// ´Ù¼öÀÇ ¼³Á¤ÆÄÀÏÀ» ·Îµå Çß±â¶§¹®¿¡ Ã³À½ ¼³Á¤ÆÄÀÏÀ» Àç·Îµå		
+	// ë‹¤ìˆ˜ì˜ ì„¤ì •íŒŒì¼ì„ ë¡œë“œ í–ˆê¸°ë•Œë¬¸ì— ì²˜ìŒ ì„¤ì •íŒŒì¼ì„ ì¬ë¡œë“œ		
 	m_bMultiMode = FALSE;
 	//GetDocument()->OnOpenDocument(m_SettingFilePath);
-	// ¿©·¯°³ ½ÇÇàÈÄ Å¸ÀÌÆ²ÀÌ¸§ÀÌ ¹Ù²î¾î ÀúÀåÇÒ¶§ ¸¶Áö¸·ÀÌ¸§À¸·Î ÀúÀåµÇ¾î ¹ö¸²
+	// ì—¬ëŸ¬ê°œ ì‹¤í–‰í›„ íƒ€ì´í‹€ì´ë¦„ì´ ë°”ë€Œì–´ ì €ì¥í• ë•Œ ë§ˆì§€ë§‰ì´ë¦„ìœ¼ë¡œ ì €ì¥ë˜ì–´ ë²„ë¦¼
 	//GetDocument()->SetPathName(m_SettingFilePath,0);
-	//GetDocument()->SetPathName(m_SettingFilePath + "¿©±â",0);
+	//GetDocument()->SetPathName(m_SettingFilePath + "ì—¬ê¸°",0);
 	if(m_MTCL_ExitCheckBox.GetCheck()){
-		MessageBox("==== ¿Ï·á! ====", "TotalCommandLine");
+		MessageBox(_T("==== ì™„ë£Œ! ===="), _T("TotalCommandLine"));
 		exit(0);
 	}
 }
@@ -1576,13 +1587,13 @@ void CFormViewShellView::ShellCommon(CString excutteFile, CString CMDLine, int i
 
 	si.cbSize = (sizeof(SHELLEXECUTEINFO));
 	si.lpVerb = __TEXT("open");                 //mode : print, write
-	si.lpFile = __TEXT(excutteFile);           //½ÇÇàÆÄÀÏ
-	si.lpParameters = CMDLine;                    //½ÇÇàÆÄÀÏ ÀÎÀÚ°ª.
-	// shellIP.lpDirectory =                        //½ÇÇÛÆÄÀÏ µğ·ºÅä¸®.
+	si.lpFile = (excutteFile);           //ì‹¤í–‰íŒŒì¼
+	si.lpParameters = CMDLine;                    //ì‹¤í–‰íŒŒì¼ ì¸ìê°’.
+	// shellIP.lpDirectory =                        //ì‹¤í•¼íŒŒì¼ ë””ë ‰í† ë¦¬.
 	si.nShow = isShow;                    //SW_HIDE
 	si.fMask = SEE_MASK_NOCLOSEPROCESS|SEE_MASK_FLAG_DDEWAIT;
 
-	BOOL isSuccess = ShellExecuteEx(&si);             //¼º°ø½Ã true
+	BOOL isSuccess = ShellExecuteEx(&si);             //ì„±ê³µì‹œ true
 
 	if(!isSuccess)
 	{
@@ -1592,62 +1603,62 @@ void CFormViewShellView::ShellCommon(CString excutteFile, CString CMDLine, int i
 			case ERROR_FILE_NOT_FOUND:
 			{
 
-				MessageBox("ÁöÁ¤µÈ ÆÄÀÏÀ» Ã£À»¼ö ¾ø´Ù.");
+				MessageBox(_T("ì§€ì •ëœ íŒŒì¼ì„ ì°¾ì„ìˆ˜ ì—†ë‹¤."));
 			}
 			break;
 			case ERROR_DDE_FAIL:
 			{
 
-				MessageBox("µ¿Àû µ¥ÀÌÅÍ ±³È¯(DDE) Æ®·£Àè¼Ç(transaction)¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+				MessageBox(_T("ë™ì  ë°ì´í„° êµí™˜(DDE) íŠ¸ëœì­ì…˜(transaction)ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."));
 			}
 			break;
 			case ERROR_NO_ASSOCIATION:
 			{
 
-				MessageBox("ÁÖ¾îÁø ÆÄÀÏÀÇ È®Àå¸í°ú ¿¬°áµÇ´Â ÀÀ¿ë ÇÁ·Î±×·¥ÀÌ ¾ø´Ù.");
+				MessageBox(_T("ì£¼ì–´ì§„ íŒŒì¼ì˜ í™•ì¥ëª…ê³¼ ì—°ê²°ë˜ëŠ” ì‘ìš© í”„ë¡œê·¸ë¨ì´ ì—†ë‹¤."));
 			}
 			break;
 			case ERROR_ACCESS_DENIED:
 			{
 
-				MessageBox("ÁöÁ¤µÈ ÆÄÀÏ¿¡ ´ëÇÑ ¾×¼¼½º°¡ °ÅºÎ µÇ¾ú´Ù.");
+				MessageBox(_T("ì§€ì •ëœ íŒŒì¼ì— ëŒ€í•œ ì•¡ì„¸ìŠ¤ê°€ ê±°ë¶€ ë˜ì—ˆë‹¤."));
 			}
 			break;
 			case ERROR_DLL_NOT_FOUND:
 			{
 
-				MessageBox("ÀÀ¿ë ÇÁ·Î±×·¥À» ½ÇÇàÇÏ´Â µ¥ ÇÊ¿äÇÑ ÇÏ³ªÀÇ ¶óÀÌºê·¯¸®(library)  ÆÄÀÏÀ» Ã£À» ¼ö¾ø½À´Ï´Ù.");
+				MessageBox(_T("ì‘ìš© í”„ë¡œê·¸ë¨ì„ ì‹¤í–‰í•˜ëŠ” ë° í•„ìš”í•œ í•˜ë‚˜ì˜ ë¼ì´ë¸ŒëŸ¬ë¦¬(library)  íŒŒì¼ì„ ì°¾ì„ ìˆ˜ì—†ìŠµë‹ˆë‹¤."));
 			}
 			break;
 			case ERROR_CANCELLED:
 			{
 
-				MessageBox("ÇÔ¼ö°¡ »ç¿ëÀÚ¸¦ À§ÇÑ Ãß°¡Á¤º¸¸¦ ¾Ë·ÁÁÖ¾úÁö¸¸ »ç¿ëÀÚ°¡ ¿äÃ»À» Ãë¼Ò Çß´Ù.");
+				MessageBox(_T("í•¨ìˆ˜ê°€ ì‚¬ìš©ìë¥¼ ìœ„í•œ ì¶”ê°€ì •ë³´ë¥¼ ì•Œë ¤ì£¼ì—ˆì§€ë§Œ ì‚¬ìš©ìê°€ ìš”ì²­ì„ ì·¨ì†Œ í–ˆë‹¤."));
 			}
 			break;
 			case ERROR_NOT_ENOUGH_MEMORY:
 			{
 
-				MessageBox("±×°÷¿¡ ÁöÁ¤µÈ ÀÛ¾÷À» ¼öÇàÇÏ±â À§ÇÑ ÃæºĞÇÑ ¸Ş¸ğ¸®°¡ ¾ø´Ù.");
+				MessageBox(_T("ê·¸ê³³ì— ì§€ì •ëœ ì‘ì—…ì„ ìˆ˜í–‰í•˜ê¸° ìœ„í•œ ì¶©ë¶„í•œ ë©”ëª¨ë¦¬ê°€ ì—†ë‹¤."));
 			}
 			break;
 			case ERROR_SHARING_VIOLATION:
 			{
 
-				MessageBox("°øÀ¯ À§¹İÀÌ ¹ß»ıÇß´Ù.");
+				MessageBox(_T("ê³µìœ  ìœ„ë°˜ì´ ë°œìƒí–ˆë‹¤."));
 			}
 			break;
 		}
 	}
 
-	// ÇÁ·Î¼¼½º°¡ ¿Ï·áµÉ¶§±îÁö ±â´Ù¸²
+	// í”„ë¡œì„¸ìŠ¤ê°€ ì™„ë£Œë ë•Œê¹Œì§€ ê¸°ë‹¤ë¦¼
 	while(1)
 	{
 		::GetExitCodeProcess( si.hProcess, &dwExitCode );
 
 		if( dwExitCode != STILL_ACTIVE )
 		{
-			//MessageBox("Á¾·á");
+			//MessageBox("ì¢…ë£Œ");
 			break;
 		}
 	}
@@ -1664,8 +1675,8 @@ void CFormViewShellView::OnLbnSelchangeListTclFiles()
 	if(lbIdx >= 0  && lbIdx <lbTclFilesCnt)
 	{
 		m_TclFilesListBox.GetText(lbIdx, fPath);
-		// °íÁ¤µÈ Æú´õ¿¡¼­¸¸ tcl ·Îµå
-		int i = fPath.ReverseFind('\\');//½ÇÇà ÆÄÀÏ ÀÌ¸§À» Áö¿ì±â À§ÇØ¼­ ¿ŞÂÊ¿¡ ÀÖ´Â '/'¸¦ Ã£´Â´Ù.
+		// ê³ ì •ëœ í´ë”ì—ì„œë§Œ tcl ë¡œë“œ
+		int i = fPath.ReverseFind('\\');//ì‹¤í–‰ íŒŒì¼ ì´ë¦„ì„ ì§€ìš°ê¸° ìœ„í•´ì„œ ì™¼ìª½ì— ìˆëŠ” '/'ë¥¼ ì°¾ëŠ”ë‹¤.
 		fPath = fPath.Right(fPath.GetLength() - i);
 		fPath = GetDocument()->m_tclFilePath + fPath;
 	}
@@ -1723,7 +1734,7 @@ void CFormViewShellView::OnBnClickedButtonPrelist()
 	PreviewDlg prevDlg;
 	prevDlg.m_EditText = m_AllCmdLnText;
 	prevDlg.m_bIsModiFy = TRUE;
-	prevDlg.m_TitleText = "¸í·ÉÁÙ";
+	prevDlg.m_TitleText = "ëª…ë ¹ì¤„";
 	
 	prevDlg.DoModal();
 
@@ -1739,14 +1750,14 @@ void CFormViewShellView::OnBnClickedButtonPrelist()
 
 }
 
-// ¹Ì¸®º¸±â
+// ë¯¸ë¦¬ë³´ê¸°
 void CFormViewShellView::OnBnClickedButtonPreview()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 
 	int lbTclFilesCnt = m_TclFilesListBox.GetCount();
 	int forceDelay = 0;
-	// °á°ú ÅØ½ºÆ® ÃÊ±âÈ­
+	// ê²°ê³¼ í…ìŠ¤íŠ¸ ì´ˆê¸°í™”
 	m_ExcuteFilePath = "";
 	m_bIsPreview = TRUE;
 	OnBnClickedExecappl();

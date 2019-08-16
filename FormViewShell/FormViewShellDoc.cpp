@@ -161,7 +161,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		// TODO: 여기에 로딩 코드를 추가합니다.
 
 		BOOL isEmpty = ar.IsBufferEmpty();
-		BOOL isMultiCommand = !(ar.m_strFileName.Right(5)).Compare(".mtcl");
+		BOOL isMultiCommand = !(ar.m_strFileName.Right(5)).Compare(_T(".mtcl"));
 
 		pView->m_FirstLoaded = FALSE;
 		ar >> execArg;
@@ -205,21 +205,21 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		ar >> nCheck;
 		pView->m_Check_EnableErrPop.SetCheck(nCheck);
 		
-		pView->SetDlgItemText(IDC_EDIT6, "");
+		pView->SetDlgItemText(IDC_EDIT6, _T(""));
 		if(!ar.IsBufferEmpty())
 		{	
 			ar >> execArg;
 			pView->SetDlgItemText(IDC_EDIT6, execArg);
 		}
 		
-		pView->SetDlgItemText(IDC_EDIT7, "");
+		pView->SetDlgItemText(IDC_EDIT7, _T(""));
 		if(!ar.IsBufferEmpty())
 		{	
 			ar >> execArg;
 			pView->SetDlgItemText(IDC_EDIT7, execArg);
 		}
 
-		pView->SetDlgItemText(IDC_EDIT8, "");
+		pView->SetDlgItemText(IDC_EDIT8, _T(""));
 		if(!ar.IsBufferEmpty())
 		{
 			ar >> execArg;
@@ -233,7 +233,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 			// 제외 폴더리스트 로드
 			pView->m_ExFolderListBox.ResetContent();
 			// 이전버전은 기본적으로 svn폴더를 제외해준 것 대응
-			pView->m_ExFolderListBox.AddString(".svn");
+			pView->m_ExFolderListBox.AddString(_T(".svn"));
 		}
 		else
 		{
@@ -286,7 +286,7 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 				pView->m_BtnExcute.EnableWindow(FALSE);
 				
 				// 단일 설정 초기화 표시
-				CString clrString = "";
+				CString clrString = _T("");
 				pView->SetDlgItemText(IDC_EDIT3, clrString);
 				((CEdit*)pView->GetDlgItem(IDC_EDIT3))->SetReadOnly(TRUE);
 
@@ -482,8 +482,8 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 
 	if(!pView->m_bMultiMode)
 	{
-		BOOL isMultiMode = !(ar.m_strFileName.Right(5)).Compare(".mtcl");
-		BOOL isSingleLoaded = !(pView->m_SettingFilePath.Right(4)).Compare(".tcl");
+		BOOL isMultiMode = !(ar.m_strFileName.Right(5)).Compare(_T(".mtcl"));
+		BOOL isSingleLoaded = !(pView->m_SettingFilePath.Right(4)).Compare(_T(".tcl"));
 		CString nextLoad = pView->m_SettingFilePath;
 		// 연속모드인데 단일모드 파일경로를 저장하게 된다면
 		if(isMultiMode && isSingleLoaded)
@@ -495,7 +495,10 @@ void CFormViewShellDoc::Serialize(CArchive& ar)
 		{
 			TRACE(_T("File could not be opened %s : %d\n"), m_IniFilePath, e.m_cause);
 		}
-		myFile.Write(nextLoad, nextLoad.GetLength());
+		int len_0 = nextLoad.GetAllocLength();
+		int len_1 = nextLoad.GetLength();
+		int len_3 = sizeof(*nextLoad);
+		myFile.Write(nextLoad, nextLoad.GetAllocLength() * sizeof(*nextLoad));
 		// 다음에 실행하면 최후에 로드했던 파일을 로드
 		
 		myFile.Close();

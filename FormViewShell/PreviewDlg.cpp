@@ -132,9 +132,9 @@ BOOL PreviewDlg::OnInitDialog()
 	if(m_bIsModiFy)
 	{
 		SetWindowPos(NULL,0,0,1280,138,SWP_NOMOVE);
-		SetWindowTextA(m_TitleText);
+		SetWindowText(m_TitleText);
 		// 큰크기의 폰트를 만든다.
-		m_bigfont.CreatePointFont(120, "굴림");
+		m_bigfont.CreatePointFont(120, _T("굴림"));
 	}
 	
 	//m_EditText.Replace(" ", "∨");
