@@ -1,0 +1,12 @@
+
+*.obj
+FormViewShell/Release/TotalCommandLine.Build.CppClean.log
+.vs/TotalCommandLine/v15/Browse.VC.opendb
+.vs/TotalCommandLine/v15/Solution.VC.db
+.vs/TotalCommandLine/v15/Solution.VC.db-shm
+.vs/TotalCommandLine/v15/Solution.VC.db-wal
+UpgradeLog2.htm
+
+.vs/TotalCommandLine/v15/.suo
+.vs/TotalCommandLine/v15/Browse.VC.db
+UpgradeLog3.htm
