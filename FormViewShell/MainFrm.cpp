@@ -70,6 +70,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// 타이틀바의 "******" - FormViewShell -> "******" - TotalCommandLine Converter
 	SetTitle(_T("TotalCommandLine v1.3.0"));
+
 	return 0;
 }
 

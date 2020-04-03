@@ -51,16 +51,22 @@ BOOL CFormViewShellApp::InitInstance()
 	// 이 항목을 설정하십시오.
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
-	char *a0 = NULL;
-	char *a1 = NULL;
-	char *a2 = NULL;
-	if (__argv) {
-		if(__argv[0])
-			a0 = __argv[0];
-		if (__argv[1])
-			a1 = __argv[1];
-		if (__argv[2])
-			a2 = __argv[2];
+	TCHAR *a0 = NULL;
+	TCHAR *a1 = NULL;
+	TCHAR *a2 = NULL;
+
+	// commandline arguments 수정
+	if (__targv) {
+		if(__targv[0])
+			a0 = __targv[0];
+		if (__targv[1])
+			a1 = __targv[1];
+		if (__targv[2])
+			a2 = __targv[2];
+
+		//AfxMessageBox(CString(a0));
+		//AfxMessageBox(CString(a1));
+		//AfxMessageBox(CString(a2));
 	}
 		 
 //char *a0 = __argv[0];
@@ -125,6 +131,9 @@ BOOL CFormViewShellApp::InitInstance()
 
 	BOOL isMultiMode = false;
 	BOOL isExcute = false;
+
+
+
 	if(a1)
 	{
 		fPath = a1;
@@ -189,6 +198,7 @@ BOOL CFormViewShellApp::InitInstance()
 	// 현재경로 고정
 	::SetCurrentDirectory(mydoc->m_tclFilePath);
 	if(isExcute){
+
 		if(!isMultiMode)
 			pView->OnBnClickedExecappl();
 		else

@@ -1,7 +1,28 @@
-﻿  MainFrm.cpp
+﻿Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\totalcommandline.pch' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\vc141.pdb' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\stdafx.obj' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\resizedlg.obj' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\previewdlg.obj' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\operplus.obj' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\mainfrm.obj' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\formviewshellview.obj' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\formviewshelldoc.obj' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\formviewshell.obj' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\release\totalcommandline.pdb' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\formviewshell\release\formviewshell.res' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\release\totalcommandline.ipdb' 경로에 대한 액세스가 거부되었습니다.
+Z:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 'e:\work\github\totalcommandline\release\totalcommandline.iobj' 경로에 대한 액세스가 거부되었습니다.
+  stdafx.cpp
+  FormViewShell.cpp
+  FormViewShellDoc.cpp
+  FormViewShellView.cpp
+  MainFrm.cpp
+  OperPlus.cpp
+  PreviewDlg.cpp
+  ResizeDlg.cpp
   코드를 생성하고 있습니다.
-  3 of 623 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
+  626 of 626 functions (100.0%) were compiled.
+    38 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  FormViewShell.vcxproj -> E:\work\GitHub\totalcommandline\Release\TotalCommandLine.exe
+  FormViewShell.vcxproj -> E:\GitHub\totalcommandline\Release\TotalCommandLine.exe
