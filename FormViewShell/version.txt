@@ -27,6 +27,16 @@
 1.0.8
 	생성결과 파일이 큰 이유등으로 파일 이동, 복사 등을 담당하는 SHFileOperation()가 제대로 마치지 못했으면 될때까지한다.
 
+
+* totalcommandline\Release의 하위 폴더인
+  tcl폴더와 테스트설정파일 폴더의 파일들(.tcl, .stcl, mtcl)을 참고하자.
+
+* totalcommandline\Release\TotalCommandLine.exe 과 totalcommandline\Release\UsingTimeControl.dll 는
+  함께 있어야 함.
+
+* totalcommandline\Release\UsingTimeControl.dll은 기간제한용 테스트 플러그인이지만
+  현재는 무제한 사용가능
+
 * 커맨드라인 명령 사용법
 	TotalCommandLine.exe Z:\영상\tcl\mp4_move_Folder.stcl -go (-go 옵션을 넣으면 실행까지 진행)
 	
